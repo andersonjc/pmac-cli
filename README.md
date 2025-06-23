@@ -84,6 +84,27 @@ pnpm pmac add-dep TASK-001 SETUP-001   # Add task dependency
 pnpm pmac rm-dep TASK-001 SETUP-001    # Remove dependency
 ```
 
+## Optional Tools
+
+### Git Pre-Commit Hook
+
+PMaC includes an optional pre-commit hook that enforces PMaC compliance by ensuring PMaC files are updated whenever code changes are committed.
+
+**Installation** (optional):
+```bash
+# Copy the hook to your git hooks directory
+cp tools/resources/pmac-pre-commit-hook .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
+**What it does**:
+- Detects when code files are being committed
+- Ensures corresponding PMaC files (`project-backlog.yml`, `prompts-log.md`) are also staged
+- Auto-stages modified PMaC files if they exist but aren't staged
+- Blocks commits that don't follow PMaC methodology
+
+**Note**: This hook is a resource for teams that want to enforce PMaC compliance. It's not required to use PMaC methodology.
+
 ## Development Workflow
 
 ### 1. Pick a Task

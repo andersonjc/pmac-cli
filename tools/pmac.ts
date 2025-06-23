@@ -154,13 +154,27 @@ Please check the file permissions and format.
     }
 
     const { phase, taskIndex } = taskInfo;
-    const timestamp = new Date().toISOString().split("T")[0];
+    
+    // Generate timestamp with date, time, and local timezone
+    const now = new Date();
+    const timestamp = now.toLocaleString('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'short'
+    }).replace(',', '');
+    
     if (!this.backlog.phases[phase].tasks[taskIndex].notes) {
       this.backlog.phases[phase].tasks[taskIndex].notes = [];
     }
-    this.backlog.phases[phase].tasks[taskIndex].notes.push(
-      `${timestamp}: ${note}`,
-    );
+    
+    // Always prepend timestamp - CLI automatically adds timestamps to all notes
+    const formattedNote = `${timestamp}: ${note}`;
+    
+    this.backlog.phases[phase].tasks[taskIndex].notes.push(formattedNote);
 
     this.saveBacklog();
     console.log(`Added note to ${taskId}: ${note}`);

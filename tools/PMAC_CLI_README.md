@@ -25,7 +25,7 @@ The PMaC CLI provides a command-line interface for managing project backlogs usi
 - **Priority Management**: Update task priorities and organize by importance
 - **Phase Organization**: Move tasks between project phases
 - **Validation**: Comprehensive dependency and relationship validation
-- **Audit Trail**: Automatic timestamped notes for all changes
+- **Audit Trail**: Automatic local timezone timestamps for all notes and changes
 - **Critical Path Analysis**: Identify project bottlenecks and timeline impacts
 
 ### Architecture
@@ -179,24 +179,28 @@ pnpm pmac create FEAT-002 "User authentication" backend high 12
 - `estimatedHours`: Numeric value (default: 8)
 
 #### `update <taskId> <status> [note]`
-Update task status with optional note.
+Update task status with optional note. Timestamps are automatically added to notes.
 
 ```bash
 # Update status only
 pnpm pmac update FEAT-001 in_progress
 
-# Update with note
+# Update with note (timestamp automatically added)
 pnpm pmac update FEAT-001 testing "Ready for QA review"
+# Results in: "2025-06-23 11:45:30 a.m. EDT: Ready for QA review"
 ```
 
 **Status Values:** ready, in_progress, testing, completed
 
 #### `note <taskId> <note>`
-Add a timestamped note to a task.
+Add a note to a task. Timestamps are automatically added by the CLI.
 
 ```bash
 pnpm pmac note FEAT-001 "Discovered dependency on external API"
+# Results in: "2025-06-23 11:45:30 a.m. EDT: Discovered dependency on external API"
 ```
+
+**Note**: The CLI automatically prepends timestamps with local date, time, and timezone. Do not include timestamp information in your note text.
 
 #### `move <taskId> <targetPhase>`
 Move a task to a different phase.

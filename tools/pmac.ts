@@ -130,7 +130,18 @@ Please check the file permissions and format.
     this.backlog.phases[phase].tasks[taskIndex].status = status;
 
     if (note) {
-      const timestamp = new Date().toISOString().split("T")[0];
+      // Generate timestamp with date, time, and local timezone (consistent with addTaskNote)
+      const now = new Date();
+      const timestamp = now.toLocaleString('en-CA', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short'
+      }).replace(',', '');
+      
       if (!this.backlog.phases[phase].tasks[taskIndex].notes) {
         this.backlog.phases[phase].tasks[taskIndex].notes = [];
       }

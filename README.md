@@ -18,6 +18,8 @@ Traditional project management tools (Jira, Linear, Asana) store data in proprie
 - **🔄 Git Integration**: Project management data evolves with your code
 - **🏗️ Quality Assurance**: Built-in protocols ensure production-ready code
 
+📚 **[Read the Complete Methodology](project-management-as-code.md)** - Full documentation of the PMaC approach and workflows.
+
 ## Quick Start
 
 ### For New Projects
@@ -28,14 +30,14 @@ git clone https://github.com/andersonjc/pmac.git my-project
 cd my-project
 
 # Install CLI tool
-npm install -D yaml tsx @types/node
+pnpm add -D yaml tsx @types/node
 
 # Initialize your project files
 cp templates/* .
 # Edit files to match your project
 
 # Start managing tasks
-npm run pmac list
+pnpm pmac list
 ```
 
 ### For Existing Projects
@@ -47,7 +49,7 @@ curl -O https://raw.githubusercontent.com/andersonjc/pmac/main/templates/CLAUDE.
 curl -O https://raw.githubusercontent.com/andersonjc/pmac/main/templates/prompts-log.md
 
 # Add CLI tool
-npm install -D yaml tsx @types/node
+pnpm add -D yaml tsx @types/node
 # Copy tools/pmac.ts to your project
 ```
 
@@ -68,30 +70,30 @@ Powerful command-line tool for managing your PMaC workflow:
 
 ```bash
 # Task Management
-npm run pmac list [status] [priority]     # List tasks with filters
-npm run pmac update TASK-001 in_progress  # Update task status
-npm run pmac create "New Feature" dev      # Create new task
+pnpm pmac list [status] [priority]     # List tasks with filters
+pnpm pmac update TASK-001 in_progress  # Update task status
+pnpm pmac create "New Feature" dev      # Create new task
 
 # Project Analysis
-npm run pmac critical-path                 # Show project critical path
-npm run pmac validate                      # Validate dependencies
-npm run pmac phases                        # List all project phases
+pnpm pmac critical-path                 # Show project critical path
+pnpm pmac validate                      # Validate dependencies
+pnpm pmac phases                        # List all project phases
 
 # Dependencies
-npm run pmac add-dep TASK-001 SETUP-001   # Add task dependency
-npm run pmac rm-dep TASK-001 SETUP-001    # Remove dependency
+pnpm pmac add-dep TASK-001 SETUP-001   # Add task dependency
+pnpm pmac rm-dep TASK-001 SETUP-001    # Remove dependency
 ```
 
 ## Development Workflow
 
 ### 1. Pick a Task
 ```bash
-npm run pmac list ready high  # Find high-priority ready tasks
+pnpm pmac list ready high  # Find high-priority ready tasks
 ```
 
 ### 2. Start Work
 ```bash
-npm run pmac update TASK-001 in_progress "Starting implementation"
+pnpm pmac update TASK-001 in_progress "Starting implementation"
 git checkout -b feature/TASK-001-description
 ```
 
@@ -104,7 +106,7 @@ git checkout -b feature/TASK-001-description
 ### 4. Complete & Validate
 ```bash
 # Validate all acceptance criteria met
-npm run pmac update TASK-001 completed "All criteria validated"
+pnpm pmac update TASK-001 completed "All criteria validated"
 
 # Commit PMaC files with code changes
 git add .
@@ -193,8 +195,8 @@ We welcome contributions to improve PMaC methodology and tooling!
 ```bash
 git clone https://github.com/andersonjc/pmac.git
 cd pmac
-npm install
-npm test
+pnpm install
+pnpm test
 ```
 
 ### Contributing Guidelines

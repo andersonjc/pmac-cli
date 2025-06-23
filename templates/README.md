@@ -21,7 +21,7 @@ These files work together to maintain complete project context and enable seamle
 ### Prerequisites
 
 - [List your project's prerequisites, e.g., Node.js 18+, Python 3.9+, etc.]
-- [Package manager: npm, yarn, pnpm, pip, etc.]
+- [Package manager: pnpm, npm, yarn, pip, etc.]
 - [Database requirements]
 - [Other tools or services]
 
@@ -33,7 +33,7 @@ git clone https://github.com/[username]/[repository].git
 cd [repository]
 
 # Install dependencies
-[your install command, e.g., npm install, pip install -r requirements.txt]
+[your install command, e.g., pnpm install, pip install -r requirements.txt]
 
 # Set up environment variables
 cp .env.example .env
@@ -43,7 +43,7 @@ cp .env.example .env
 [your migration command]
 
 # Start development server
-[your dev command, e.g., npm run dev]
+[your dev command, e.g., pnpm dev]
 ```
 
 ### PMaC CLI (Project Management)
@@ -52,19 +52,19 @@ This project includes a CLI tool for managing PMaC workflows:
 
 ```bash
 # View current tasks
-npm run pmac list
+pnpm pmac list
 
 # Update task status
-npm run pmac update TASK-001 in_progress "Starting implementation"
+pnpm pmac update TASK-001 in_progress "Starting implementation"
 
 # View critical path
-npm run pmac critical-path
+pnpm pmac critical-path
 
 # Validate dependencies
-npm run pmac validate
+pnpm pmac validate
 
 # See all available commands
-npm run pmac help
+pnpm pmac help
 ```
 
 ## Architecture Overview
@@ -93,18 +93,18 @@ npm run pmac help
 
 ```bash
 # Development
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run test         # Run all tests
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm test         # Run all tests
 
 # Code Quality
-npm run lint         # Run linting
-npm run format       # Format code
-npm run typecheck    # Type checking (if using TypeScript)
+pnpm lint         # Run linting
+pnpm format       # Format code
+pnpm typecheck    # Type checking (if using TypeScript)
 
 # PMaC Management
-npm run pmac list    # View tasks
-npm run pmac help    # PMaC CLI help
+pnpm pmac list    # View tasks
+pnpm pmac help    # PMaC CLI help
 ```
 
 ### Testing
@@ -113,15 +113,15 @@ npm run pmac help    # PMaC CLI help
 
 ```bash
 # Run all tests
-npm test
+pnpm test
 
 # Run specific test suites
-npm run test:unit
-npm run test:integration
-npm run test:e2e
+pnpm test:unit
+pnpm test:integration
+pnpm test:e2e
 
 # Test coverage
-npm run test:coverage
+pnpm test:coverage
 ```
 
 ## Project Structure

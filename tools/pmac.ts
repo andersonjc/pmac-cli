@@ -726,7 +726,7 @@ Please check the file permissions and format.
     console.log(`
 PMaC CLI - Project Management as Code Tool
 
-Usage: npm run pmac <command> [options]
+Usage: pnpm pmac <command> [options]
 
 Task Management Commands:
   list [status] [priority]         List all tasks, optionally filtered by status and/or priority

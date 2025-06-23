@@ -32,16 +32,16 @@ This repository follows **Project Management as Code (PMaC)** methodology for AI
 
 **PMaC Management:**
 ```bash
-npm run pmac list              # View current tasks
-npm run pmac update TASK-001 in_progress "Starting work"
-npm run pmac validate          # Check dependencies
+pnpm pmac list              # View current tasks
+pnpm pmac update TASK-001 in_progress "Starting work"
+pnpm pmac validate          # Check dependencies
 ```
 
 **Testing & Quality:**
 ```bash
-npm test                       # Run all tests
-npm run lint                   # Run linting  
-npm run build                  # Build project
+pnpm test                       # Run all tests
+pnpm lint                   # Run linting  
+pnpm build                  # Build project
 ```
 
 ## Quality Standards

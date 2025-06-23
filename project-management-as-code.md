@@ -12,17 +12,17 @@ Version-controlled files that provide complete project context to both humans an
 
 ## Core Files
 
-| File | Purpose |
-|------|---------|
-| **`project-backlog.yml`** | Tasks, dependencies, status tracking, acceptance criteria |
-| **`prompts-log.md`** | Complete conversation history and decision audit trail |
-| **`project-requirements.md`** | Technical architecture and specifications |
-| **`CLAUDE.md`** | AI assistant instructions and project guidance |
+| File                          | Purpose                                                   |
+| ----------------------------- | --------------------------------------------------------- |
+| **`project-backlog.yml`**     | Tasks, dependencies, status tracking, acceptance criteria |
+| **`prompts-log.md`**          | Complete conversation history and decision audit trail    |
+| **`project-requirements.md`** | Technical architecture and specifications                 |
+| **`CLAUDE.md`**               | AI assistant instructions and project guidance            |
 
 ## Key Benefits
 
 - **🤖 AI-Native**: YAML/Markdown format AI assistants can read and update
-- **📝 Complete Audit Trail**: Every decision tracked in version control  
+- **📝 Complete Audit Trail**: Every decision tracked in version control
 - **⚡ Zero Context Loss**: Resume complex projects with full context
 - **🔄 Git Integration**: PM data evolves alongside code
 - **🏗️ Quality Assurance**: Built-in protocols ensure production-ready code
@@ -30,16 +30,19 @@ Version-controlled files that provide complete project context to both humans an
 ## Workflow
 
 ### Before Starting Work
+
 1. Read next "ready" task from `project-backlog.yml` (highest priority)
 2. Update task status to "in_progress"
 3. Review requirements and acceptance criteria
 
 ### During Development
+
 1. Update task notes with implementation decisions
 2. Log all AI prompts in `prompts-log.md`
 3. Follow technical requirements exactly
 
 ### Before Committing
+
 1. Validate ALL acceptance criteria are met
 2. Update task status to "completed"
 3. Commit PMaC files with code changes
@@ -66,7 +69,7 @@ git commit -m "TASK-001: Implement feature XYZ
 ```
 project-root/
 ├── project-management-as-code.md    # This methodology
-├── project-backlog.yml               # Task management  
+├── project-backlog.yml               # Task management
 ├── prompts-log.md                    # Decision log
 ├── project-requirements.md           # Technical specs
 ├── CLAUDE.md                         # AI instructions
@@ -77,7 +80,7 @@ project-root/
 ## Quality Standards
 
 - **Tests**: 100% coverage on new code, all tests pass
-- **Dependencies**: Validate with `npm run pmac validate`
+- **Dependencies**: Validate with `pnpm pmac validate`
 - **Documentation**: Update with all code changes
 - **Security**: Input validation, secure patterns, audit logs
 
@@ -105,13 +108,13 @@ phases:
 
 ## PMaC vs Traditional PM
 
-| Aspect | Traditional Tools | PMaC |
-|--------|------------------|------|
-| AI Integration | Manual/None | Native |
-| Decision Context | Lost | Complete |
-| Version Control | External | Full Integration |
-| Audit Trail | Platform-dependent | Git + prompts + tasks |
-| Quality Control | External processes | Built-in protocols |
+| Aspect           | Traditional Tools  | PMaC                  |
+| ---------------- | ------------------ | --------------------- |
+| AI Integration   | Manual/None        | Native                |
+| Decision Context | Lost               | Complete              |
+| Version Control  | External           | Full Integration      |
+| Audit Trail      | Platform-dependent | Git + prompts + tasks |
+| Quality Control  | External processes | Built-in protocols    |
 
 ## PMaC CLI Tool
 
@@ -119,37 +122,40 @@ Optional TypeScript CLI for enhanced workflows:
 
 ```bash
 # Installation
-npm install -D yaml tsx @types/node
+pnpm add -D yaml tsx @types/node
 
 # Key Commands
-npm run pmac list [status] [priority]    # List filtered tasks
-npm run pmac update TASK-001 in_progress # Update status
-npm run pmac validate                     # Check dependencies
-npm run pmac critical-path                # Show critical path
+pnpm pmac list [status] [priority]    # List filtered tasks
+pnpm pmac update TASK-001 in_progress # Update status
+pnpm pmac validate                     # Check dependencies
+pnpm pmac critical-path                # Show critical path
 ```
 
 ## Getting Started
 
 1. **Initialize Files**: Copy PMaC templates to your project root
-2. **Install CLI**: `npm install -D yaml tsx @types/node` 
+2. **Install CLI**: `pnpm add -D yaml tsx @types/node`
 3. **Configure**: Add `"pmac": "tsx tools/pmac.ts"` to package.json scripts
 4. **Start Working**: Pick tasks from `project-backlog.yml` and follow workflow
 
 ## Best Practices
 
 **Task Definition:**
+
 - Write specific, testable acceptance criteria
-- Include testing requirements  
+- Include testing requirements
 - Reference technical requirements
 - Estimate effort realistically
 
 **Documentation:**
+
 - Log every AI prompt in `prompts-log.md`
 - Document architectural decisions
 - Update PMaC files with code changes
 - Use task IDs in commits and branches
 
 **Quality:**
+
 - Follow Senior Engineer Protocol for every task
 - Validate all criteria before marking complete
 - Run tests, lint, build before committing
@@ -158,9 +164,15 @@ npm run pmac critical-path                # Show critical path
 ## Common Pitfalls
 
 - **Skipping PMaC updates** → Use Git hooks to enforce
-- **Vague criteria** → Write specific, measurable outcomes  
+- **Vague criteria** → Write specific, measurable outcomes
 - **Incomplete logging** → Log every interaction verbatim
 - **Poor dependencies** → Use CLI validation to prevent cycles
+
+## Acknowledgments
+
+This methodology was inspired by Max Mitchell's concept of "prompts as source code" from his analysis of [Cloudflare's Claude-generated commits](https://www.maxemitchell.com/writings/i-read-all-of-cloudflares-claude-generated-commits/).
+
+The independent emergence of similar concepts, such as the [PMAC project](https://github.com/schneidergithub/pmac) by schneidergithub, demonstrates the industry's shared need for standardized AI-assisted development practices.
 
 ---
 

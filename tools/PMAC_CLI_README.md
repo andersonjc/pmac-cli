@@ -59,16 +59,16 @@ phases:
 ### Prerequisites
 
 - Node.js 18+ 
-- npm/yarn/pnpm package manager
+- pnpm package manager (npm/yarn also supported)
 - TypeScript runtime (tsx)
 
 ### Setup
 
 1. **Install Dependencies**
    ```bash
-   npm install -D yaml tsx @types/node
-   # or
    pnpm add -D yaml tsx @types/node
+   # or
+   npm install -D yaml tsx @types/node
    ```
 
 2. **Copy CLI Files**
@@ -91,9 +91,9 @@ phases:
 
 4. **Verify Installation**
    ```bash
-   npm run pmac help
-   # or
    pnpm pmac help
+   # or
+   npm run pmac help
    ```
 
 ## Quick Start
@@ -331,7 +331,7 @@ Use the `set` command for bulk dependency updates:
 pnpm pmac set TASK-001 dependencies "DEP-1,DEP-2,DEP-3"
 
 # Clear all dependencies
-pnmp pmac set TASK-001 dependencies ""
+pnpm pmac set TASK-001 dependencies ""
 ```
 
 ### Task Status Workflow
@@ -408,7 +408,7 @@ The test suite covers:
 ### Development Setup
 
 1. **Clone/Copy Files**: Ensure all CLI files are in your `tools/` directory
-2. **Install Dependencies**: Run `pnpm install` or `npm install`
+2. **Install Dependencies**: Run `pnpm install` (or `npm install`)
 3. **Run Tests**: Verify everything works with `npx vitest run --config tools/vitest.config.ts`
 
 ### Code Style

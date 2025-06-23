@@ -218,6 +218,12 @@ PMaC is designed for projects where:
 
 **Works with**: Any AI assistant (Claude, GPT, etc.), any tech stack, any team size
 
+## Acknowledgments
+
+This methodology was inspired by Max Mitchell's concept of "prompts as source code" from his analysis of [Cloudflare's Claude-generated commits](https://www.maxemitchell.com/writings/i-read-all-of-cloudflares-claude-generated-commits/).
+
+The independent emergence of similar concepts, such as the [PMAC project](https://github.com/schneidergithub/pmac) by schneidergithub, demonstrates the industry's shared need for standardized AI-assisted development practices.
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.

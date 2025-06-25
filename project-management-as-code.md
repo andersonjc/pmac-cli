@@ -15,7 +15,7 @@ Version-controlled files that provide complete project context to both humans an
 | File                          | Purpose                                                   |
 | ----------------------------- | --------------------------------------------------------- |
 | **`project-backlog.yml`**     | Tasks, dependencies, status tracking, acceptance criteria |
-| **`prompts-log.md`**          | Complete conversation history and decision audit trail    |
+| **`prompts-log.md`**          | User prompts only - verbatim conversation log            |
 | **`project-requirements.md`** | Technical architecture and specifications                 |
 | **`CLAUDE.md`**               | AI assistant instructions and project guidance            |
 
@@ -37,16 +37,36 @@ Version-controlled files that provide complete project context to both humans an
 
 ### During Development
 
-1. Update task notes with implementation decisions
-2. Log all AI prompts in `prompts-log.md`
+1. **Immediately log user prompts verbatim** in `prompts-log.md` with current local timestamp
+2. Update task notes with implementation decisions via PMaC CLI
 3. Follow technical requirements exactly
+
+### Timestamp Standards
+
+**All PMaC files must use consistent local timezone format:**
+- **Format**: `YYYY-MM-DD HH:MM:SS a.m./p.m. EDT` (e.g., "2025-06-24 03:25:00 p.m. EDT")
+- **Source**: JavaScript `new Date().toLocaleString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short'}).replace(',', '')`
+- **Application**: Both prompts-log.md manual entries and PMaC CLI automated timestamps
 
 ### Before Committing
 
 1. Validate ALL acceptance criteria are met
-2. Update task status to "completed"
+2. Update task status and add milestone notes via PMaC CLI
 3. Commit PMaC files with code changes
 4. Include task ID in commit message
+
+### File Separation Guidelines
+
+**prompts-log.md**: 
+- User prompts ONLY, verbatim
+- Minimal context, just timestamp and prompt text
+- No analysis, decisions, or implementation details
+
+**project-backlog.yml** (via PMaC CLI):
+- Implementation decisions and rationale
+- Technical milestones and progress notes  
+- Architecture decisions and trade-offs
+- Test results and validation status
 
 ## Git Integration
 

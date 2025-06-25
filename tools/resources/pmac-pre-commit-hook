@@ -9,7 +9,7 @@ PMAC_FILES=(
     "project-backlog.yml"
     "prompts-log.md" 
     "project-management-as-code.md"
-    "community-platform-prompt.md"
+    "project-requirements.md"
     "CLAUDE.md"
 )
 

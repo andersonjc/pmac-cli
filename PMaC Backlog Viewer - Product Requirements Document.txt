@@ -1,0 +1,123 @@
+PMaC Backlog Viewer - Dark Mode Svelte + Tailwind Implementation                                             │
+     │                                                                                                              │
+     │ 🎯 Architecture Overview                                                                                     │
+     │                                                                                                              │
+     │ - Framework: Svelte with TypeScript                                                                          │
+     │ - Styling: Tailwind CSS with dark mode design system                                                         │
+     │ - Theme: Dark mode only - sleek developer-focused interface                                                  │
+     │ - Distribution: Integrated as PMaC tool (pnpm pmac viewer)                                                   │
+     │ - Data Source: Reads any project-backlog.yml file path                                                       │
+     │                                                                                                              │
+     │ 🎨 Dark Mode Design System                                                                                   │
+     │                                                                                                              │
+     │ - Background: bg-gray-900 (primary), bg-gray-800 (cards), bg-gray-700 (hover)                                │
+     │ - Text: text-gray-100 (primary), text-gray-300 (secondary), text-gray-400 (muted)                            │
+     │ - Accents:                                                                                                   │
+     │   - Completed: bg-green-600/20 text-green-400 border-green-500/30                                            │
+     │   - In Progress: bg-blue-600/20 text-blue-400 border-blue-500/30                                             │
+     │   - Pending: bg-gray-600/20 text-gray-400 border-gray-500/30                                                 │
+     │   - Critical: bg-red-600/20 text-red-400 border-red-500/30                                                   │
+     │ - Borders: border-gray-700 with subtle border-gray-600 on hover                                              │
+     │ - Shadows: Dark box-shadows for depth without harsh contrast                                                 │
+     │                                                                                                              │
+     │ 📁 File Structure in ./pmac/src/viewer/                                                                      │
+     │                                                                                                              │
+     │ src/viewer/                                                                                                  │
+     │ ├── app.html                     # Dark theme Svelte template                                                │
+     │ ├── main.ts                      # Svelte app initialization                                                 │
+     │ ├── App.svelte                   # Root component with dark layout                                           │
+     │ ├── lib/                                                                                                     │
+     │ │   ├── types.ts                 # TypeScript interfaces for backlog data                                    │
+     │ │   ├── parseBacklog.ts          # YAML parser with validation                                               │
+     │ │   └── stores.ts                # Svelte stores for reactive state                                          │
+     │ ├── components/                                                                                              │
+     │ │   ├── BacklogOverview.svelte   # Dark-themed project summary                                               │
+     │ │   ├── PhaseGroup.svelte        # Dark card-based phase container                                           │
+     │ │   ├── TaskCard.svelte          # Dark task cards with status colors                                        │
+     │ │   ├── TaskDetail.svelte        # Dark modal with syntax highlighting                                       │
+     │ │   ├── CriticalPath.svelte      # Dark SVG critical path visualization                                      │
+     │ │   ├── DependencyGraph.svelte   # Dark interactive dependency viewer                                        │
+     │ │   └── RiskPanel.svelte         # Dark risk assessment with color coding                                    │
+     │ ├── styles/                                                                                                  │
+     │ │   └── app.css                  # Tailwind + dark mode custom styles                                        │
+     │ └── vite.config.ts               # Vite configuration                                                        │
+     │                                                                                                              │
+     │ 🌙 Dark Mode Component Design                                                                                │
+     │                                                                                                              │
+     │ 1. App.svelte:                                                                                               │
+     │   - bg-gray-900 base with text-gray-100                                                                      │
+     │   - Dark sidebar navigation with subtle borders                                                              │
+     │   - Minimal header with project title in text-gray-100                                                       │
+     │ 2. TaskCard.svelte:                                                                                          │
+     │   - bg-gray-800 cards with border-gray-700                                                                   │
+     │   - Status indicators with dark-appropriate opacity                                                          │
+     │   - Hover states: hover:bg-gray-700 hover:border-gray-600                                                    │
+     │   - Priority badges with dark color schemes                                                                  │
+     │ 3. CriticalPath.svelte:                                                                                      │
+     │   - Dark SVG background (fill="rgb(17 24 39)")                                                               │
+     │   - Light path lines (stroke="rgb(156 163 175)")                                                             │
+     │   - Node colors match dark status theme                                                                      │
+     │   - Subtle glow effects for active path                                                                      │
+     │ 4. TaskDetail.svelte:                                                                                        │
+     │   - Dark modal overlay: bg-black/50                                                                          │
+     │   - Content card: bg-gray-800 border-gray-700                                                                │
+     │   - Syntax highlighting for requirements/criteria                                                            │
+     │   - Dark scrollbars and form elements                                                                        │
+     │                                                                                                              │
+     │ 🎨 Tailwind Dark Color Palette                                                                               │
+     │                                                                                                              │
+     │ /* Status Colors for Dark Theme */                                                                           │
+     │ .status-completed { @apply bg-green-600/20 text-green-400 border-green-500/30; }                             │
+     │ .status-in-progress { @apply bg-blue-600/20 text-blue-400 border-blue-500/30; }                              │
+     │ .status-pending { @apply bg-gray-600/20 text-gray-400 border-gray-500/30; }                                  │
+     │ .status-blocked { @apply bg-red-600/20 text-red-400 border-red-500/30; }                                     │
+     │                                                                                                              │
+     │ /* Priority Colors */                                                                                        │
+     │ .priority-critical { @apply bg-red-500/10 text-red-300 border-red-500/20; }                                  │
+     │ .priority-high { @apply bg-orange-500/10 text-orange-300 border-orange-500/20; }                             │
+     │ .priority-medium { @apply bg-yellow-500/10 text-yellow-300 border-yellow-500/20; }                           │
+     │ .priority-low { @apply bg-green-500/10 text-green-300 border-green-500/20; }                                 │
+     │                                                                                                              │
+     │ 📊 Dark UI Features                                                                                          │
+     │                                                                                                              │
+     │ - Phase Headers: Dark gradient backgrounds with subtle borders                                               │
+     │ - Task Grid: Dark cards with hover animations and status indicators                                          │
+     │ - Dependency Lines: Subtle gray connecting lines with hover highlights                                       │
+     │ - Critical Path: Glowing path visualization on dark background                                               │
+     │ - Risk Panel: Color-coded severity levels optimized for dark theme                                           │
+     │ - Search/Filter: Dark input fields with focus states                                                         │
+     │ - Progress Bars: Dark-themed progress indicators with colored fills                                          │
+     │                                                                                                              │
+     │ 🔧 PMaC CLI Integration                                                                                      │
+     │                                                                                                              │
+     │ # Dark-themed backlog viewer commands:                                                                       │
+     │ pnpm pmac viewer                 # Launch dark viewer for ./project-backlog.yml                              │
+     │ pnpm pmac viewer ../communities/project-backlog.yml  # Custom path                                           │
+     │ pnpm pmac viewer --build         # Build static dark version                                                 │
+     │ pnpm pmac viewer --serve         # Serve built dark version                                                  │
+     │                                                                                                              │
+     │ 📦 Key Dependencies                                                                                          │
+     │                                                                                                              │
+     │ {                                                                                                            │
+     │   "devDependencies": {                                                                                       │
+     │     "@sveltejs/vite-plugin-svelte": "^3.0.0",                                                                │
+     │     "svelte": "^4.0.0",                                                                                      │
+     │     "tailwindcss": "^3.4.0",                                                                                 │
+     │     "vite": "^5.0.0",                                                                                        │
+     │     "@tailwindcss/typography": "^0.5.0"                                                                      │
+     │   }                                                                                                          │
+     │ }                                                                                                            │
+     │                                                                                                              │
+     │ 🎯 Dark Mode Core Features                                                                                   │
+     │                                                                                                              │
+     │ - ✅ Sleek Dark Interface: Professional developer-focused design                                              │
+     │ - ✅ Status Color Coding: Dark-optimized status and priority indicators                                       │
+     │ - ✅ Interactive Elements: Subtle hover states and transitions                                                │
+     │ - ✅ Readable Typography: High contrast text on dark backgrounds                                              │
+     │ - ✅ Visual Hierarchy: Clear information architecture in dark theme                                           │
+     │ - ✅ Accessibility: Proper contrast ratios for dark mode                                                      │
+     │ - ✅ Syntax Highlighting: Dark-themed code/requirement blocks                                                 │
+     │ - ✅ Minimal Distraction: Clean, focused interface for project analysis                                       │
+     │                                                                                                              │
+     │ This creates a professional, terminal-inspired dark interface perfect for developers working with PMaC       │
+     │ backlogs.

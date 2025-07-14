@@ -20,9 +20,9 @@ PMaC Backlog Viewer - Dark Mode Svelte + Tailwind Implementation                
      │ - Borders: border-gray-700 with subtle border-gray-600 on hover                                              │
      │ - Shadows: Dark box-shadows for depth without harsh contrast                                                 │
      │                                                                                                              │
-     │ 📁 File Structure in ./pmac/src/viewer/                                                                      │
+     │ 📁 File Structure in ./pmac/viewer/src/                                                                      │
      │                                                                                                              │
-     │ src/viewer/                                                                                                  │
+     │ src/                                                                                                 │
      │ ├── app.html                     # Dark theme Svelte template                                                │
      │ ├── main.ts                      # Svelte app initialization                                                 │
      │ ├── App.svelte                   # Root component with dark layout                                           │

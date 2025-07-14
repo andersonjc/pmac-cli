@@ -52,6 +52,46 @@ Read the project documents and PMaC Backlog Viewer requirements doc. Add PMaC-ba
 
 ---
 
+### 2025-01-14 11:56:32 p.m. EST - Begin Development
+
+**Task Reference**: VIEWER-001  
+**Prompt Type**: [IMPLEMENTATION]  
+**Context**: Starting development following PMaC methodology
+
+**Content**:
+
+```
+Begin development, adhering strictly to pmac
+```
+
+**Outcome**: Beginning VIEWER-001 task implementation - setting up complete project structure with Svelte + TypeScript + Tailwind configuration
+
+**Files Modified**:
+
+- `tools/viewer/prompts-log.md` (updated with new entry)
+
+---
+
+### 2025-01-14 11:59:45 p.m. EST - Configuration Integration Decision
+
+**Task Reference**: VIEWER-001  
+**Prompt Type**: [DECISION]  
+**Context**: User feedback on configuration approach
+
+**Content**:
+
+```
+Other files like tsconfig.json should be integrated with top level. Reassess, fix, and continue. Follow PMaC.
+```
+
+**Outcome**: Decided to integrate all configuration files at top level for simplicity. Moving tsconfig, tailwind, postcss configs to root level to avoid nested project complexity.
+
+**Files Modified**:
+
+- `tools/viewer/prompts-log.md` (updated with decision entry)
+
+---
+
 ## Development Decision Categories
 
 ### Architecture Decisions

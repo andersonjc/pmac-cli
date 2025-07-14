@@ -1,6 +1,14 @@
 <script lang="ts">
   // PMaC Backlog Viewer - Root Application Component
+  import type { TaskStatus, TaskPriority, AppState } from './lib/types';
+  import { DEFAULT_APP_STATE, TASK_STATUS_COLORS, TASK_PRIORITY_COLORS } from './lib/types';
+  
   let projectTitle = "PMaC Backlog Viewer"
+  let appState: AppState = DEFAULT_APP_STATE;
+  
+  // Demo data using our types
+  const demoStatuses: TaskStatus[] = ['completed', 'in_progress', 'ready', 'blocked'];
+  const demoPriorities: TaskPriority[] = ['critical', 'high', 'medium', 'low'];
 </script>
 
 <main class="min-h-screen bg-pmac-bg-primary text-pmac-text-primary">
@@ -22,20 +30,29 @@
         Basic project structure initialized with dark mode support.
       </p>
       
-      <!-- Status indicator test -->
+      <!-- Status indicator test with TypeScript types -->
       <div class="flex gap-2 mb-4">
-        <span class="status-completed px-2 py-1 rounded text-xs border">Completed</span>
-        <span class="status-in-progress px-2 py-1 rounded text-xs border">In Progress</span>
-        <span class="status-pending px-2 py-1 rounded text-xs border">Pending</span>
-        <span class="status-blocked px-2 py-1 rounded text-xs border">Blocked</span>
+        {#each demoStatuses as status}
+          <span class="{TASK_STATUS_COLORS[status]} px-2 py-1 rounded text-xs border capitalize">
+            {status.replace('_', ' ')}
+          </span>
+        {/each}
       </div>
       
-      <!-- Priority indicator test -->
-      <div class="flex gap-2">
-        <span class="priority-critical px-2 py-1 rounded text-xs border">Critical</span>
-        <span class="priority-high px-2 py-1 rounded text-xs border">High</span>
-        <span class="priority-medium px-2 py-1 rounded text-xs border">Medium</span>
-        <span class="priority-low px-2 py-1 rounded text-xs border">Low</span>
+      <!-- Priority indicator test with TypeScript types -->
+      <div class="flex gap-2 mb-4">
+        {#each demoPriorities as priority}
+          <span class="{TASK_PRIORITY_COLORS[priority]} px-2 py-1 rounded text-xs border capitalize">
+            {priority}
+          </span>
+        {/each}
+      </div>
+      
+      <!-- App state indicator -->
+      <div class="text-sm text-pmac-text-muted">
+        <p>Loading: {appState.isLoading}</p>
+        <p>Error: {appState.error ?? 'none'}</p>
+        <p>Backlog loaded: {appState.backlog ? 'yes' : 'no'}</p>
       </div>
     </div>
   </div>

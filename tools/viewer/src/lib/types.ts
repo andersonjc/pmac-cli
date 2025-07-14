@@ -95,6 +95,18 @@ export interface AppState {
   viewState: ViewState;
   isLoading: boolean;
   error: string | null;
+  lastUpdated: string | null;
+}
+
+/**
+ * Filter state for tasks
+ */
+export interface FilterState {
+  status: TaskStatus | null;
+  priority: TaskPriority | null;
+  phase: string | null;
+  search: string;
+  showCompleted: boolean;
 }
 
 // ===== COMPUTED/DERIVED TYPES =====
@@ -336,5 +348,6 @@ export const DEFAULT_APP_STATE: AppState = {
   backlog: null,
   viewState: DEFAULT_VIEW_STATE,
   isLoading: false,
-  error: null
+  error: null,
+  lastUpdated: null
 };

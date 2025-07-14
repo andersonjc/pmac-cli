@@ -4,12 +4,24 @@
   import { TASK_STATUS_COLORS, TASK_PRIORITY_COLORS } from './lib/types';
   import { parseBacklogYaml } from './lib/parseBacklog';
   import { runAllTests } from './lib/parseBacklog.test';
+  import { 
+    appState, 
+    projectTitle, 
+    filteredTasks,
+    loadBacklog, 
+    setLoading, 
+    setError,
+    loadUserPreferences,
+    saveUserPreferences
+  } from './lib/stores';
+  import FilterPanel from './components/FilterPanel.svelte';
+  import StatsPanel from './components/StatsPanel.svelte';
   import { onMount } from 'svelte';
   
-  let projectTitle = "PMaC Backlog Viewer"
-  let isLoading = true;
-  let backlog: ProjectBacklog | null = null;
-  let error: string | null = null;
+  // Subscribe to reactive stores
+  $: isLoading = $appState.isLoading;
+  $: backlog = $appState.backlog;
+  $: error = $appState.error;
   
   // Parser testing
   let testResults = '';
@@ -17,7 +29,11 @@
   
   // Load the actual project backlog
   onMount(async () => {
-    isLoading = true;
+    // Load user preferences
+    loadUserPreferences();
+    saveUserPreferences();
+    
+    setLoading(true);
     
     try {
       const response = await fetch('/project-backlog.yml');
@@ -25,9 +41,8 @@
       if (!response.ok) {
         // If file doesn't exist, create a sample backlog
         const sampleBacklog = createSampleBacklog();
-        backlog = sampleBacklog;
-        projectTitle = sampleBacklog.metadata.project;
-        isLoading = false;
+        loadBacklog(sampleBacklog);
+        setLoading(false);
         return;
       }
       
@@ -35,23 +50,21 @@
       const parseResult = parseBacklogYaml(yamlContent);
       
       if (parseResult.success && parseResult.data) {
-        backlog = parseResult.data;
-        projectTitle = parseResult.data.metadata.project;
-        error = null;
+        loadBacklog(parseResult.data);
+        setError(null);
       } else {
-        error = parseResult.error || 'Failed to parse backlog';
+        setError(parseResult.error || 'Failed to parse backlog');
         // Still create sample backlog as fallback
-        backlog = createSampleBacklog();
-        projectTitle = backlog.metadata.project;
+        const sampleBacklog = createSampleBacklog();
+        loadBacklog(sampleBacklog);
       }
     } catch (err) {
       // Create sample backlog as fallback
       const sampleBacklog = createSampleBacklog();
-      backlog = sampleBacklog;
-      error = 'Could not load project-backlog.yml, using sample data';
-      projectTitle = sampleBacklog.metadata.project;
+      loadBacklog(sampleBacklog);
+      setError('Could not load project-backlog.yml, using sample data');
     } finally {
-      isLoading = false;
+      setLoading(false);
     }
   });
   
@@ -229,7 +242,7 @@
   <div class="container mx-auto px-4 py-8">
     <header class="mb-8">
       <h1 class="text-3xl font-bold text-pmac-text-primary mb-2">
-        {projectTitle}
+        {$projectTitle}
       </h1>
       <p class="text-pmac-text-secondary">
         Dark mode visualization tool for PMaC project backlogs
@@ -250,6 +263,12 @@
     {/if}
     
     {#if backlog}
+      <!-- Project Statistics -->
+      <StatsPanel />
+      
+      <!-- Filter Panel -->
+      <FilterPanel />
+      
       <!-- Project Overview -->
       <div class="card card-hover p-6 mb-6">
         <h2 class="text-xl font-semibold mb-4 text-pmac-text-primary">
@@ -277,29 +296,27 @@
         </div>
       </div>
       
-      <!-- Phases and Tasks -->
-      {#each Object.entries(backlog.phases) as [_phaseName, phase]}
-        <div class="card card-hover p-6 mb-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-pmac-text-primary">{phase.title}</h3>
-            <span class="text-xs px-2 py-1 rounded border border-gray-600 text-pmac-text-secondary">
-              {phase.status}
-            </span>
+      <!-- Filtered Tasks -->
+      <div class="card card-hover p-6 mb-6">
+        <h3 class="text-lg font-semibold text-pmac-text-primary mb-4">
+          Tasks ({$filteredTasks.length})
+        </h3>
+        
+        {#if $filteredTasks.length === 0}
+          <div class="text-center py-8">
+            <p class="text-pmac-text-secondary">No tasks match the current filters.</p>
           </div>
-          <p class="text-pmac-text-secondary mb-4">{phase.description}</p>
-          <p class="text-sm text-pmac-text-muted mb-4">
-            <span class="font-medium">Duration:</span> {phase.estimated_duration}
-          </p>
-          
-          <!-- Tasks -->
+        {:else}
           <div class="space-y-3">
-            <h4 class="text-sm font-medium text-pmac-text-secondary">Tasks ({phase.tasks.length})</h4>
-            {#each phase.tasks as task}
+            {#each $filteredTasks as task}
               <div class="bg-pmac-bg-tertiary p-4 rounded border border-gray-700">
                 <div class="flex items-center justify-between mb-2">
                   <div class="flex items-center gap-2">
                     <span class="text-sm font-mono text-pmac-text-muted">{task.id}</span>
                     <span class="text-pmac-text-primary font-medium">{task.title}</span>
+                    <span class="text-xs px-2 py-1 rounded bg-gray-700 text-pmac-text-muted">
+                      {task.phaseTitle}
+                    </span>
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="{TASK_STATUS_COLORS[task.status]} px-2 py-1 rounded text-xs border capitalize">
@@ -356,8 +373,8 @@
               </div>
             {/each}
           </div>
-        </div>
-      {/each}
+        {/if}
+      </div>
       
       <!-- Risks (if available) -->
       {#if backlog.risks}

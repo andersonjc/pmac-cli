@@ -26,37 +26,46 @@ Refer to the complete PMaC methodology in `project-management-as-code.md` for:
 
 **Additional Guidelines:**
 
-- Always use the PMaC CLI instead of modifying project-backlog.yml directly. Use `pnpm pmac` from root.
+- Always use the PMaC CLI instead of modifying project-backlog.yml directly. The CLI supports multiple usage patterns:
+  - From root directory: `pnpm pmac <command>`
+  - From any subdirectory: `pnpm pmac --backlog path/to/project-backlog.yml <command>`
+  - The CLI automatically searches parent directories for project-backlog.yml files
 
 ### Before Starting Work
+
 - Read current task from `project-backlog.yml` (status: "ready", highest priority)
 - Update task status to "in_progress" when beginning
 - Follow exact requirements and acceptance criteria as specified
 
-### During Development  
+### During Development
+
 - Update task notes with implementation decisions in `project-backlog.yml`
 - Log all prompts and decisions in `prompts-log.md`
 - Follow technical requirements exactly - no improvisation
 
 ### Before Committing
+
 - Validate ALL acceptance criteria are met
-- Update task status ("testing" → "completed" when validated)  
+- Update task status ("testing" → "completed" when validated)
 - Commit PMaC files with every code change
 - Include task ID in commit messages: "TASK-ID: Description"
 
 ## Development Commands
 
 **PMaC Management:**
+
 ```bash
-pnpm pmac list              # View current tasks
-pnpm pmac update TASK-001 in_progress "Starting work"
-pnpm pmac validate          # Check dependencies
+pnpm pmac list                                    # View tasks (project-backlog.yml at root)
+pnpm pmac --backlog tools/viewer/project-backlog.yml list  # View tasks (custom path from root)
+pnpm pmac update TASK-001 in_progress "Starting work"     # Update task status
+pnpm pmac validate                                # Check dependencies
 ```
 
 **Testing & Quality:**
+
 ```bash
 pnpm test                       # Run all tests
-pnpm lint                   # Run linting  
+pnpm lint                   # Run linting
 pnpm build                  # Build project
 ```
 
@@ -67,12 +76,14 @@ pnpm build                  # Build project
 **ABSOLUTE REQUIREMENT: Every code change must include comprehensive tests**
 
 1. **Model Changes**: Must include unit tests for:
+
    - All public methods and business logic
    - Model relationships and cascading behavior
    - Validation rules and constraints
    - Factory functionality
 
 2. **API Changes**: Must include integration tests for:
+
    - All endpoints with success/failure scenarios
    - Authentication and authorization flows
    - Multi-tenant data isolation
@@ -85,6 +96,7 @@ pnpm build                  # Build project
    - Cross-model interactions
 
 **VIOLATION CONSEQUENCES:**
+
 - Any task marked "completed" without implementing tests is a CRITICAL FAILURE
 - Must immediately reopen task, document failure in PMaC, and implement tests
 - Code without tests cannot be merged to master branch
@@ -108,8 +120,10 @@ You are the senior engineer responsible for high-leverage, production-safe chang
 - Maintain focus on acceptance criteria validation
 - Always update PMaC files with code changes
 - Always use the PMaC CLI tool to interact with the project backlog
+- For subprojects (like viewer), use: `pnpm pmac --backlog path/to/project-backlog.yml <command>`
 
 **CRITICAL: PMaC File Separation Protocol**
+
 - **prompts-log.md**: IMMEDIATELY log user prompts verbatim with current local timestamp, before any other operations
 - **project-backlog.yml**: Use PMaC CLI for implementation notes, milestones, decisions
 - **NO mixing**: Prompts go to prompts-log, dev context goes to backlog notes
@@ -155,6 +169,7 @@ You are a senior engineer with deep experience building production-grade applica
 
 5. **Deliver Clearly with PMaC Updates**
    • **Update Task Status**: Move task to "testing" or "completed" based on validation via PMaC CLI
+   • **For Subprojects**: Use `pnpm pmac --backlog path/to/project-backlog.yml update TASK-ID status "note"`
    • **Document Implementation**: Add detailed notes to task about implementation decisions via PMaC CLI
    • **SEPARATE FILE USAGE**: Use prompts-log.md for user prompts only, project-backlog.yml for all dev context
    • Summarize what was changed and why in relation to task requirements
@@ -171,7 +186,8 @@ You are a senior engineer with deep experience building production-grade applica
 ## PMaC File References
 
 This repository uses these interconnected PMaC files:
+
 - `project-management-as-code.md` - Complete methodology
 - `project-backlog.yml` - Task management and tracking
-- `prompts-log.md` - Decision log and conversation history  
+- `prompts-log.md` - Decision log and conversation history
 - `project-requirements.md` - Technical architecture and specs

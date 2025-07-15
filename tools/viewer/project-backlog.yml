@@ -390,9 +390,11 @@ phases:
           - Performance is acceptable for large projects
         dependencies:
           - VIEWER-010
-        blocks:
-          - VIEWER-014
-        notes: []
+        blocks: []
+        notes:
+          - "2025-07-15 05:25:52 p.m. EDT: Deprioritized in favor of responsive design - will implement after core
+            functionality complete"
+          - "2025-07-15: Blocks updated to: none"
       - id: VIEWER-013
         title: Build Risk Assessment Panel
         status: ready
@@ -414,9 +416,11 @@ phases:
           - Risk filtering works with overall app filters
         dependencies:
           - VIEWER-011
-        blocks:
-          - VIEWER-015
-        notes: []
+        blocks: []
+        notes:
+          - "2025-07-15 05:25:59 p.m. EDT: Deprioritized in favor of responsive design - will implement after core
+            functionality complete"
+          - "2025-07-15: Blocks updated to: none"
       - id: VIEWER-014
         title: Add Responsive Design and Mobile Support
         status: ready
@@ -427,6 +431,7 @@ phases:
         requirements:
           - Implement responsive breakpoints for mobile/tablet
           - Adapt sidebar navigation for smaller screens
+          - Fix phase navigation functionality in sidebar
           - Optimize touch interactions for mobile
           - Test critical path visualization on mobile
           - Add mobile-specific UI improvements
@@ -437,10 +442,14 @@ phases:
           - Critical path visualization adapts to mobile
           - No horizontal scrolling on mobile devices
         dependencies:
-          - VIEWER-012
+          - VIEWER-011
         blocks:
           - VIEWER-016
-        notes: []
+        notes:
+          - "2025-07-15: Dependencies updated to: VIEWER-011"
+          - "2025-07-15 05:26:15 p.m. EDT: Adding phase navigation functionality requirement: Make sidebar phase
+            navigation functional - clicking phases should filter/navigate to phase content"
+          - "2025-07-15: Requirements updated (6 items)"
   integration:
     title: PMaC CLI Integration
     description: Integration with existing PMaC CLI tool
@@ -467,10 +476,11 @@ phases:
           - '"pnpm pmac viewer --serve" serves built version'
           - Help documentation is clear and complete
         dependencies:
-          - VIEWER-013
+          - VIEWER-014
         blocks:
           - VIEWER-016
-        notes: []
+        notes:
+          - "2025-07-15: Dependencies updated to: VIEWER-014"
       - id: VIEWER-016
         title: Implement Error Handling and Validation
         status: ready

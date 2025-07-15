@@ -20,11 +20,11 @@
     closeTaskDetail,
   } from './lib/stores';
   import FilterPanel from './components/FilterPanel.svelte';
-  import StatsPanel from './components/StatsPanel.svelte';
   import TaskCard from './components/TaskCard.svelte';
   import PhaseGroup from './components/PhaseGroup.svelte';
   import TaskDetail from './components/TaskDetail.svelte';
   import CriticalPath from './components/CriticalPath.svelte';
+  import BacklogOverview from './components/BacklogOverview.svelte';
   import { getEnvironmentConfig, findBacklogFile } from './lib/config';
   import { onMount, onDestroy } from 'svelte';
 
@@ -37,7 +37,7 @@
   let mobileMenuOpen = false;
   
   // Collapsible sections
-  let criticalPathExpanded = true;
+  let criticalPathExpanded = false;
 
   // Task interaction
   function handleTaskClick(task: TaskWithPhase) {
@@ -489,53 +489,13 @@ phases:
         {/if}
 
         {#if backlog}
-          <!-- Project Statistics -->
-          <StatsPanel />
+          <!-- Backlog Overview -->
+          <div class="mb-6">
+            <BacklogOverview />
+          </div>
 
           <!-- Filter Panel -->
           <FilterPanel />
-
-          <!-- Project Overview -->
-          <div
-            class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6 hover:bg-gray-700 transition-colors"
-          >
-            <h2 class="text-xl font-semibold mb-4 text-gray-100">Project Overview</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 class="text-sm font-medium text-gray-300 mb-2">Metadata</h3>
-                <div class="space-y-1 text-sm">
-                  <p><span class="text-gray-400">Version:</span> {backlog.metadata.version}</p>
-                  <p>
-                    <span class="text-gray-400">Last Updated:</span>
-                    {backlog.metadata.last_updated}
-                  </p>
-                  <p>
-                    <span class="text-gray-400">Current Sprint:</span>
-                    {backlog.metadata.current_sprint}
-                  </p>
-                </div>
-              </div>
-              <div>
-                <h3 class="text-sm font-medium text-gray-300 mb-2">Statistics</h3>
-                <div class="space-y-1 text-sm">
-                  {#if backlog.epic_summary}
-                    <p>
-                      <span class="text-gray-400">Total Hours:</span>
-                      {backlog.epic_summary.total_estimated_hours}
-                    </p>
-                    <p>
-                      <span class="text-gray-400">Duration:</span>
-                      {backlog.epic_summary.estimated_duration}
-                    </p>
-                  {/if}
-                  <p>
-                    <span class="text-gray-400">Phases:</span>
-                    {Object.keys(backlog.phases).length}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- Critical Path Visualization -->
           <div class="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">

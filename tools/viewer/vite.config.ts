@@ -25,8 +25,13 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    host: true
+    host: true,
+    fs: {
+      // Allow serving files from the viewer directory
+      allow: ['..', '.']
+    }
   },
+  publicDir: resolve(__dirname, 'public'),
   resolve: {
     alias: {
       '$lib': resolve(__dirname, 'src/lib'),

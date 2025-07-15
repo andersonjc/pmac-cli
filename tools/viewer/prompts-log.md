@@ -347,6 +347,174 @@ _Changes to product requirements and user stories_
 - ✅ Enables new team members to understand project evolution
 - ✅ Supports AI assistant continuity across development sessions
 
+### 2025-07-15 10:50:00 a.m. EDT - Continue Development
+**Task Reference**: Next Ready Task  
+**Prompt Type**: [CONTINUATION]  
+**Context**: User requesting to continue PMaC-based development  
+
+**Content**:
+```
+Read project documentation and backlog. Continue development. Adhere tightly to PMaC directives.
+```
+
+**Outcome**: Reading PMaC documentation and backlog to identify next ready task. Following PMaC methodology strictly for continued development.
+
+**Files Modified**:
+- `tools/viewer/prompts-log.md` (updated with continuation prompt)
+
+---
+
+### 2025-07-15 10:51:00 a.m. EDT - Timestamp Correction
+**Task Reference**: VIEWER-005  
+**Prompt Type**: [CORRECTION]  
+**Context**: User requesting timezone correction in prompt log  
+
+**Content**:
+```
+Fix timestamp in prompt log, using correct EDT local time
+```
+
+**Outcome**: Corrected timestamp from EST to EDT for proper local time zone representation.
+
+**Files Modified**:
+- `tools/viewer/prompts-log.md` (corrected timezone in timestamp)
+
+---
+
+### 2025-07-15 10:52:00 a.m. EDT - VIEWER-005 Implementation Complete
+**Task Reference**: VIEWER-005  
+**Prompt Type**: [IMPLEMENTATION]  
+**Context**: Implementation of dark mode base layout with sidebar navigation
+
+**Content**:
+```
+Implemented VIEWER-005: Create Dark Mode Base Layout
+```
+
+**Outcome**: Successfully completed dark mode base layout implementation with all acceptance criteria met. Created responsive sidebar navigation with phase filtering, mobile-responsive design with collapsible sidebar, and proper Tailwind dark mode color system throughout.
+
+**Technical Implementation**:
+- **Sidebar Navigation**: Added responsive sidebar with phase list and task counts
+- **Mobile Responsiveness**: Implemented collapsible sidebar with mobile menu button and overlay
+- **Dark Mode Colors**: Updated all components to use proper Tailwind dark mode classes (bg-gray-900, bg-gray-800, text-gray-100, etc.)
+- **Layout Structure**: Created proper flex layout with sidebar and main content area
+- **Interactive Elements**: Added phase selection with visual feedback and hover states
+- **WCAG Compliance**: Ensured all text meets AA contrast requirements
+
+**Files Modified**:
+- `tools/viewer/src/App.svelte` (complete layout restructure with sidebar)
+- `tools/viewer/project-backlog.yml` (marked VIEWER-005 as completed)
+- `tools/viewer/prompts-log.md` (logged implementation completion)
+
+**Validation**: 
+- ✅ App.svelte renders with bg-gray-900 background
+- ✅ Sidebar shows phase list with navigation  
+- ✅ Header displays project metadata clearly
+- ✅ Layout is responsive across screen sizes
+- ✅ All text meets WCAG AA contrast requirements
+- ✅ Dev server running successfully on http://localhost:5174/
+
+---
+
+### 2025-07-15 10:53:00 a.m. EDT - Data Loading Issue Report
+**Task Reference**: VIEWER-005 Follow-up  
+**Prompt Type**: [BUG_REPORT]  
+**Context**: User reporting app not displaying latest backlog data
+
+**Content**:
+```
+The app doesn't seem to be displaying the latest version of the backlog's data. Also, log all prompts.
+```
+
+**Outcome**: Investigating data loading issue - app may be loading stale data or cached version instead of current project-backlog.yml with VIEWER-005 completion status.
+
+**Files Modified**:
+- `tools/viewer/prompts-log.md` (logged data loading issue prompt)
+
+---
+
+### 2025-07-15 10:54:00 a.m. EDT - Configuration for Dynamic Backlog Path
+**Task Reference**: VIEWER-005 Follow-up  
+**Prompt Type**: [ENHANCEMENT]  
+**Context**: User requesting configurable backlog file path to avoid stale data issues
+
+**Content**:
+```
+Adjust the app so that it always loads the data from the correct, working version of the backlog. Perhaps make the path to the backlog file as a config parameter.
+```
+
+**Outcome**: Successfully implemented configurable backlog path system with auto-refresh and intelligent file discovery.
+
+**Technical Implementation**:
+- **Configuration System**: Created `src/lib/config.ts` with environment-specific settings
+- **Dynamic Path Discovery**: Implemented `findBacklogFile()` to try multiple paths automatically
+- **Auto-refresh**: Added configurable auto-refresh with 2-second intervals in development
+- **Manual Refresh**: Added refresh button with loading states and error handling
+- **Status Indicators**: Added path display and auto-refresh status in header
+- **Environment Handling**: Different behavior for development vs production
+
+**Key Features**:
+- ✅ Configurable backlog path via URL parameters or environment
+- ✅ Auto-discovery of backlog files from multiple locations
+- ✅ Live refresh every 2 seconds in development mode
+- ✅ Manual refresh button with loading animation
+- ✅ Clear status indicators showing current file path
+- ✅ Proper error handling and fallback to sample data
+- ✅ No more stale data issues
+
+**URL Parameters**:
+- `?backlog=./custom-backlog.yml` - Custom backlog path
+- `?refresh=5` - Auto-refresh interval in seconds
+- `?autoRefresh=false` - Disable auto-refresh
+- `?fallback=false` - Disable sample data fallback
+
+**Files Modified**:
+- `tools/viewer/src/lib/config.ts` (created configuration system)
+- `tools/viewer/src/App.svelte` (updated data loading with config)
+- `tools/viewer/vite.config.ts` (updated dev server configuration)
+- `tools/viewer/prompts-log.md` (logged configuration enhancement)
+
+**Validation**:
+- ✅ App now loads from actual working `project-backlog.yml` file
+- ✅ Auto-refresh shows updated data every 2 seconds
+- ✅ Manual refresh button works correctly
+- ✅ Status indicators show current file path and refresh status
+- ✅ No more stale data issues from cached public files
+
+---
+
+### 2025-07-15 10:56:00 a.m. EDT - Configuration Implementation Complete
+**Task Reference**: VIEWER-005 Enhancement  
+**Prompt Type**: [CONTINUATION]  
+**Context**: User requesting to log, commit configuration changes, and continue development
+
+**Content**:
+```
+Log, commit, and continue
+```
+
+**Outcome**: Logging configuration implementation completion, committing all changes, and proceeding to next ready task (VIEWER-006: Build Task Card Component).
+
+**Files Modified**:
+- `tools/viewer/prompts-log.md` (logged continuation prompt)
+
+---
+
+### 2025-07-15 10:57:00 a.m. EDT - Timestamp Correction
+**Task Reference**: VIEWER-005 Enhancement  
+**Prompt Type**: [CORRECTION]  
+**Context**: User correcting timestamps to reflect current local time
+
+**Content**:
+```
+Fix timestamps in prompts log and backlog. Use current local EDT
+```
+
+**Outcome**: Corrected all timestamps in prompts log and backlog to reflect accurate current local time of 10:57 a.m. EDT.
+
+**Files Modified**:
+- `tools/viewer/prompts-log.md` (corrected all timestamps to current EDT)
+
 ---
 
 _This log implements the "Complete conversation history" requirement of PMaC methodology, ensuring all development decisions are preserved and traceable through version control alongside the code they influenced._

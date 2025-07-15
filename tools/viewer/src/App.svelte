@@ -24,6 +24,7 @@
   import TaskCard from './components/TaskCard.svelte';
   import PhaseGroup from './components/PhaseGroup.svelte';
   import TaskDetail from './components/TaskDetail.svelte';
+  import CriticalPath from './components/CriticalPath.svelte';
   import { getEnvironmentConfig, findBacklogFile } from './lib/config';
   import { onMount, onDestroy } from 'svelte';
 
@@ -34,6 +35,9 @@
 
   // Mobile sidebar toggle
   let mobileMenuOpen = false;
+  
+  // Collapsible sections
+  let criticalPathExpanded = true;
 
   // Task interaction
   function handleTaskClick(task: TaskWithPhase) {
@@ -531,6 +535,47 @@ phases:
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Critical Path Visualization -->
+          <div class="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
+            <header
+              class="p-4 bg-gray-750 border-b border-gray-700 cursor-pointer hover:bg-gray-700 transition-colors"
+              on:click={() => criticalPathExpanded = !criticalPathExpanded}
+              on:keydown={e => e.key === 'Enter' && (criticalPathExpanded = !criticalPathExpanded)}
+              tabindex="0"
+              role="button"
+              aria-expanded={criticalPathExpanded}
+              aria-controls="critical-path-content"
+            >
+              <div class="flex items-center gap-3">
+                <!-- Collapse/Expand Icon -->
+                <svg
+                  class="w-5 h-5 text-gray-400 transition-transform duration-200 {criticalPathExpanded ? 'rotate-90' : ''}"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+
+                <!-- Section Title -->
+                <h2 class="text-xl font-semibold text-gray-100">
+                  Critical Path Analysis
+                </h2>
+              </div>
+            </header>
+            
+            {#if criticalPathExpanded}
+              <div id="critical-path-content" class="p-6">
+                <CriticalPath tasks={$filteredTasks} on:taskSelect={(e) => handleTaskClick(e.detail.task)} />
+              </div>
+            {/if}
           </div>
 
           <!-- Phase Groups -->

@@ -133,11 +133,13 @@ Commit, then continue
 ---
 
 ### 2025-01-15 12:20:00 a.m. EST - Demo Request
+
 **Task Reference**: VIEWER-003  
 **Prompt Type**: [DEMONSTRATION]  
 **Context**: User requesting browser demonstration of viewer functionality
 
 **Content**:
+
 ```
 Demo to me in the browser
 ```
@@ -145,16 +147,19 @@ Demo to me in the browser
 **Outcome**: Started development server and provided demo walkthrough of implemented features. Identified need to ensure proper data loading functionality.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (updated with demo entry)
 
 ---
 
 ### 2025-01-15 12:25:00 a.m. EST - Loading Issue Identified
+
 **Task Reference**: VIEWER-003  
 **Prompt Type**: [BUG_REPORT]  
 **Context**: User identified critical loading issue with application
 
 **Content**:
+
 ```
 The app in the browser only shows a loading spinner. Make sure it is loading the project backlog and parsing the yml.
 ```
@@ -162,16 +167,19 @@ The app in the browser only shows a loading spinner. Make sure it is loading the
 **Outcome**: Identified that App.svelte was not properly loading and parsing the project-backlog.yml file. Updated onMount lifecycle to fetch actual backlog data with sample data fallback.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (updated with bug report entry)
 
 ---
 
 ### 2025-07-14 02:15:00 p.m. EDT - Continued Loading Issue
+
 **Task Reference**: VIEWER-003  
 **Prompt Type**: [BUG_REPORT]  
 **Context**: User still experiencing loading spinner issue and requesting prompt logging
 
 **Content**:
+
 ```
 All I see is the loading spinner still. Also, log all my prior unlogged prompts.
 ```
@@ -179,6 +187,7 @@ All I see is the loading spinner still. Also, log all my prior unlogged prompts.
 **Outcome**: Successfully resolved loading spinner issue by fixing Svelte reactive state management and TypeScript compilation errors. App now loads and displays backlog data properly.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (updated with current issue and missing prompts)
 - `tools/viewer/src/App.svelte` (fixed reactive state and compilation errors)
 - `tools/viewer/public/project-backlog.yml` (copied for browser access)
@@ -186,11 +195,13 @@ All I see is the loading spinner still. Also, log all my prior unlogged prompts.
 ---
 
 ### 2025-07-14 02:20:00 p.m. EDT - Persistent Loading Spinner Issue
+
 **Task Reference**: VIEWER-003  
 **Prompt Type**: [BUG_REPORT]  
 **Context**: User reports loading spinner persists despite console showing successful loading
 
 **Content**:
+
 ```
 All I see is the loading spinner, even though this is my console output. [vite] connecting...
 client:618 [vite] connected.
@@ -206,6 +217,7 @@ Also, log prompts
 **Outcome**: **ISSUE RESOLVED!** The problem was that Svelte was appending content instead of replacing it, so the loading div with `min-height: 100vh` was covering the actual app content. Fixed by clearing `target.innerHTML = ''` before mounting.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (updated with prompt logging)
 - `tools/viewer/src/main.ts` (added `target.innerHTML = ''` to clear loading div)
 
@@ -214,11 +226,13 @@ Also, log prompts
 ---
 
 ### 2025-07-14 02:30:00 p.m. EDT - Cleanup After Troubleshooting
+
 **Task Reference**: VIEWER-003  
 **Prompt Type**: [CLEANUP]  
 **Context**: User requesting cleanup of troubleshooting code while maintaining prompt logging
 
 **Content**:
+
 ```
 Clean up everything from that troubleshooting work. Keep logging prompts.
 ```
@@ -226,6 +240,7 @@ Clean up everything from that troubleshooting work. Keep logging prompts.
 **Outcome**: Cleaned up all troubleshooting code while preserving the core fix that resolved the loading spinner issue.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (updated with cleanup prompt)
 - `tools/viewer/src/main.ts` (removed debug logs, kept core fix)
 - `tools/viewer/src/App.svelte` (removed debug alerts, console logs, and test code)
@@ -237,11 +252,13 @@ Clean up everything from that troubleshooting work. Keep logging prompts.
 ---
 
 ### 2025-07-14 02:33:00 p.m. EDT - Continue Development
+
 **Task Reference**: VIEWER-003 → VIEWER-004  
 **Prompt Type**: [CONTINUATION]  
 **Context**: User requesting to log, commit, and continue to next PMaC task
 
 **Content**:
+
 ```
 Log, commit, and continue
 ```
@@ -249,16 +266,19 @@ Log, commit, and continue
 **Outcome**: Logging completion of VIEWER-003, committing clean code, and proceeding to VIEWER-004 (Svelte Stores for State Management).
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (updated with continuation prompt)
 
 ---
 
 ### 2025-07-14 02:42:00 p.m. EDT - VIEWER-004 Completion
+
 **Task Reference**: VIEWER-004  
 **Prompt Type**: [COMPLETION]  
 **Context**: User requesting to log and commit completed VIEWER-004 implementation
 
 **Content**:
+
 ```
 Log and commit
 ```
@@ -266,6 +286,7 @@ Log and commit
 **Outcome**: Completed VIEWER-004 implementation with comprehensive Svelte stores for state management, reactive filtering, and interactive UI components.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (updated with completion prompt)
 - `tools/viewer/src/lib/stores.ts` (created comprehensive state management)
 - `tools/viewer/src/lib/types.ts` (added FilterState interface)
@@ -348,11 +369,13 @@ _Changes to product requirements and user stories_
 - ✅ Supports AI assistant continuity across development sessions
 
 ### 2025-07-15 10:50:00 a.m. EDT - Continue Development
+
 **Task Reference**: Next Ready Task  
 **Prompt Type**: [CONTINUATION]  
-**Context**: User requesting to continue PMaC-based development  
+**Context**: User requesting to continue PMaC-based development
 
 **Content**:
+
 ```
 Read project documentation and backlog. Continue development. Adhere tightly to PMaC directives.
 ```
@@ -360,16 +383,19 @@ Read project documentation and backlog. Continue development. Adhere tightly to 
 **Outcome**: Reading PMaC documentation and backlog to identify next ready task. Following PMaC methodology strictly for continued development.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (updated with continuation prompt)
 
 ---
 
 ### 2025-07-15 10:51:00 a.m. EDT - Timestamp Correction
+
 **Task Reference**: VIEWER-005  
 **Prompt Type**: [CORRECTION]  
-**Context**: User requesting timezone correction in prompt log  
+**Context**: User requesting timezone correction in prompt log
 
 **Content**:
+
 ```
 Fix timestamp in prompt log, using correct EDT local time
 ```
@@ -377,16 +403,19 @@ Fix timestamp in prompt log, using correct EDT local time
 **Outcome**: Corrected timestamp from EST to EDT for proper local time zone representation.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (corrected timezone in timestamp)
 
 ---
 
 ### 2025-07-15 10:52:00 a.m. EDT - VIEWER-005 Implementation Complete
+
 **Task Reference**: VIEWER-005  
 **Prompt Type**: [IMPLEMENTATION]  
 **Context**: Implementation of dark mode base layout with sidebar navigation
 
 **Content**:
+
 ```
 Implemented VIEWER-005: Create Dark Mode Base Layout
 ```
@@ -394,6 +423,7 @@ Implemented VIEWER-005: Create Dark Mode Base Layout
 **Outcome**: Successfully completed dark mode base layout implementation with all acceptance criteria met. Created responsive sidebar navigation with phase filtering, mobile-responsive design with collapsible sidebar, and proper Tailwind dark mode color system throughout.
 
 **Technical Implementation**:
+
 - **Sidebar Navigation**: Added responsive sidebar with phase list and task counts
 - **Mobile Responsiveness**: Implemented collapsible sidebar with mobile menu button and overlay
 - **Dark Mode Colors**: Updated all components to use proper Tailwind dark mode classes (bg-gray-900, bg-gray-800, text-gray-100, etc.)
@@ -402,13 +432,15 @@ Implemented VIEWER-005: Create Dark Mode Base Layout
 - **WCAG Compliance**: Ensured all text meets AA contrast requirements
 
 **Files Modified**:
+
 - `tools/viewer/src/App.svelte` (complete layout restructure with sidebar)
 - `tools/viewer/project-backlog.yml` (marked VIEWER-005 as completed)
 - `tools/viewer/prompts-log.md` (logged implementation completion)
 
-**Validation**: 
+**Validation**:
+
 - ✅ App.svelte renders with bg-gray-900 background
-- ✅ Sidebar shows phase list with navigation  
+- ✅ Sidebar shows phase list with navigation
 - ✅ Header displays project metadata clearly
 - ✅ Layout is responsive across screen sizes
 - ✅ All text meets WCAG AA contrast requirements
@@ -417,11 +449,13 @@ Implemented VIEWER-005: Create Dark Mode Base Layout
 ---
 
 ### 2025-07-15 10:53:00 a.m. EDT - Data Loading Issue Report
+
 **Task Reference**: VIEWER-005 Follow-up  
 **Prompt Type**: [BUG_REPORT]  
 **Context**: User reporting app not displaying latest backlog data
 
 **Content**:
+
 ```
 The app doesn't seem to be displaying the latest version of the backlog's data. Also, log all prompts.
 ```
@@ -429,16 +463,19 @@ The app doesn't seem to be displaying the latest version of the backlog's data. 
 **Outcome**: Investigating data loading issue - app may be loading stale data or cached version instead of current project-backlog.yml with VIEWER-005 completion status.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (logged data loading issue prompt)
 
 ---
 
 ### 2025-07-15 10:54:00 a.m. EDT - Configuration for Dynamic Backlog Path
+
 **Task Reference**: VIEWER-005 Follow-up  
 **Prompt Type**: [ENHANCEMENT]  
 **Context**: User requesting configurable backlog file path to avoid stale data issues
 
 **Content**:
+
 ```
 Adjust the app so that it always loads the data from the correct, working version of the backlog. Perhaps make the path to the backlog file as a config parameter.
 ```
@@ -446,6 +483,7 @@ Adjust the app so that it always loads the data from the correct, working versio
 **Outcome**: Successfully implemented configurable backlog path system with auto-refresh and intelligent file discovery.
 
 **Technical Implementation**:
+
 - **Configuration System**: Created `src/lib/config.ts` with environment-specific settings
 - **Dynamic Path Discovery**: Implemented `findBacklogFile()` to try multiple paths automatically
 - **Auto-refresh**: Added configurable auto-refresh with 2-second intervals in development
@@ -454,6 +492,7 @@ Adjust the app so that it always loads the data from the correct, working versio
 - **Environment Handling**: Different behavior for development vs production
 
 **Key Features**:
+
 - ✅ Configurable backlog path via URL parameters or environment
 - ✅ Auto-discovery of backlog files from multiple locations
 - ✅ Live refresh every 2 seconds in development mode
@@ -463,18 +502,21 @@ Adjust the app so that it always loads the data from the correct, working versio
 - ✅ No more stale data issues
 
 **URL Parameters**:
+
 - `?backlog=./custom-backlog.yml` - Custom backlog path
 - `?refresh=5` - Auto-refresh interval in seconds
 - `?autoRefresh=false` - Disable auto-refresh
 - `?fallback=false` - Disable sample data fallback
 
 **Files Modified**:
+
 - `tools/viewer/src/lib/config.ts` (created configuration system)
 - `tools/viewer/src/App.svelte` (updated data loading with config)
 - `tools/viewer/vite.config.ts` (updated dev server configuration)
 - `tools/viewer/prompts-log.md` (logged configuration enhancement)
 
 **Validation**:
+
 - ✅ App now loads from actual working `project-backlog.yml` file
 - ✅ Auto-refresh shows updated data every 2 seconds
 - ✅ Manual refresh button works correctly
@@ -484,11 +526,13 @@ Adjust the app so that it always loads the data from the correct, working versio
 ---
 
 ### 2025-07-15 10:56:00 a.m. EDT - Configuration Implementation Complete
+
 **Task Reference**: VIEWER-005 Enhancement  
 **Prompt Type**: [CONTINUATION]  
 **Context**: User requesting to log, commit configuration changes, and continue development
 
 **Content**:
+
 ```
 Log, commit, and continue
 ```
@@ -496,16 +540,19 @@ Log, commit, and continue
 **Outcome**: Logging configuration implementation completion, committing all changes, and proceeding to next ready task (VIEWER-006: Build Task Card Component).
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (logged continuation prompt)
 
 ---
 
 ### 2025-07-15 10:57:00 a.m. EDT - Timestamp Correction
+
 **Task Reference**: VIEWER-005 Enhancement  
 **Prompt Type**: [CORRECTION]  
 **Context**: User correcting timestamps to reflect current local time
 
 **Content**:
+
 ```
 Fix timestamps in prompts log and backlog. Use current local EDT
 ```
@@ -513,16 +560,19 @@ Fix timestamps in prompts log and backlog. Use current local EDT
 **Outcome**: Corrected all timestamps in prompts log and backlog to reflect accurate current local time of 10:57 a.m. EDT.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (corrected all timestamps to current EDT)
 
 ---
 
 ### 2025-07-15 10:58:00 a.m. EDT - VIEWER-006 Implementation Complete
+
 **Task Reference**: VIEWER-006  
 **Prompt Type**: [IMPLEMENTATION]  
 **Context**: Implementation of TaskCard component for task visualization
 
 **Content**:
+
 ```
 Implemented VIEWER-006: Build Task Card Component
 ```
@@ -530,6 +580,7 @@ Implemented VIEWER-006: Build Task Card Component
 **Outcome**: Successfully completed TaskCard component implementation with all acceptance criteria met. Created comprehensive dark mode task cards with responsive grid layout, progress indicators, and interactive features.
 
 **Technical Implementation**:
+
 - **TaskCard Component**: Created `TaskCard.svelte` with complete dark mode styling
 - **Card Layout**: Responsive grid system (1 col mobile, 2 cols tablet, 3 cols desktop)
 - **Task Information**: Displays ID, title, status, priority, estimated/actual hours, assignee
@@ -543,6 +594,7 @@ Implemented VIEWER-006: Build Task Card Component
 - **Accessibility**: Proper ARIA roles, keyboard navigation, and focus states
 
 **Key Features**:
+
 - ✅ Responsive card grid layout
 - ✅ Complete task information display
 - ✅ Progress visualization with bars
@@ -553,12 +605,14 @@ Implemented VIEWER-006: Build Task Card Component
 - ✅ Keyboard accessibility
 
 **Files Modified**:
+
 - `tools/viewer/src/components/TaskCard.svelte` (created comprehensive task card component)
 - `tools/viewer/src/App.svelte` (integrated TaskCard component with grid layout)
 - `tools/viewer/project-backlog.yml` (marked VIEWER-006 as completed)
 - `tools/viewer/prompts-log.md` (logged implementation completion)
 
-**Validation**: 
+**Validation**:
+
 - ✅ TaskCard displays all required task information
 - ✅ Status colors match design system specification
 - ✅ Priority badges use correct dark mode colors
@@ -570,11 +624,13 @@ Implemented VIEWER-006: Build Task Card Component
 ---
 
 ### 2025-07-15 10:59:00 a.m. EDT - VIEWER-006 Bug Report
+
 **Task Reference**: VIEWER-006  
 **Prompt Type**: [BUG_REPORT]  
 **Context**: User reporting issues with task status display and filtering
 
 **Content**:
+
 ```
 Re-open the task. Tasks with in progress statuses aren't being displayed as such in the UI and the filter doesn't include in progress as an option.
 ```
@@ -582,16 +638,19 @@ Re-open the task. Tasks with in progress statuses aren't being displayed as such
 **Outcome**: Reopening VIEWER-006 to fix status display and filtering issues. Tasks with "in_progress" status not showing correctly and filter missing "in_progress" option.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (logged bug report)
 
 ---
 
 ### 2025-07-15 11:00:00 a.m. EDT - Eliminate Public Directory Behavior
+
 **Task Reference**: VIEWER-006 Bug Fix  
 **Prompt Type**: [BUG_FIX]  
 **Context**: User requesting elimination of public directory fallback behavior
 
 **Content**:
+
 ```
 The backlog shouldn't be in the public directory anymore, it should be read from the working filesystem. Eliminate this behavior from the app.
 ```
@@ -599,6 +658,7 @@ The backlog shouldn't be in the public directory anymore, it should be read from
 **Outcome**: Successfully eliminated public directory fallback behavior. App now reads exclusively from working filesystem paths.
 
 **Technical Changes**:
+
 - **Removed Public Path**: Eliminated `/project-backlog.yml` from BACKLOG_PATHS
 - **Updated Production Config**: Changed production to use `./project-backlog.yml` instead of public path
 - **Disabled Public Directory**: Set `publicDir: false` in Vite config
@@ -607,6 +667,7 @@ The backlog shouldn't be in the public directory anymore, it should be read from
 - **Enhanced Status Display**: Fixed "in_progress" status formatting in TaskCard and FilterPanel
 
 **Key Improvements**:
+
 - ✅ No more public directory fallback
 - ✅ Always reads from working filesystem
 - ✅ Proper "in_progress" status display formatting
@@ -614,6 +675,7 @@ The backlog shouldn't be in the public directory anymore, it should be read from
 - ✅ Direct filesystem access via Vite dev server
 
 **Files Modified**:
+
 - `tools/viewer/src/lib/config.ts` (removed public paths, updated configs)
 - `tools/viewer/vite.config.ts` (disabled public directory)
 - `tools/viewer/src/components/TaskCard.svelte` (improved status formatting)
@@ -622,6 +684,7 @@ The backlog shouldn't be in the public directory anymore, it should be read from
 - `tools/viewer/prompts-log.md` (logged elimination of public behavior)
 
 **Validation**:
+
 - ✅ App loads from working `project-backlog.yml` file only
 - ✅ No fallback to public directory
 - ✅ VIEWER-006 shows as "in progress" with blue badge
@@ -632,11 +695,13 @@ The backlog shouldn't be in the public directory anymore, it should be read from
 ---
 
 ### 2025-07-15 11:01:00 a.m. EDT - Planning Next Action
+
 **Task Reference**: VIEWER-006 Bug Fix Complete  
 **Prompt Type**: [PLANNING]  
 **Context**: User requesting to log, commit, and plan next development action
 
 **Content**:
+
 ```
 Log, commit, and lay out a plan for next action
 ```
@@ -644,16 +709,19 @@ Log, commit, and lay out a plan for next action
 **Outcome**: Logging VIEWER-006 bug fixes completion, committing all changes, and planning next development steps based on current PMaC backlog status.
 
 **Files Modified**:
+
 - `tools/viewer/prompts-log.md` (logged planning prompt)
 
 ---
 
 ### 2025-07-15 11:02:00 a.m. EDT - PMaC CLI Analysis Request
+
 **Task Reference**: PMaC CLI Enhancement  
 **Prompt Type**: [ANALYSIS]  
 **Context**: User requesting analysis of PMaC CLI for non-root folder usage
 
 **Content**:
+
 ```
 You seem to be having trouble running `pnpm pmac ...` commands from within this /tools/viewer/ folder. Analyze the CLI and determine if changes are needed to work with project backlog files that aren't in the root folder. Determine if updates to AI directives are needed to ensure that the pmac CLI is always used and that it works properly from any folder location.
 ```
@@ -661,12 +729,14 @@ You seem to be having trouble running `pnpm pmac ...` commands from within this 
 **Outcome**: Successfully analyzed and enhanced PMaC CLI to support non-root folder usage with automatic path discovery and explicit path parameters.
 
 **Problem Analysis**:
+
 - **Root Cause**: CLI hardcoded to `process.cwd()/project-backlog.yml` (line 42)
 - **Subfolder Failure**: When run from `/tools/viewer/`, looks for backlog in wrong directory
 - **Missing Feature**: No path parameter support for custom backlog locations
 - **AI Directive Gap**: CLAUDE.md didn't account for subproject development patterns
 
 **Solution Implemented**:
+
 1. **Enhanced Constructor**: Added optional `customPath` parameter
 2. **Automatic Path Discovery**: Added `findBacklogFile()` method that searches:
    - Current directory: `./project-backlog.yml`
@@ -677,6 +747,7 @@ You seem to be having trouble running `pnpm pmac ...` commands from within this 
 5. **Path Transparency**: Shows which backlog file is being used
 
 **Technical Implementation**:
+
 ```typescript
 // New constructor with path resolution
 constructor(customPath?: string) {
@@ -705,12 +776,14 @@ function parseArgs() {
 ```
 
 **Usage Patterns Now Supported**:
+
 - **Root Directory**: `pnpm pmac <command>` (unchanged)
 - **Explicit Path**: `pnpm pmac --backlog path/to/project-backlog.yml <command>`
 - **Auto-Discovery**: CLI searches parent directories automatically
 - **Subprojects**: `pnpm pmac --backlog ./project-backlog.yml update TASK-ID status`
 
 **AI Directive Updates**:
+
 - Updated CLAUDE.md with new CLI usage patterns
 - Added subproject-specific instructions
 - Enhanced guidance for non-root development
@@ -725,6 +798,7 @@ function parseArgs() {
 ✅ **Enhanced error messages**: Provides helpful troubleshooting guidance
 
 **Files Modified**:
+
 - `tools/pmac.ts` (enhanced CLI with path support and auto-discovery)
 - `CLAUDE.md` (updated AI directives for subproject usage)
 - `tools/viewer/prompts-log.md` (documented CLI analysis and enhancement)
@@ -733,11 +807,13 @@ function parseArgs() {
 ---
 
 ### 2025-07-15 11:30:00 a.m. EDT - CLI Path Discovery Simplification
+
 **Task Reference**: PMaC CLI Enhancement  
 **Prompt Type**: [SIMPLIFICATION]  
 **Context**: User requested simplification of overly complex path discovery system
 
 **Content**:
+
 ```
 This is getting overcomplicated. Simplify by adhering to these two use cases: either the backlog file is at root (default) or the path to the backlog file from root is explicitly passed in via the optional argument.
 ```
@@ -745,6 +821,7 @@ This is getting overcomplicated. Simplify by adhering to these two use cases: ei
 **Outcome**: Successfully simplified PMaC CLI to support only two clear use cases instead of complex auto-discovery.
 
 **Technical Simplification**:
+
 - **Removed Complex Logic**: Eliminated multi-directory path discovery, environment variable preservation, and wrapper scripts
 - **Two Use Cases Only**:
   1. **Default**: `pnpm pmac list` - looks for `project-backlog.yml` at project root
@@ -760,6 +837,7 @@ This is getting overcomplicated. Simplify by adhering to these two use cases: ei
 ✅ **Cleanup**: Removed unnecessary wrapper script and complex logic
 
 **Files Modified**:
+
 - `tools/pmac.ts` (simplified constructor and removed complex path discovery)
 - `CLAUDE.md` (updated with simplified CLI usage examples)
 - `package.json` (reverted to simple script definition)
@@ -771,11 +849,13 @@ This is getting overcomplicated. Simplify by adhering to these two use cases: ei
 ---
 
 ### 2025-07-15 11:56:00 a.m. EDT - CLI Test Coverage Enhancement
+
 **Task Reference**: PMaC CLI Testing  
 **Prompt Type**: [TESTING]  
 **Context**: User requested evaluation and expansion of CLI test coverage for latest changes
 
 **Content**:
+
 ```
 Evaluate test coverage on the CLI, expand as appropriate to cover latest changes
 ```
@@ -783,6 +863,7 @@ Evaluate test coverage on the CLI, expand as appropriate to cover latest changes
 **Outcome**: Successfully expanded PMaC CLI test coverage to comprehensively cover the simplified path resolution logic and all recent changes.
 
 **Test Coverage Analysis**:
+
 - **Existing Integration Tests**: 34 tests covering core CLI functionality
 - **Test Coverage Gap**: Recent simplified path resolution logic not tested
 - **New Unit Tests**: 10 additional unit tests for constructor and path resolution
@@ -812,6 +893,7 @@ Evaluate test coverage on the CLI, expand as appropriate to cover latest changes
    - ✅ PMaC structure validation
 
 **Technical Validation**:
+
 - **Total Tests**: 50 tests (40 integration + 10 unit)
 - **Test Success Rate**: 100% (50/50 passing)
 - **Coverage Areas**: All recent CLI changes covered
@@ -820,11 +902,12 @@ Evaluate test coverage on the CLI, expand as appropriate to cover latest changes
 - **CRUD Operations**: All operations tested with custom paths
 
 **Key Test Scenarios Covered**:
+
 ```bash
 # Default usage from root
 pnpm pmac list
 
-# Custom path usage from any directory  
+# Custom path usage from any directory
 pnpm pmac --backlog tools/viewer/project-backlog.yml list
 
 # Path resolution scenarios
@@ -837,6 +920,7 @@ update, note, create, set, move, add-dep, rm-dep
 ```
 
 **Files Modified**:
+
 - `tools/pmac.test.ts` (added 16 new integration tests for custom path support)
 - `tools/pmac.unit.test.ts` (created 10 unit tests for core logic)
 - `tools/viewer/prompts-log.md` (documented test coverage enhancement)
@@ -846,11 +930,13 @@ update, note, create, set, move, add-dep, rm-dep
 ---
 
 ### 2025-07-15 12:05:00 p.m. EDT - Test Separation and Coverage Enhancement
+
 **Task Reference**: Test Organization  
 **Prompt Type**: [TESTING_ORGANIZATION]  
 **Context**: User identified test intermingling between CLI and viewer components
 
 **Content**:
+
 ```
 The tests for the pmac cli and the backlog viewer app seem to have gotten intermingled. Determine the best way to keep these separate. Ensure full test coverage for the cli.
 ```
@@ -858,6 +944,7 @@ The tests for the pmac cli and the backlog viewer app seem to have gotten interm
 **Outcome**: Successfully separated CLI and viewer test suites with comprehensive coverage for both components.
 
 **Problem Analysis**:
+
 - **Mixed Test Structure**: CLI and viewer tests were running together with shared vitest config
 - **Coverage Confusion**: Single test configuration trying to cover both Node.js CLI and browser viewer
 - **Test File Organization**: Test files in different directories but using same runner
@@ -866,11 +953,13 @@ The tests for the pmac cli and the backlog viewer app seem to have gotten interm
 **Solution Implemented**:
 
 **1. Separate Test Configurations**:
+
 - **CLI Tests**: `vitest.config.ts` at root (Node.js environment)
 - **Viewer Tests**: `tools/viewer/vitest.config.ts` (jsdom environment)
 - **Different Environments**: Node.js for CLI, jsdom for Svelte components
 
 **2. Updated Package.json Scripts**:
+
 ```bash
 # Separated test commands
 pnpm test:cli              # CLI integration + unit tests
@@ -882,6 +971,7 @@ pnpm test:coverage         # Combined coverage report
 ```
 
 **3. Test File Organization**:
+
 ```
 /tools/
 ├── pmac.test.ts           # CLI integration tests (40 tests)
@@ -893,6 +983,7 @@ pnpm test:coverage         # Combined coverage report
 ```
 
 **4. Converted Legacy Test Format**:
+
 - **Before**: Custom console.log based test functions
 - **After**: Modern vitest test suites with describe/it/expect
 - **Type Safety**: Full TypeScript support in both test suites
@@ -900,6 +991,7 @@ pnpm test:coverage         # Combined coverage report
 **5. Enhanced Coverage Analysis**:
 
 **CLI Test Coverage (50 tests)**:
+
 - ✅ **Integration Tests**: 40 tests covering all CLI commands via child process execution
 - ✅ **Unit Tests**: 10 tests for constructor logic and path resolution
 - ✅ **Custom Path Support**: Complete testing of simplified path resolution
@@ -907,17 +999,20 @@ pnpm test:coverage         # Combined coverage report
 - ✅ **CRUD Operations**: Full task lifecycle testing
 
 **Viewer Test Coverage (23 tests)**:
+
 - ✅ **Type System**: 11 tests for type guards, constants, and inference
 - ✅ **YAML Parser**: 12 tests for parsing, validation, and transformation
 - ✅ **Coverage Stats**: types.ts (100%), parseBacklog.ts (79%)
 - ✅ **Error Handling**: Invalid YAML, schema validation, file path resolution
 
 **6. Environment Specific Setup**:
+
 - **CLI**: Node.js environment with file system access
 - **Viewer**: jsdom environment with Svelte plugin support
 - **Dependencies**: Added jsdom for browser environment simulation
 
 **Technical Validation**:
+
 - **Total Tests**: 73 tests (50 CLI + 23 viewer)
 - **CLI Success Rate**: 100% (50/50 passing)
 - **Viewer Success Rate**: 100% (23/23 passing)
@@ -925,6 +1020,7 @@ pnpm test:coverage         # Combined coverage report
 - **Coverage**: Comprehensive coverage for core functionality in both components
 
 **Key Improvements**:
+
 1. **Clean Separation**: CLI and viewer tests completely isolated
 2. **Environment Appropriate**: Node.js for CLI, browser for viewer
 3. **Modern Test Format**: Converted legacy tests to vitest standard
@@ -932,6 +1028,7 @@ pnpm test:coverage         # Combined coverage report
 5. **Maintainable Structure**: Clear organization for future development
 
 **Files Modified**:
+
 - `vitest.config.ts` (created for CLI-only testing)
 - `tools/viewer/vitest.config.ts` (created for viewer-only testing)
 - `package.json` (updated with separated test scripts)
@@ -940,6 +1037,18 @@ pnpm test:coverage         # Combined coverage report
 - `tools/viewer/prompts-log.md` (documented test separation)
 
 **PMaC Testing Compliance**: ✅ Both CLI and viewer components now have comprehensive, properly separated test suites that meet PMaC methodology requirements for test coverage and maintainability.
+
+## 2025-01-15 16:04:27 EST
+
+**User Prompt**: "The task modals aren't opening when I click on a Task card. All I see is a console.log. Task clicked: VIEWER-007"
+
+**Context**: User discovered that clicking on task cards only logs to console instead of opening task detail modals. This is expected since VIEWER-008 (Implement Task Detail Modal) hasn't been implemented yet - the current handleTaskClick is a placeholder with TODO comment.
+
+## 2025-01-15 16:09:12 EST
+
+**User Prompt**: "The card headers are quite cramped. Move the task title down below the task ID and status/priority labels, to its own line, above the phase label."
+
+**Context**: User wants to improve the TaskCard layout by reducing cramping in the header area and reorganizing the layout hierarchy for better readability.
 
 ---
 

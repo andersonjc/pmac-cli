@@ -243,23 +243,23 @@ export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 // ===== TYPE GUARDS =====
 
 export function isTaskStatus(value: unknown): value is TaskStatus {
-  return typeof value === 'string' && 
-    ['ready', 'in_progress', 'testing', 'completed', 'blocked'].includes(value);
+  return (
+    typeof value === 'string' &&
+    ['ready', 'in_progress', 'testing', 'completed', 'blocked'].includes(value)
+  );
 }
 
 export function isTaskPriority(value: unknown): value is TaskPriority {
-  return typeof value === 'string' && 
-    ['critical', 'high', 'medium', 'low'].includes(value);
+  return typeof value === 'string' && ['critical', 'high', 'medium', 'low'].includes(value);
 }
 
 export function isRiskLevel(value: unknown): value is RiskLevel {
-  return typeof value === 'string' && 
-    ['high', 'medium', 'low'].includes(value);
+  return typeof value === 'string' && ['high', 'medium', 'low'].includes(value);
 }
 
 export function isTask(value: unknown): value is Task {
   if (!value || typeof value !== 'object') return false;
-  
+
   const task = value as Record<string, unknown>;
   return (
     typeof task.id === 'string' &&
@@ -276,7 +276,7 @@ export function isTask(value: unknown): value is Task {
 
 export function isPhase(value: unknown): value is Phase {
   if (!value || typeof value !== 'object') return false;
-  
+
   const phase = value as Record<string, unknown>;
   return (
     typeof phase.title === 'string' &&
@@ -290,7 +290,7 @@ export function isPhase(value: unknown): value is Phase {
 
 export function isProjectBacklog(value: unknown): value is ProjectBacklog {
   if (!value || typeof value !== 'object') return false;
-  
+
   const backlog = value as Record<string, unknown>;
   return (
     typeof backlog.metadata === 'object' &&
@@ -308,20 +308,20 @@ export const TASK_STATUS_COLORS: Record<TaskStatus, string> = {
   in_progress: 'status-in-progress',
   testing: 'status-in-progress',
   completed: 'status-completed',
-  blocked: 'status-blocked'
+  blocked: 'status-blocked',
 };
 
 export const TASK_PRIORITY_COLORS: Record<TaskPriority, string> = {
   critical: 'priority-critical',
   high: 'priority-high',
   medium: 'priority-medium',
-  low: 'priority-low'
+  low: 'priority-low',
 };
 
 export const RISK_LEVEL_COLORS: Record<RiskLevel, string> = {
   high: 'text-red-400 border-red-500/20',
   medium: 'text-yellow-400 border-yellow-500/20',
-  low: 'text-green-400 border-green-500/20'
+  low: 'text-green-400 border-green-500/20',
 };
 
 export const DEFAULT_FILTERS: TaskFilters = {
@@ -329,19 +329,19 @@ export const DEFAULT_FILTERS: TaskFilters = {
   priority: null,
   phase: null,
   assignee: null,
-  search: null
+  search: null,
 };
 
 export const DEFAULT_VIEW_STATE: ViewState = {
   filters: DEFAULT_FILTERS,
   selection: {
     selectedTaskId: null,
-    selectedPhase: null
+    selectedPhase: null,
   },
   collapsedPhases: new Set(),
   showCriticalPath: false,
   showDependencyGraph: false,
-  showRiskPanel: false
+  showRiskPanel: false,
 };
 
 export const DEFAULT_APP_STATE: AppState = {
@@ -349,5 +349,5 @@ export const DEFAULT_APP_STATE: AppState = {
   viewState: DEFAULT_VIEW_STATE,
   isLoading: false,
   error: null,
-  lastUpdated: null
+  lastUpdated: null,
 };

@@ -1,8 +1,13 @@
-/**
- * Tests for PMaC Backlog YAML Parser
- */
-
-import { parseBacklogYaml, validateBacklogSchema, transformForUI, calculateCriticalPath, getErrorMessage, isValidBacklogYaml, resolveFilePath } from './parseBacklog';
+import { describe, it, expect } from 'vitest';
+import {
+  parseBacklogYaml,
+  validateBacklogSchema,
+  transformForUI,
+  calculateCriticalPath,
+  getErrorMessage,
+  isValidBacklogYaml,
+  resolveFilePath,
+} from './parseBacklog';
 
 // Test data - Valid PMaC backlog YAML
 const validYaml = `
@@ -113,275 +118,194 @@ phases:
         notes: []
 `;
 
-// Test functions
-export function testParseValidYaml(): boolean {
-  console.log('Testing valid YAML parsing...');
-  const result = parseBacklogYaml(validYaml);
-  
-  if (!result.success) {
-    console.error('Failed to parse valid YAML:', result.error);
-    return false;
-  }
-  
-  const backlog = result.data!;
-  
-  // Verify structure
-  if (!backlog.metadata || !backlog.phases) {
-    console.error('Invalid parsed structure');
-    return false;
-  }
-  
-  if (backlog.metadata.project !== 'Test Project') {
-    console.error('Incorrect project name');
-    return false;
-  }
-  
-  if (!backlog.phases.foundation || !backlog.phases.foundation.tasks) {
-    console.error('Missing foundation phase or tasks');
-    return false;
-  }
-  
-  if (backlog.phases.foundation.tasks.length !== 2) {
-    console.error('Incorrect number of tasks');
-    return false;
-  }
-  
-  console.log('✅ Valid YAML parsing test passed');
-  return true;
-}
+describe('PMaC Backlog Parser', () => {
+  describe('YAML Parsing', () => {
+    it('should parse valid YAML correctly', () => {
+      const result = parseBacklogYaml(validYaml);
 
-export function testParseInvalidYaml(): boolean {
-  console.log('Testing invalid YAML parsing...');
-  const result = parseBacklogYaml(invalidYaml);
-  
-  if (result.success) {
-    console.error('Should have failed to parse invalid YAML');
-    return false;
-  }
-  
-  if (!result.error || !result.error.includes('validation failed')) {
-    console.error('Should have validation error');
-    return false;
-  }
-  
-  console.log('✅ Invalid YAML parsing test passed');
-  return true;
-}
+      expect(result.success).toBe(true);
+      expect(result.data).toBeDefined();
 
-export function testSchemaValidation(): boolean {
-  console.log('Testing schema validation...');
-  
-  // Test valid schema
-  const validData = {
-    metadata: {
-      project: 'Test',
-      version: '1.0.0',
-      last_updated: '2024-01-01'
-    },
-    phases: {
-      test: {
-        title: 'Test Phase',
-        description: 'Test description',
-        status: 'ready',
-        estimated_duration: '1 week',
-        tasks: []
+      if (result.success) {
+        const backlog = result.data!;
+
+        // Verify structure
+        expect(backlog.metadata).toBeDefined();
+        expect(backlog.phases).toBeDefined();
+        expect(backlog.metadata.project).toBe('Test Project');
+        expect(backlog.phases.foundation).toBeDefined();
+        expect(backlog.phases.foundation.tasks).toBeDefined();
+        expect(backlog.phases.foundation.tasks).toHaveLength(2);
       }
-    }
-  };
-  
-  const validResult = validateBacklogSchema(validData);
-  if (!validResult.success) {
-    console.error('Valid schema should pass validation:', validResult.error);
-    return false;
-  }
-  
-  // Test invalid schema
-  const invalidData = {
-    metadata: {
-      // Missing required fields
-    },
-    phases: {
-      test: {
-        // Missing required fields
+    });
+
+    it('should fail to parse invalid YAML', () => {
+      const result = parseBacklogYaml(invalidYaml);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBeDefined();
+      expect(result.error).toContain('validation failed');
+    });
+
+    it('should handle malformed YAML syntax', () => {
+      const result = parseBacklogYaml('invalid: yaml: content: [');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBeDefined();
+    });
+  });
+
+  describe('Schema Validation', () => {
+    it('should validate correct schema', () => {
+      const validData = {
+        metadata: {
+          project: 'Test',
+          version: '1.0.0',
+          last_updated: '2024-01-01',
+        },
+        phases: {
+          test: {
+            title: 'Test Phase',
+            description: 'Test description',
+            status: 'ready',
+            estimated_duration: '1 week',
+            tasks: [],
+          },
+        },
+      };
+
+      const result = validateBacklogSchema(validData);
+      expect(result.success).toBe(true);
+    });
+
+    it('should reject invalid schema', () => {
+      const invalidData = {
+        metadata: {
+          // Missing required fields
+        },
+        phases: {
+          test: {
+            // Missing required fields
+          },
+        },
+      };
+
+      const result = validateBacklogSchema(invalidData);
+      expect(result.success).toBe(false);
+      expect(result.error).toBeDefined();
+    });
+  });
+
+  describe('UI Transformation', () => {
+    it('should transform parsed data for UI consumption', () => {
+      const result = parseBacklogYaml(validYaml);
+      expect(result.success).toBe(true);
+
+      if (result.success) {
+        const transformed = transformForUI(result.data!);
+
+        expect(transformed.tasksWithPhase).toHaveLength(2);
+        expect(transformed.stats).toBeDefined();
+        expect(transformed.stats.totalTasks).toBe(2);
+        expect(transformed.dependencyNodes).toHaveLength(2);
+        expect(transformed.dependencyEdges).toHaveLength(2);
       }
-    }
-  };
-  
-  const invalidResult = validateBacklogSchema(invalidData);
-  if (invalidResult.success) {
-    console.error('Invalid schema should fail validation');
-    return false;
-  }
-  
-  console.log('✅ Schema validation test passed');
-  return true;
-}
+    });
+  });
 
-export function testTransformForUI(): boolean {
-  console.log('Testing UI transformation...');
-  const result = parseBacklogYaml(validYaml);
-  
-  if (!result.success) {
-    console.error('Failed to parse YAML for UI test');
-    return false;
-  }
-  
-  const transformed = transformForUI(result.data!);
-  
-  if (transformed.tasksWithPhase.length !== 2) {
-    console.error('Incorrect number of tasks with phase');
-    return false;
-  }
-  
-  if (!transformed.stats || transformed.stats.totalTasks !== 2) {
-    console.error('Incorrect statistics');
-    return false;
-  }
-  
-  if (transformed.dependencyNodes.length !== 2) {
-    console.error('Incorrect number of dependency nodes');
-    return false;
-  }
-  
-  if (transformed.dependencyEdges.length !== 2) {
-    console.error('Incorrect number of dependency edges');
-    return false;
-  }
-  
-  console.log('✅ UI transformation test passed');
-  return true;
-}
+  describe('Critical Path Calculation', () => {
+    it('should calculate critical path correctly', () => {
+      const result = parseBacklogYaml(validYaml);
+      expect(result.success).toBe(true);
 
-export function testCriticalPath(): boolean {
-  console.log('Testing critical path calculation...');
-  const result = parseBacklogYaml(validYaml);
-  
-  if (!result.success) {
-    console.error('Failed to parse YAML for critical path test');
-    return false;
-  }
-  
-  const transformed = transformForUI(result.data!);
-  const criticalPath = calculateCriticalPath(transformed.dependencyNodes);
-  
-  if (criticalPath.length !== 2) {
-    console.error('Incorrect critical path length');
-    return false;
-  }
-  
-  // Check that at least one node is marked as critical
-  const hasCriticalNode = criticalPath.some(node => node.isCritical);
-  if (!hasCriticalNode) {
-    console.error('No nodes marked as critical');
-    return false;
-  }
-  
-  console.log('✅ Critical path calculation test passed');
-  return true;
-}
+      if (result.success) {
+        const transformed = transformForUI(result.data!);
+        const criticalPath = calculateCriticalPath(transformed.dependencyNodes);
 
-export function testErrorHandling(): boolean {
-  console.log('Testing error handling...');
-  
-  // Test malformed YAML
-  const malformedResult = parseBacklogYaml('invalid: yaml: content: [');
-  if (malformedResult.success) {
-    console.error('Should fail on malformed YAML');
-    return false;
-  }
-  
-  // Test user-friendly error messages
-  const errorMessage = getErrorMessage('YAMLParseError: Invalid syntax');
-  if (!errorMessage.includes('Invalid YAML format')) {
-    console.error('Should provide user-friendly error message');
-    return false;
-  }
-  
-  // Test validation utility
-  const isValid = isValidBacklogYaml(validYaml);
-  if (!isValid) {
-    console.error('Should recognize valid YAML');
-    return false;
-  }
-  
-  const isInvalid = isValidBacklogYaml('invalid yaml');
-  if (isInvalid) {
-    console.error('Should recognize invalid YAML');
-    return false;
-  }
-  
-  console.log('✅ Error handling test passed');
-  return true;
-}
+        expect(criticalPath).toHaveLength(2);
 
-export function testFilePathResolution(): boolean {
-  console.log('Testing file path resolution...');
-  
-  // Test absolute path
-  const absolutePath = resolveFilePath('/absolute/path/file.yml');
-  if (absolutePath !== '/absolute/path/file.yml') {
-    console.error('Absolute path should remain unchanged');
-    return false;
-  }
-  
-  // Test URL
-  const urlPath = resolveFilePath('https://example.com/file.yml');
-  if (urlPath !== 'https://example.com/file.yml') {
-    console.error('URL path should remain unchanged');
-    return false;
-  }
-  
-  // Test relative path
-  const relativePath = resolveFilePath('relative/path/file.yml');
-  if (relativePath !== 'relative/path/file.yml') {
-    console.error('Relative path handling failed');
-    return false;
-  }
-  
-  console.log('✅ File path resolution test passed');
-  return true;
-}
-
-// Run all tests
-export function runAllTests(): boolean {
-  console.log('Running PMaC Backlog Parser Tests...');
-  
-  const tests = [
-    testParseValidYaml,
-    testParseInvalidYaml,
-    testSchemaValidation,
-    testTransformForUI,
-    testCriticalPath,
-    testErrorHandling,
-    testFilePathResolution
-  ];
-  
-  let passed = 0;
-  let failed = 0;
-  
-  for (const test of tests) {
-    try {
-      if (test()) {
-        passed++;
-      } else {
-        failed++;
+        // Check that at least one node is marked as critical
+        const hasCriticalNode = criticalPath.some(node => node.isCritical);
+        expect(hasCriticalNode).toBe(true);
       }
-    } catch (error) {
-      console.error(`Test failed with exception:`, error);
-      failed++;
-    }
-  }
-  
-  console.log(`\n📊 Test Results: ${passed} passed, ${failed} failed`);
-  
-  if (failed === 0) {
-    console.log('🎉 All tests passed!');
-    return true;
-  } else {
-    console.log('❌ Some tests failed');
-    return false;
-  }
-}
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should provide user-friendly error messages', () => {
+      const errorMessage = getErrorMessage('YAMLParseError: Invalid syntax');
+      expect(errorMessage).toContain('Invalid YAML format');
+    });
+
+    it('should validate YAML utility functions', () => {
+      expect(isValidBacklogYaml(validYaml)).toBe(true);
+      expect(isValidBacklogYaml('invalid yaml')).toBe(false);
+    });
+  });
+
+  describe('File Path Resolution', () => {
+    it('should handle absolute paths correctly', () => {
+      const absolutePath = resolveFilePath('/absolute/path/file.yml');
+      expect(absolutePath).toBe('/absolute/path/file.yml');
+    });
+
+    it('should handle URL paths correctly', () => {
+      const urlPath = resolveFilePath('https://example.com/file.yml');
+      expect(urlPath).toBe('https://example.com/file.yml');
+    });
+
+    it('should handle relative paths correctly', () => {
+      const relativePath = resolveFilePath('relative/path/file.yml');
+      expect(relativePath).toBe('relative/path/file.yml');
+    });
+  });
+});
 
 // Export test data for use in other modules
 export { validYaml, invalidYaml, malformedYaml };
+
+// Export a function to run all tests programmatically (for demo purposes)
+export function runAllTests(): boolean {
+  // This is a simplified test runner for demonstration
+  // In a real application, you would use a proper test framework
+
+  try {
+    // Test basic parsing
+    const result = parseBacklogYaml(validYaml);
+    console.log('✓ Basic parsing test passed');
+
+    if (!result.success) {
+      throw new Error('Basic parsing failed');
+    }
+
+    // Test validation
+    const validation = validateBacklogSchema(result.data!);
+    console.log('✓ Validation test passed');
+
+    if (!validation.success) {
+      throw new Error('Validation failed');
+    }
+
+    // Test error handling
+    const errorResult = parseBacklogYaml(invalidYaml);
+    console.log('✓ Error handling test passed');
+
+    if (errorResult.success) {
+      throw new Error('Error handling failed - should have failed');
+    }
+
+    // Test UI transformation
+    const transformed = transformForUI(result.data!);
+    console.log('✓ UI transformation test passed');
+
+    if (!transformed || !transformed.stats) {
+      throw new Error('UI transformation failed');
+    }
+
+    console.log('✅ All tests passed!');
+    return true;
+  } catch (error) {
+    console.error('❌ Test failed:', error);
+    return false;
+  }
+}

@@ -1,5 +1,5 @@
-import './styles/app.css'
-import App from './App.svelte'
+import './styles/app.css';
+import App from './App.svelte';
 
 const target = document.getElementById('app');
 
@@ -8,6 +8,6 @@ target!.innerHTML = '';
 
 const app = new App({
   target: target!,
-})
+});
 
-export default app
+export default app;

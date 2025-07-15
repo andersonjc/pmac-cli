@@ -1,27 +1,23 @@
-/**
- * Type validation tests for PMaC types
- * These tests ensure type safety and proper TypeScript compilation
- */
-
-import type { 
-  Task, 
-  Phase, 
-  ProjectBacklog, 
-  TaskFilters, 
+import { describe, it, expect } from 'vitest';
+import type {
+  Task,
+  Phase,
+  ProjectBacklog,
+  TaskFilters,
   ProjectStats,
   TaskStatus,
-  TaskPriority 
+  TaskPriority,
 } from './types';
 
-import { 
-  isTask, 
-  isPhase, 
-  isProjectBacklog, 
-  isTaskStatus, 
+import {
+  isTask,
+  isPhase,
+  isProjectBacklog,
+  isTaskStatus,
   isTaskPriority,
   TASK_STATUS_COLORS,
   TASK_PRIORITY_COLORS,
-  DEFAULT_FILTERS
+  DEFAULT_FILTERS,
 } from './types';
 
 // Test data conforming to types
@@ -37,7 +33,7 @@ const testTask: Task = {
   acceptance_criteria: ['Criteria 1', 'Criteria 2'],
   dependencies: ['DEP-001'],
   blocks: ['BLOCK-001'],
-  notes: ['Note 1', 'Note 2']
+  notes: ['Note 1', 'Note 2'],
 };
 
 const testPhase: Phase = {
@@ -45,7 +41,7 @@ const testPhase: Phase = {
   description: 'Test phase description',
   status: 'ready',
   estimated_duration: '1 week',
-  tasks: [testTask]
+  tasks: [testTask],
 };
 
 const testBacklog: ProjectBacklog = {
@@ -57,11 +53,11 @@ const testBacklog: ProjectBacklog = {
     pmac_methodology: 'project-management-as-code.md',
     technical_requirements: 'requirements.md',
     decision_log: 'prompts-log.md',
-    ai_instructions: 'CLAUDE.md'
+    ai_instructions: 'CLAUDE.md',
   },
   phases: {
-    test: testPhase
-  }
+    test: testPhase,
+  },
 };
 
 const testFilters: TaskFilters = {
@@ -69,75 +65,123 @@ const testFilters: TaskFilters = {
   priority: 'high',
   phase: 'development',
   assignee: 'developer',
-  search: 'test'
+  search: 'test',
 };
 
-// Type guard tests
-function testTypeGuards() {
-  console.log('Testing type guards...');
-  
-  // Test isTaskStatus
-  console.log('isTaskStatus("completed"):', isTaskStatus('completed')); // true
-  console.log('isTaskStatus("invalid"):', isTaskStatus('invalid')); // false
-  
-  // Test isTaskPriority
-  console.log('isTaskPriority("high"):', isTaskPriority('high')); // true
-  console.log('isTaskPriority("invalid"):', isTaskPriority('invalid')); // false
-  
-  // Test isTask
-  console.log('isTask(testTask):', isTask(testTask)); // true
-  console.log('isTask(null):', isTask(null)); // false
-  
-  // Test isPhase
-  console.log('isPhase(testPhase):', isPhase(testPhase)); // true
-  console.log('isPhase({}):', isPhase({})); // false
-  
-  // Test isProjectBacklog
-  console.log('isProjectBacklog(testBacklog):', isProjectBacklog(testBacklog)); // true
-  console.log('isProjectBacklog(null):', isProjectBacklog(null)); // false
-}
+describe('PMaC Types', () => {
+  describe('Type Guards', () => {
+    it('should validate task status correctly', () => {
+      expect(isTaskStatus('completed')).toBe(true);
+      expect(isTaskStatus('in_progress')).toBe(true);
+      expect(isTaskStatus('ready')).toBe(true);
+      expect(isTaskStatus('testing')).toBe(true);
+      expect(isTaskStatus('invalid')).toBe(false);
+      expect(isTaskStatus('')).toBe(false);
+      expect(isTaskStatus(null)).toBe(false);
+    });
 
-// Utility function tests
-function testConstants() {
-  console.log('Testing constants...');
-  
-  // Test status colors
-  const statusColor = TASK_STATUS_COLORS['completed'];
-  console.log('Completed status color:', statusColor);
-  
-  // Test priority colors
-  const priorityColor = TASK_PRIORITY_COLORS['high'];
-  console.log('High priority color:', priorityColor);
-  
-  // Test default filters
-  console.log('Default filters:', DEFAULT_FILTERS);
-}
+    it('should validate task priority correctly', () => {
+      expect(isTaskPriority('critical')).toBe(true);
+      expect(isTaskPriority('high')).toBe(true);
+      expect(isTaskPriority('medium')).toBe(true);
+      expect(isTaskPriority('low')).toBe(true);
+      expect(isTaskPriority('invalid')).toBe(false);
+      expect(isTaskPriority('')).toBe(false);
+      expect(isTaskPriority(null)).toBe(false);
+    });
 
-// Type inference tests
-function testTypeInference() {
-  console.log('Testing type inference...');
-  
-  // Test that types are properly inferred
-  const task = testTask;
-  const status: TaskStatus = task.status; // Should compile without error
-  const priority: TaskPriority = task.priority; // Should compile without error
-  
-  console.log('Task status:', status);
-  console.log('Task priority:', priority);
-  
-  // Test filter typing
-  const filters = testFilters;
-  if (filters.status) {
-    console.log('Filter status is defined:', filters.status);
-  }
-}
+    it('should validate task objects correctly', () => {
+      expect(isTask(testTask)).toBe(true);
+      expect(isTask(null)).toBe(false);
+      expect(isTask({})).toBe(false);
+      expect(isTask({ id: 'TEST-001' })).toBe(false); // Missing required fields
+    });
 
-// Run tests if this file is executed directly
-if (import.meta.env.DEV) {
-  testTypeGuards();
-  testConstants();
-  testTypeInference();
-  console.log('All type tests completed successfully!');
-}
+    it('should validate phase objects correctly', () => {
+      expect(isPhase(testPhase)).toBe(true);
+      expect(isPhase({})).toBe(false);
+      expect(isPhase(null)).toBe(false);
+      expect(isPhase({ title: 'Test' })).toBe(false); // Missing required fields
+    });
+
+    it('should validate project backlog objects correctly', () => {
+      expect(isProjectBacklog(testBacklog)).toBe(true);
+      expect(isProjectBacklog(null)).toBe(false);
+      expect(isProjectBacklog({})).toBe(false);
+      expect(isProjectBacklog({ metadata: {} })).toBe(false); // Missing phases
+    });
+  });
+
+  describe('Constants', () => {
+    it('should have correct status color mappings', () => {
+      expect(TASK_STATUS_COLORS.completed).toBe('status-completed');
+      expect(TASK_STATUS_COLORS.in_progress).toBe('status-in-progress');
+      expect(TASK_STATUS_COLORS.ready).toBe('status-pending');
+      expect(TASK_STATUS_COLORS.testing).toBe('status-in-progress');
+      expect(TASK_STATUS_COLORS.blocked).toBe('status-blocked');
+    });
+
+    it('should have correct priority color mappings', () => {
+      expect(TASK_PRIORITY_COLORS.critical).toBe('priority-critical');
+      expect(TASK_PRIORITY_COLORS.high).toBe('priority-high');
+      expect(TASK_PRIORITY_COLORS.medium).toBe('priority-medium');
+      expect(TASK_PRIORITY_COLORS.low).toBe('priority-low');
+    });
+
+    it('should have correct default filters', () => {
+      expect(DEFAULT_FILTERS.status).toBe(null);
+      expect(DEFAULT_FILTERS.priority).toBe(null);
+      expect(DEFAULT_FILTERS.phase).toBe(null);
+      expect(DEFAULT_FILTERS.assignee).toBe(null);
+      expect(DEFAULT_FILTERS.search).toBe(null);
+    });
+  });
+
+  describe('Type Inference', () => {
+    it('should properly infer task types', () => {
+      const task = testTask;
+      const status: TaskStatus = task.status;
+      const priority: TaskPriority = task.priority;
+
+      expect(status).toBe('in_progress');
+      expect(priority).toBe('high');
+    });
+
+    it('should properly handle filter typing', () => {
+      const filters = testFilters;
+
+      expect(filters.status).toBe('completed');
+      expect(filters.priority).toBe('high');
+      expect(filters.phase).toBe('development');
+      expect(filters.assignee).toBe('developer');
+      expect(filters.search).toBe('test');
+    });
+
+    it('should validate test data structure', () => {
+      // Verify test data is properly typed
+      expect(testTask.id).toBe('TEST-001');
+      expect(testTask.title).toBe('Test Task');
+      expect(testTask.status).toBe('in_progress');
+      expect(testTask.priority).toBe('high');
+      expect(testTask.estimated_hours).toBe(4);
+      expect(testTask.actual_hours).toBe(2);
+      expect(testTask.assignee).toBe('developer');
+      expect(Array.isArray(testTask.requirements)).toBe(true);
+      expect(Array.isArray(testTask.dependencies)).toBe(true);
+      expect(Array.isArray(testTask.blocks)).toBe(true);
+      expect(Array.isArray(testTask.notes)).toBe(true);
+
+      expect(testPhase.title).toBe('Test Phase');
+      expect(testPhase.description).toBe('Test phase description');
+      expect(testPhase.status).toBe('ready');
+      expect(Array.isArray(testPhase.tasks)).toBe(true);
+      expect(testPhase.tasks).toHaveLength(1);
+
+      expect(testBacklog.metadata.project).toBe('Test Project');
+      expect(testBacklog.metadata.version).toBe('1.0.0');
+      expect(testBacklog.phases.test).toBeDefined();
+    });
+  });
+});
 
 export { testTask, testPhase, testBacklog, testFilters };

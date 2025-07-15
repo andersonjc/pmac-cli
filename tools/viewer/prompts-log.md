@@ -517,4 +517,135 @@ Fix timestamps in prompts log and backlog. Use current local EDT
 
 ---
 
+### 2025-07-15 10:58:00 a.m. EDT - VIEWER-006 Implementation Complete
+**Task Reference**: VIEWER-006  
+**Prompt Type**: [IMPLEMENTATION]  
+**Context**: Implementation of TaskCard component for task visualization
+
+**Content**:
+```
+Implemented VIEWER-006: Build Task Card Component
+```
+
+**Outcome**: Successfully completed TaskCard component implementation with all acceptance criteria met. Created comprehensive dark mode task cards with responsive grid layout, progress indicators, and interactive features.
+
+**Technical Implementation**:
+- **TaskCard Component**: Created `TaskCard.svelte` with complete dark mode styling
+- **Card Layout**: Responsive grid system (1 col mobile, 2 cols tablet, 3 cols desktop)
+- **Task Information**: Displays ID, title, status, priority, estimated/actual hours, assignee
+- **Status Colors**: Proper color coding using existing design system (green/blue/gray/red)
+- **Priority Badges**: Dark mode compatible priority indicators
+- **Progress Bars**: Visual progress indicators with percentage calculations
+- **Dependencies**: Visual indicators for task dependencies and blocks with icons
+- **Requirements Preview**: Truncated requirements list with "show more" indicator
+- **Hover States**: Smooth transitions and visual feedback
+- **Click Handling**: Prepared for task detail modal integration (VIEWER-008)
+- **Accessibility**: Proper ARIA roles, keyboard navigation, and focus states
+
+**Key Features**:
+- ✅ Responsive card grid layout
+- ✅ Complete task information display
+- ✅ Progress visualization with bars
+- ✅ Dependency and blocking indicators
+- ✅ Requirements preview with truncation
+- ✅ Hover effects and click interactions
+- ✅ Dark mode styling throughout
+- ✅ Keyboard accessibility
+
+**Files Modified**:
+- `tools/viewer/src/components/TaskCard.svelte` (created comprehensive task card component)
+- `tools/viewer/src/App.svelte` (integrated TaskCard component with grid layout)
+- `tools/viewer/project-backlog.yml` (marked VIEWER-006 as completed)
+- `tools/viewer/prompts-log.md` (logged implementation completion)
+
+**Validation**: 
+- ✅ TaskCard displays all required task information
+- ✅ Status colors match design system specification
+- ✅ Priority badges use correct dark mode colors
+- ✅ Hover states provide visual feedback
+- ✅ Click handling prepared for task detail modal
+- ✅ Responsive grid layout works across screen sizes
+- ✅ Auto-refresh shows updated task cards in real-time
+
+---
+
+### 2025-07-15 10:59:00 a.m. EDT - VIEWER-006 Bug Report
+**Task Reference**: VIEWER-006  
+**Prompt Type**: [BUG_REPORT]  
+**Context**: User reporting issues with task status display and filtering
+
+**Content**:
+```
+Re-open the task. Tasks with in progress statuses aren't being displayed as such in the UI and the filter doesn't include in progress as an option.
+```
+
+**Outcome**: Reopening VIEWER-006 to fix status display and filtering issues. Tasks with "in_progress" status not showing correctly and filter missing "in_progress" option.
+
+**Files Modified**:
+- `tools/viewer/prompts-log.md` (logged bug report)
+
+---
+
+### 2025-07-15 11:00:00 a.m. EDT - Eliminate Public Directory Behavior
+**Task Reference**: VIEWER-006 Bug Fix  
+**Prompt Type**: [BUG_FIX]  
+**Context**: User requesting elimination of public directory fallback behavior
+
+**Content**:
+```
+The backlog shouldn't be in the public directory anymore, it should be read from the working filesystem. Eliminate this behavior from the app.
+```
+
+**Outcome**: Successfully eliminated public directory fallback behavior. App now reads exclusively from working filesystem paths.
+
+**Technical Changes**:
+- **Removed Public Path**: Eliminated `/project-backlog.yml` from BACKLOG_PATHS
+- **Updated Production Config**: Changed production to use `./project-backlog.yml` instead of public path
+- **Disabled Public Directory**: Set `publicDir: false` in Vite config
+- **Removed Public Folder**: Deleted `/public` directory entirely
+- **Fixed Path Discovery**: Updated `findBacklogFile()` to only try filesystem paths
+- **Enhanced Status Display**: Fixed "in_progress" status formatting in TaskCard and FilterPanel
+
+**Key Improvements**:
+- ✅ No more public directory fallback
+- ✅ Always reads from working filesystem
+- ✅ Proper "in_progress" status display formatting
+- ✅ Enhanced filter dropdown with proper capitalization
+- ✅ Direct filesystem access via Vite dev server
+
+**Files Modified**:
+- `tools/viewer/src/lib/config.ts` (removed public paths, updated configs)
+- `tools/viewer/vite.config.ts` (disabled public directory)
+- `tools/viewer/src/components/TaskCard.svelte` (improved status formatting)
+- `tools/viewer/src/components/FilterPanel.svelte` (improved status labels)
+- `tools/viewer/public/` (removed directory entirely)
+- `tools/viewer/prompts-log.md` (logged elimination of public behavior)
+
+**Validation**:
+- ✅ App loads from working `project-backlog.yml` file only
+- ✅ No fallback to public directory
+- ✅ VIEWER-006 shows as "in progress" with blue badge
+- ✅ Filter includes "In Progress" option
+- ✅ Auto-refresh works from filesystem
+- ✅ Dev server allows filesystem access via `fs.allow`
+
+---
+
+### 2025-07-15 11:01:00 a.m. EDT - Planning Next Action
+**Task Reference**: VIEWER-006 Bug Fix Complete  
+**Prompt Type**: [PLANNING]  
+**Context**: User requesting to log, commit, and plan next development action
+
+**Content**:
+```
+Log, commit, and lay out a plan for next action
+```
+
+**Outcome**: Logging VIEWER-006 bug fixes completion, committing all changes, and planning next development steps based on current PMaC backlog status.
+
+**Files Modified**:
+- `tools/viewer/prompts-log.md` (logged planning prompt)
+
+---
+
 _This log implements the "Complete conversation history" requirement of PMaC methodology, ensuring all development decisions are preserved and traceable through version control alongside the code they influenced._

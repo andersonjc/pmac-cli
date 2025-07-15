@@ -68,9 +68,6 @@ export const BACKLOG_PATHS = {
   // Local development - actual working file
   LOCAL: './project-backlog.yml',
   
-  // Public static file (for distribution)
-  PUBLIC: '/project-backlog.yml',
-  
   // Parent directory (for integrated development)
   PARENT: '../project-backlog.yml',
   
@@ -85,7 +82,6 @@ export async function findBacklogFile(primaryPath?: string): Promise<string> {
   const pathsToTry = [
     primaryPath || DEFAULT_CONFIG.backlogPath,
     BACKLOG_PATHS.LOCAL,
-    BACKLOG_PATHS.PUBLIC,
     BACKLOG_PATHS.PARENT,
     BACKLOG_PATHS.VIEWER
   ].filter(Boolean);
@@ -125,8 +121,8 @@ export const DEV_CONFIG = {
  * Production configuration
  */
 export const PROD_CONFIG = {
-  // For production, use the bundled public file
-  backlogPath: '/project-backlog.yml',
+  // For production, look for backlog in current directory
+  backlogPath: './project-backlog.yml',
   
   // Disable auto-refresh in production
   enableAutoRefresh: false,

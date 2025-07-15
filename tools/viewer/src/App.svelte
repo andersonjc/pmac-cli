@@ -1,6 +1,6 @@
 <script lang="ts">
   // PMaC Backlog Viewer - Root Application Component
-  import type { ProjectBacklog } from './lib/types';
+  import type { ProjectBacklog, TaskWithPhase } from './lib/types';
   import { TASK_STATUS_COLORS, TASK_PRIORITY_COLORS } from './lib/types';
   import { parseBacklogYaml } from './lib/parseBacklog';
   import { runAllTests } from './lib/parseBacklog.test';
@@ -16,6 +16,7 @@
   } from './lib/stores';
   import FilterPanel from './components/FilterPanel.svelte';
   import StatsPanel from './components/StatsPanel.svelte';
+  import TaskCard from './components/TaskCard.svelte';
   import { getEnvironmentConfig, findBacklogFile } from './lib/config';
   import { onMount, onDestroy } from 'svelte';
   
@@ -26,6 +27,12 @@
   
   // Mobile sidebar toggle
   let mobileMenuOpen = false;
+  
+  // Task interaction
+  function handleTaskClick(task: TaskWithPhase) {
+    // TODO: Open task detail modal (VIEWER-008)
+    console.log('Task clicked:', task.id);
+  }
   
   // Parser testing
   let testResults = '';
@@ -457,70 +464,9 @@
             <p class="text-gray-400">No tasks match the current filters.</p>
           </div>
         {:else}
-          <div class="space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {#each $filteredTasks as task}
-              <div class="bg-gray-700 p-4 rounded border border-gray-600">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-mono text-gray-400">{task.id}</span>
-                    <span class="text-gray-100 font-medium">{task.title}</span>
-                    <span class="text-xs px-2 py-1 rounded bg-gray-600 text-gray-400">
-                      {task.phaseTitle}
-                    </span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="{TASK_STATUS_COLORS[task.status]} px-2 py-1 rounded text-xs border capitalize">
-                      {task.status.replace('_', ' ')}
-                    </span>
-                    <span class="{TASK_PRIORITY_COLORS[task.priority]} px-2 py-1 rounded text-xs border capitalize">
-                      {task.priority}
-                    </span>
-                  </div>
-                </div>
-                
-                <div class="text-xs text-gray-400 mb-2">
-                  <span>Estimated: {task.estimated_hours}h</span>
-                  {#if task.actual_hours}
-                    <span class="ml-4">Actual: {task.actual_hours}h</span>
-                  {/if}
-                  {#if task.assignee}
-                    <span class="ml-4">Assignee: {task.assignee}</span>
-                  {/if}
-                </div>
-                
-                {#if task.requirements.length > 0}
-                  <div class="text-xs mb-2">
-                    <span class="text-gray-300 font-medium">Requirements:</span>
-                    <ul class="mt-1 ml-4 space-y-1">
-                      {#each task.requirements as requirement}
-                        <li class="text-gray-400">• {requirement}</li>
-                      {/each}
-                    </ul>
-                  </div>
-                {/if}
-                
-                {#if task.dependencies.length > 0 || task.blocks.length > 0}
-                  <div class="text-xs text-gray-400">
-                    {#if task.dependencies.length > 0}
-                      <span>Dependencies: {task.dependencies.join(', ')}</span>
-                    {/if}
-                    {#if task.blocks.length > 0}
-                      <span class="ml-4">Blocks: {task.blocks.join(', ')}</span>
-                    {/if}
-                  </div>
-                {/if}
-                
-                {#if task.notes.length > 0}
-                  <div class="text-xs mt-2">
-                    <span class="text-gray-300 font-medium">Notes:</span>
-                    <ul class="mt-1 space-y-1">
-                      {#each task.notes as note}
-                        <li class="text-gray-400">• {note}</li>
-                      {/each}
-                    </ul>
-                  </div>
-                {/if}
-              </div>
+              <TaskCard {task} onClick={handleTaskClick} />
             {/each}
           </div>
         {/if}

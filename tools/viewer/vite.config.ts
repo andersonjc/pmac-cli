@@ -27,11 +27,11 @@ export default defineConfig({
     port: 5173,
     host: true,
     fs: {
-      // Allow serving files from the viewer directory
+      // Allow serving files from the viewer directory and parent directories
       allow: ['..', '.']
     }
   },
-  publicDir: resolve(__dirname, 'public'),
+  publicDir: false, // Disable public directory
   resolve: {
     alias: {
       '$lib': resolve(__dirname, 'src/lib'),

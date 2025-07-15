@@ -44,7 +44,9 @@
       >
         <option value="">All Statuses</option>
         {#each $filterOptions.statuses as status}
-          <option value={status}>{status.replace('_', ' ')}</option>
+          <option value={status}>
+            {status === 'in_progress' ? 'In Progress' : status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+          </option>
         {/each}
       </select>
     </div>

@@ -1,35 +1,13 @@
 <script lang="ts">
-  import { appState, projectStats, allTasks } from '../lib/stores';
-  import type { ProjectBacklog } from '../lib/types';
+  import { appState, projectStats } from '../lib/stores';
 
   // Reactive data from stores
   $: backlog = $appState.backlog;
   $: stats = $projectStats;
-  $: tasks = $allTasks;
 
   // Calculate completion percentage
   $: completionPercentage = stats.totalTasks > 0 ? (stats.completedTasks / stats.totalTasks) * 100 : 0;
 
-  // Calculate phase statistics
-  $: phaseStats = backlog ? Object.entries(backlog.phases).map(([phaseId, phase]) => {
-    const phaseTasks = tasks.filter(task => task.phase === phaseId);
-    const completedTasks = phaseTasks.filter(task => task.status === 'completed').length;
-    const totalHours = phaseTasks.reduce((sum, task) => sum + task.estimated_hours, 0);
-    const completedHours = phaseTasks.filter(task => task.status === 'completed')
-      .reduce((sum, task) => sum + task.estimated_hours, 0);
-    
-    return {
-      id: phaseId,
-      title: phase.title,
-      description: phase.description,
-      status: phase.status,
-      totalTasks: phaseTasks.length,
-      completedTasks,
-      totalHours,
-      completedHours,
-      progress: phaseTasks.length > 0 ? (completedTasks / phaseTasks.length) * 100 : 0
-    };
-  }) : [];
 
   // Format date for display
   function formatDate(dateString: string): string {

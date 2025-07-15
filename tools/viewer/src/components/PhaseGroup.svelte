@@ -7,7 +7,7 @@
   export let phase: Phase;
   export let tasks: TaskWithPhase[];
   export let stats: PhaseStats;
-  export let onTaskClick: ((task: TaskWithPhase) => void) | undefined = undefined;
+  export let onTaskClick: ((_task: TaskWithPhase) => void) | undefined = undefined;
 
   import { collapsedPhases, togglePhaseCollapse } from '../lib/stores';
 
@@ -23,9 +23,9 @@
   }
 
   // Handle task click
-  function handleTaskClick(task: TaskWithPhase) {
+  function handleTaskClick(clickedTask: TaskWithPhase) {
     if (onTaskClick) {
-      onTaskClick(task);
+      onTaskClick(clickedTask);
     }
   }
 

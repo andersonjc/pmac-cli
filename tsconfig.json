@@ -28,7 +28,8 @@
   },
   "include": [
     "tools/viewer/src/**/*.ts",
-    "tools/viewer/src/**/*.svelte"
+    "tools/viewer/src/**/*.svelte",
+    "tools/viewer/src/vite-env.d.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,7 +1,6 @@
 <script lang="ts">
   // PMaC Backlog Viewer - Root Application Component
   import type { ProjectBacklog, TaskWithPhase } from './lib/types';
-  import { TASK_STATUS_COLORS, TASK_PRIORITY_COLORS } from './lib/types';
   import { parseBacklogYaml } from './lib/parseBacklog';
   import {
     appState,
@@ -20,7 +19,6 @@
     closeTaskDetail,
   } from './lib/stores';
   import FilterPanel from './components/FilterPanel.svelte';
-  import TaskCard from './components/TaskCard.svelte';
   import PhaseGroup from './components/PhaseGroup.svelte';
   import TaskDetail from './components/TaskDetail.svelte';
   import CriticalPath from './components/CriticalPath.svelte';
@@ -50,7 +48,7 @@
 
   // Configuration
   let config = getEnvironmentConfig();
-  let refreshInterval: number;
+  let refreshInterval: ReturnType<typeof setInterval> | undefined;
   let currentBacklogPath = '';
 
   // Load backlog from configured path
@@ -355,13 +353,13 @@ phases:
             <li>
               <button
                 class="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-700 transition-colors
-                       {$appState.viewState.selectedPhase === phaseId
+                       {$appState.viewState.selection.selectedPhase === phaseId
                   ? 'bg-gray-700 text-blue-400'
                   : 'text-gray-300'}"
                 on:click={() =>
                   appState.update(state => ({
                     ...state,
-                    viewState: { ...state.viewState, selectedPhase: phaseId },
+                    viewState: { ...state.viewState, selection: { ...state.viewState.selection, selectedPhase: phaseId } },
                   }))}
               >
                 <div class="flex items-center justify-between">
@@ -627,7 +625,7 @@ phases:
 </main>
 
 <!-- Task Detail Modal -->
-{#if $selectedTask}
+{#if $isTaskDetailOpen && $selectedTask}
   <TaskDetail task={$selectedTask} isOpen={$isTaskDetailOpen} on:close={closeTaskDetail} />
 {/if}
 

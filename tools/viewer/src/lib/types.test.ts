@@ -1,13 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type {
-  Task,
-  Phase,
-  ProjectBacklog,
-  TaskFilters,
-  ProjectStats,
-  TaskStatus,
-  TaskPriority,
-} from './types';
+import type { Task, Phase, ProjectBacklog, TaskFilters, TaskStatus, TaskPriority } from './types';
 
 import {
   isTask,

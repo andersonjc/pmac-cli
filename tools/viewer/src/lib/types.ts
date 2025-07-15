@@ -143,6 +143,8 @@ export interface DependencyNode {
   phase: string;
   dependencies: string[];
   blocks: string[];
+  estimated_hours: number;
+  isCritical?: boolean;
   x?: number;
   y?: number;
 }
@@ -151,6 +153,11 @@ export interface DependencyEdge {
   from: string;
   to: string;
   type: 'dependency' | 'blocking';
+  isCritical?: boolean;
+  fromX?: number;
+  fromY?: number;
+  toX?: number;
+  toY?: number;
 }
 
 export interface CriticalPathNode extends DependencyNode {
@@ -185,15 +192,15 @@ export interface TaskCardProps {
   task: Task;
   phase: string;
   isSelected: boolean;
-  onClick: (taskId: string) => void;
-  onStatusChange?: (taskId: string, status: TaskStatus) => void;
+  onClick: (_taskId: string) => void;
+  onStatusChange?: (_taskId: string, _status: TaskStatus) => void;
 }
 
 export interface PhaseGroupProps {
   phase: Phase;
   phaseName: string;
   isCollapsed: boolean;
-  onToggleCollapse: (phaseName: string) => void;
+  onToggleCollapse: (_phaseName: string) => void;
   filters: TaskFilters;
 }
 
@@ -209,20 +216,20 @@ export interface CriticalPathProps {
   edges: DependencyEdge[];
   width: number;
   height: number;
-  onNodeClick: (nodeId: string) => void;
+  onNodeClick: (_nodeId: string) => void;
 }
 
 export interface DependencyGraphProps {
   nodes: DependencyNode[];
   edges: DependencyEdge[];
   selectedNodeId: string | null;
-  onNodeSelect: (nodeId: string | null) => void;
-  onNodeDoubleClick: (nodeId: string) => void;
+  onNodeSelect: (_nodeId: string | null) => void;
+  onNodeDoubleClick: (_nodeId: string) => void;
 }
 
 export interface RiskPanelProps {
   risks: Record<RiskLevel, Risk[]>;
-  onRiskClick: (risk: Risk) => void;
+  onRiskClick: (_risk: Risk) => void;
 }
 
 export interface BacklogOverviewProps {

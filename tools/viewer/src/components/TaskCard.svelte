@@ -3,7 +3,7 @@
   import { TASK_STATUS_COLORS, TASK_PRIORITY_COLORS } from '../lib/types';
 
   export let task: TaskWithPhase;
-  export let onClick: ((task: TaskWithPhase) => void) | undefined = undefined;
+  export let onClick: ((_task: TaskWithPhase) => void) | undefined = undefined;
 
   // Calculate progress percentage
   $: progressPercentage =

@@ -29,14 +29,6 @@
     }
   }
 
-  // Format date
-  function formatDate(dateString: string): string {
-    try {
-      return new Date(dateString).toLocaleDateString();
-    } catch {
-      return dateString;
-    }
-  }
 
   // Simple syntax highlighting for code blocks
   function highlightCode(text: string): string {

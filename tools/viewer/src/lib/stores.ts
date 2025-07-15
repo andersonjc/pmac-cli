@@ -12,7 +12,6 @@ import type {
   ProjectStats,
   FilterState,
   AppState,
-  DEFAULT_APP_STATE,
 } from './types';
 
 // ===== MAIN APPLICATION STATE =====
@@ -26,10 +25,19 @@ export const appState = writable<AppState>({
   error: null,
   lastUpdated: null,
   viewState: {
-    selectedPhase: null,
-    selectedTask: null,
-    showTaskDetails: false,
-    showPhaseDetails: false,
+    filters: {
+      status: null,
+      priority: null,
+      phase: null,
+      assignee: null,
+      search: null,
+    },
+    selection: {
+      selectedTaskId: null,
+      selectedPhase: null,
+    },
+    collapsedPhases: new Set<string>(),
+    showCriticalPath: false,
     showDependencyGraph: false,
     showRiskPanel: false,
   },

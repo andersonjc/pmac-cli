@@ -13,6 +13,7 @@ import type {
   ParseResult,
   ValidationError,
   ParseOptions,
+  Task,
   TaskWithPhase,
   ProjectStats,
   PhaseStats,
@@ -447,7 +448,7 @@ export function transformForUI(backlog: ProjectBacklog): {
     for (const task of phase.tasks) {
       // Create task with phase info
       const taskWithPhase: TaskWithPhase = {
-        ...task,
+        ...(task as Task),
         phase: phaseName,
         phaseTitle: phase.title,
       };
@@ -480,6 +481,7 @@ export function transformForUI(backlog: ProjectBacklog): {
         phase: phaseName,
         dependencies: task.dependencies,
         blocks: task.blocks,
+        estimated_hours: task.estimated_hours,
       };
       dependencyNodes.push(node);
 

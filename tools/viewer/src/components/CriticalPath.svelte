@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
   import type { TaskWithPhase, DependencyNode, DependencyEdge } from '../lib/types';
-  import { allTasks, filteredTasks } from '../lib/stores';
 
   export let tasks: TaskWithPhase[] = [];
   export let width = 800;

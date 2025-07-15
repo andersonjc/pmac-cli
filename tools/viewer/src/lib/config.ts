@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 /**
  * Configuration for PMaC Backlog Viewer
  * Manages paths and settings for data loading
@@ -92,7 +93,7 @@ export async function findBacklogFile(primaryPath?: string): Promise<string> {
       if (response.ok) {
         return path;
       }
-    } catch (error) {
+    } catch {
       // Continue trying other paths
       continue;
     }

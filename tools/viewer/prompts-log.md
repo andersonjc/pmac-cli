@@ -1098,6 +1098,18 @@ pnpm test:coverage         # Combined coverage report
 
 **Context**: User requested to commit the UI cleanup changes and continue with next ready task in the PMaC backlog.
 
+## 2025-07-15 16:40:00 EDT
+
+**User Prompt**: "Remove the show completed tasks checkbox"
+
+**Context**: User requested to remove the "Show completed tasks" checkbox from the FilterPanel component.
+
+## 2025-07-15 16:41:00 EDT
+
+**User Prompt**: "There are Typescript errors. Fix those, and repair the linter so that it properly tests the viewer app with `lint:viewer`. You are linting \"tools/viewer/src/**/*.ts\", but all of the files matching the glob pattern \"tools/viewer/src/**/*.ts\" are ignored."
+
+**Context**: User identified TypeScript errors and linter configuration issues preventing proper linting of the viewer app.
+
 ---
 
 _This log implements the "Complete conversation history" requirement of PMaC methodology, ensuring all development decisions are preserved and traceable through version control alongside the code they influenced._

@@ -469,7 +469,7 @@ phases:
     tasks:
       - id: VIEWER-015
         title: Extend PMaC CLI with Viewer Command
-        status: in_progress
+        status: completed
         priority: critical
         estimated_hours: 6
         actual_hours: 0
@@ -501,9 +501,11 @@ phases:
             blocked status as a filter option. Users can now filter tasks by blocked status to see only tasks that are
             blocked by incomplete dependencies. Updated filterOptions store to use effective status for filter options."
           - "2025-07-16 03:13:52 p.m. EDT: Starting PMaC Viewer integration and cleanup phase"
+          - "2025-07-16 03:20:49 p.m. EDT: PMaC CLI viewer command implementation completed - supports dev/build modes,
+            file path validation, and automatic viewer configuration"
       - id: VIEWER-016
         title: Implement Error Handling and Validation
-        status: ready
+        status: in_progress
         priority: high
         estimated_hours: 4
         actual_hours: 0
@@ -525,7 +527,8 @@ phases:
           - VIEWER-015
         blocks:
           - VIEWER-017
-        notes: []
+        notes:
+          - "2025-07-16 03:20:55 p.m. EDT: Starting error handling and validation improvements"
   testing:
     title: Testing & Quality Assurance
     description: Comprehensive testing and quality validation

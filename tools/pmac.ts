@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync } from 'fs';
-import { resolve } from 'path';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { resolve, dirname, join } from 'path';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
+import { spawn } from 'child_process';
 
 interface Task {
   id: string;
@@ -741,6 +742,9 @@ Analysis & Validation:
   critical-path                    Show critical path analysis
   phases                          List all phases and their details
 
+Viewer:
+  viewer [dev|build]              Start PMaC Backlog Viewer (dev mode by default)
+
 Bulk Operations:
   bulk-phase <phase> <status>      Update all tasks in a phase to given status
 
@@ -754,7 +758,117 @@ Examples:
   pnpm pmac list in_progress high
   pnpm pmac update PMAC-002 testing "Implementation complete"
   pnpm pmac phases
+  pnpm pmac viewer dev
 `);
+  }
+  
+  startViewer(mode: 'dev' | 'build'): void {
+    console.log('🔍 PMaC Backlog Viewer');
+    console.log('======================');
+    
+    // Validate backlog file exists
+    if (!existsSync(this.backlogPath)) {
+      console.error(`❌ Backlog file not found: ${this.backlogPath}`);
+      console.error('Please ensure the backlog file exists or specify a valid path with --backlog');
+      process.exit(1);
+    }
+    
+    console.log(`📁 Using backlog file: ${this.backlogPath}`);
+    
+    // Determine project root (where package.json is located)
+    const projectRoot = this.findProjectRoot();
+    if (!projectRoot) {
+      console.error('❌ Could not find project root (package.json not found)');
+      process.exit(1);
+    }
+    
+    // Set viewer configuration
+    const viewerPath = join(projectRoot, 'tools', 'viewer');
+    const viewerConfigPath = join(viewerPath, 'src', 'lib', 'config.ts');
+    
+    if (!existsSync(viewerPath)) {
+      console.error(`❌ Viewer not found at: ${viewerPath}`);
+      console.error('Please ensure the PMaC Viewer is installed in tools/viewer/');
+      process.exit(1);
+    }
+    
+    // Update viewer configuration with backlog path
+    this.updateViewerConfig(viewerConfigPath, this.backlogPath);
+    
+    // Execute viewer command
+    const command = mode === 'dev' ? 'viewer:dev' : 'viewer:build';
+    console.log(`🚀 Starting ${mode} mode...`);
+    
+    const child = spawn('pnpm', ['run', command], {
+      cwd: projectRoot,
+      stdio: 'inherit',
+      shell: true
+    });
+    
+    child.on('error', (error) => {
+      console.error(`❌ Failed to start viewer: ${error.message}`);
+      process.exit(1);
+    });
+    
+    child.on('exit', (code) => {
+      if (code !== 0) {
+        console.error(`❌ Viewer exited with code ${code}`);
+        process.exit(code || 1);
+      }
+    });
+    
+    // Handle graceful shutdown
+    process.on('SIGINT', () => {
+      console.log('\n🛑 Stopping viewer...');
+      child.kill('SIGINT');
+    });
+    
+    process.on('SIGTERM', () => {
+      console.log('\n🛑 Stopping viewer...');
+      child.kill('SIGTERM');
+    });
+  }
+  
+  private findProjectRoot(): string | null {
+    let currentDir = process.cwd();
+    
+    while (currentDir !== '/') {
+      const packageJsonPath = join(currentDir, 'package.json');
+      if (existsSync(packageJsonPath)) {
+        return currentDir;
+      }
+      currentDir = dirname(currentDir);
+    }
+    
+    return null;
+  }
+  
+  private updateViewerConfig(configPath: string, backlogPath: string): void {
+    if (!existsSync(configPath)) {
+      console.error(`❌ Viewer config not found: ${configPath}`);
+      return;
+    }
+    
+    try {
+      let configContent = readFileSync(configPath, 'utf8');
+      
+      // Update the backlog path in the config
+      const backlogPathPattern = /backlogPath:\s*['"]([^'"]*)['"],?/;
+      const replacement = `backlogPath: '${backlogPath}',`;
+      
+      if (backlogPathPattern.test(configContent)) {
+        configContent = configContent.replace(backlogPathPattern, replacement);
+      } else {
+        // If pattern not found, add it to the default config
+        const configPattern = /(export function getEnvironmentConfig\(\)\s*\{[^}]*return\s*\{[^}]*)/;
+        configContent = configContent.replace(configPattern, `$1\n    backlogPath: '${backlogPath}',`);
+      }
+      
+      writeFileSync(configPath, configContent, 'utf8');
+      console.log(`✅ Updated viewer config with backlog path: ${backlogPath}`);
+    } catch (error) {
+      console.error(`❌ Failed to update viewer config: ${error}`);
+    }
   }
 }
 
@@ -864,6 +978,17 @@ switch (command) {
       process.exit(1);
     }
     cli.bulkUpdatePhase(args[0], args[1] as Task['status']);
+    break;
+
+  case 'viewer':
+    const mode = args[0] || 'dev';
+    if (!['dev', 'build'].includes(mode)) {
+      console.error('Usage: pnpm pmac viewer [dev|build]');
+      console.error('  dev   - Start development server (default)');
+      console.error('  build - Build production version');
+      process.exit(1);
+    }
+    cli.startViewer(mode as 'dev' | 'build');
     break;
 
   case 'help':

@@ -42,34 +42,69 @@ export function parseBacklogYaml(
     if (!rawData || typeof rawData !== 'object') {
       return {
         success: false,
-        error: 'Invalid YAML: Root must be an object',
+        error: 'Invalid YAML structure: The root element must be an object. Please ensure your YAML file starts with key-value pairs.',
+        context: 'Root validation',
       };
     }
 
     // Validate schema if requested
     if (validateSchema) {
       const validationResult = validateBacklogSchema(rawData, { strict, allowPartial });
-      if (!validationResult.success) {
+      if (!validationResult.success && !allowPartial) {
         return {
           success: false,
           error: `Schema validation failed: ${validationResult.error}`,
           warnings: validationResult.warnings,
+          context: validationResult.context || 'Schema validation',
+        };
+      }
+      
+      // If allowPartial is true, collect warnings but continue processing
+      if (!validationResult.success && allowPartial) {
+        const warnings = validationResult.warnings || [];
+        warnings.push('Partial data mode: Some validation errors were ignored');
+        return {
+          success: true,
+          data: transformRawDataWithDefaults(rawData),
+          warnings,
+          context: 'Partial data processing',
         };
       }
     }
 
     // Transform to typed object
-    const backlog = transformRawData(rawData);
+    const backlog = allowPartial ? transformRawDataWithDefaults(rawData) : transformRawData(rawData);
 
     return {
       success: true,
       data: backlog,
       warnings: [],
+      context: allowPartial ? 'Partial data processing' : 'Full data processing',
     };
   } catch (error) {
+    let errorMessage = 'Unknown parsing error';
+    let context = 'General parsing';
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Enhance YAML parsing errors with context
+      if (errorMessage.includes('bad indentation')) {
+        errorMessage = `YAML indentation error: ${errorMessage}. Please check that your YAML file uses consistent indentation (spaces, not tabs).`;
+        context = 'YAML indentation';
+      } else if (errorMessage.includes('unexpected character')) {
+        errorMessage = `YAML syntax error: ${errorMessage}. Please check for invalid characters or missing quotes around string values.`;
+        context = 'YAML syntax';
+      } else if (errorMessage.includes('expected')) {
+        errorMessage = `YAML structure error: ${errorMessage}. Please check your YAML structure and ensure all required fields are present.`;
+        context = 'YAML structure';
+      }
+    }
+    
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown parsing error',
+      error: errorMessage,
+      context,
     };
   }
 }
@@ -115,16 +150,16 @@ export function validateBacklogSchema(
 
   // Check required top-level fields
   if (!data.metadata) {
-    errors.push({ field: 'metadata', message: 'Missing required metadata field' });
+    errors.push({ field: 'metadata', message: 'Missing required metadata section. Please add project metadata including project name, version, and last_updated fields.' });
   } else {
     const metadataErrors = validateMetadata(data.metadata, strict);
     errors.push(...metadataErrors);
   }
 
   if (!data.phases) {
-    errors.push({ field: 'phases', message: 'Missing required phases field' });
+    errors.push({ field: 'phases', message: 'Missing required phases section. Please add at least one phase with tasks.' });
   } else if (typeof data.phases !== 'object') {
-    errors.push({ field: 'phases', message: 'Phases must be an object' });
+    errors.push({ field: 'phases', message: 'Phases must be an object with phase names as keys. Please check your YAML structure.' });
   } else {
     const phaseErrors = validatePhases(data.phases, strict);
     errors.push(...phaseErrors);
@@ -151,10 +186,15 @@ export function validateBacklogSchema(
   }
 
   if (errors.length > 0 && !allowPartial) {
+    const errorSummary = errors.length === 1 
+      ? `${errors[0].field}: ${errors[0].message}`
+      : `${errors.length} validation errors found:\n${errors.map(e => `• ${e.field}: ${e.message}`).join('\n')}`;
+    
     return {
       success: false,
-      error: `Validation failed: ${errors.map(e => `${e.field}: ${e.message}`).join(', ')}`,
+      error: `Validation failed: ${errorSummary}`,
       warnings,
+      context: 'Schema validation',
     };
   }
 
@@ -610,6 +650,106 @@ export function getErrorMessage(error: string): string {
   }
 
   return error;
+}
+
+/**
+ * Transform raw parsed data with defaults for partial/corrupted data
+ */
+function transformRawDataWithDefaults(rawData: any): ProjectBacklog {
+  const defaultMetadata = {
+    project: 'Unknown Project',
+    version: '1.0.0',
+    last_updated: new Date().toISOString().split('T')[0],
+    current_sprint: 'unknown',
+    pmac_methodology: 'project-management-as-code.md',
+    technical_requirements: 'project-requirements.md',
+    decision_log: 'prompts-log.md',
+    ai_instructions: 'CLAUDE.md',
+  };
+  
+  const defaultPhases = {
+    fallback: {
+      title: 'Fallback Phase',
+      description: 'Default phase for recovered data',
+      status: 'active',
+      estimated_duration: 'Unknown',
+      tasks: [],
+    },
+  };
+  
+  // Merge metadata with defaults
+  const metadata = { ...defaultMetadata, ...(rawData.metadata || {}) };
+  
+  // Process phases with error recovery
+  let phases = rawData.phases || {};
+  if (typeof phases !== 'object') {
+    phases = defaultPhases;
+  } else {
+    // Validate each phase and add defaults for missing fields
+    Object.keys(phases).forEach(phaseKey => {
+      const phase = phases[phaseKey];
+      if (typeof phase !== 'object') {
+        phases[phaseKey] = defaultPhases.fallback;
+        return;
+      }
+      
+      // Add defaults for missing phase fields
+      phases[phaseKey] = {
+        title: phase.title || phaseKey,
+        description: phase.description || 'No description available',
+        status: phase.status || 'active',
+        estimated_duration: phase.estimated_duration || 'Unknown',
+        tasks: Array.isArray(phase.tasks) ? phase.tasks : [],
+      };
+      
+      // Validate and fix tasks
+      phases[phaseKey].tasks = phases[phaseKey].tasks.map((task: any, index: number) => {
+        if (typeof task !== 'object') {
+          return createFallbackTask(phaseKey, index);
+        }
+        
+        return {
+          id: task.id || `${phaseKey}-${index + 1}`,
+          title: task.title || 'Untitled Task',
+          status: isTaskStatus(task.status) ? task.status : 'ready',
+          priority: isTaskPriority(task.priority) ? task.priority : 'medium',
+          estimated_hours: typeof task.estimated_hours === 'number' ? task.estimated_hours : 4,
+          actual_hours: typeof task.actual_hours === 'number' ? task.actual_hours : undefined,
+          assignee: task.assignee || undefined,
+          requirements: Array.isArray(task.requirements) ? task.requirements : [],
+          acceptance_criteria: Array.isArray(task.acceptance_criteria) ? task.acceptance_criteria : [],
+          dependencies: Array.isArray(task.dependencies) ? task.dependencies : [],
+          blocks: Array.isArray(task.blocks) ? task.blocks : [],
+          notes: Array.isArray(task.notes) ? task.notes : [],
+        };
+      });
+    });
+  }
+  
+  return {
+    metadata,
+    phases,
+    epic_summary: rawData.epic_summary,
+    risks: rawData.risks,
+  };
+}
+
+/**
+ * Create a fallback task for corrupted/missing task data
+ */
+function createFallbackTask(phaseKey: string, index: number): Task {
+  return {
+    id: `${phaseKey}-FALLBACK-${index + 1}`,
+    title: 'Recovered Task (Data Corrupted)',
+    status: 'ready',
+    priority: 'low',
+    estimated_hours: 1,
+    requirements: ['Task data was corrupted and recovered with defaults'],
+    acceptance_criteria: ['Review and update task information'],
+    dependencies: [],
+    blocks: [],
+    notes: [`Task created from corrupted data on ${new Date().toISOString().split('T')[0]}`],
+  };
 }
 
 /**

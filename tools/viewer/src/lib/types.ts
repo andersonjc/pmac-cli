@@ -173,6 +173,7 @@ export interface ParseResult<T> {
   data?: T;
   error?: string;
   warnings?: string[];
+  context?: string;
 }
 
 export interface ValidationError {

@@ -7,7 +7,7 @@
   export let height = 600;
   
   // Responsive sizing
-  let containerElement: HTMLDivElement;
+  let containerElement: HTMLDivElement | undefined;
   let responsiveWidth = width;
   let responsiveHeight = height;
   
@@ -274,12 +274,7 @@
     isDragging = false;
   }
 
-  function handleWheel(event: WheelEvent) {
-    event.preventDefault();
-    
-    const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1;
-    scale = Math.max(0.1, Math.min(scale * zoomFactor, 3));
-  }
+  // Removed unused handleWheel function - using handleWheelSimple instead
   
   // Touch event handlers for mobile support
   let touchStartDistance = 0;

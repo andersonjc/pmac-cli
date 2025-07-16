@@ -26,6 +26,7 @@
   import TaskDetail from './components/TaskDetail.svelte';
   import CriticalPath from './components/CriticalPath.svelte';
   import BacklogOverview from './components/BacklogOverview.svelte';
+  import ErrorDisplay from './components/ErrorDisplay.svelte';
   import { getEnvironmentConfig, findBacklogFile } from './lib/config';
   import { onMount, onDestroy } from 'svelte';
 
@@ -72,16 +73,37 @@
       }
 
       const yamlContent = await response.text();
-      const parseResult = parseBacklogYaml(yamlContent);
+      const parseResult = parseBacklogYaml(yamlContent, { 
+        validateSchema: true, 
+        strict: false, 
+        allowPartial: true 
+      });
 
       if (parseResult.success && parseResult.data) {
         loadBacklog(parseResult.data);
-        setError(null);
+        
+        // Show warnings if in partial mode
+        if (parseResult.warnings && parseResult.warnings.length > 0) {
+          console.warn('Backlog loaded with warnings:', parseResult.warnings);
+          // Store warnings for display
+          appState.update(state => ({ ...state, warnings: parseResult.warnings }));
+        } else {
+          setError(null);
+        }
       } else {
-        throw new Error(parseResult.error || 'Failed to parse backlog YAML');
+        // Include context and warnings in error
+        const errorMessage = parseResult.error || 'Failed to parse backlog YAML';
+        const contextInfo = parseResult.context ? ` (${parseResult.context})` : '';
+        throw new Error(errorMessage + contextInfo);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error loading backlog';
+      let errorMessage = err instanceof Error ? err.message : 'Unknown error loading backlog';
+      
+      // Enhance network errors
+      if (err instanceof Error && err.message.includes('Failed to load backlog')) {
+        errorMessage = `Network error: Could not load backlog from ${currentBacklogPath}. Please check your connection and file path.`;
+      }
+      
       setError(errorMessage);
 
       // Create sample backlog as fallback if enabled
@@ -334,7 +356,10 @@ phases:
   {#if mobileMenuOpen}
     <div
       class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+      role="button"
+      tabindex="0"
       on:click={() => (mobileMenuOpen = false)}
+      on:keydown={(e) => e.key === 'Escape' && (mobileMenuOpen = false)}
     ></div>
   {/if}
 
@@ -537,11 +562,16 @@ phases:
             <span class="ml-4 text-gray-400">Loading project backlog...</span>
           </div>
         {:else if error && !backlog}
-          <div class="bg-gray-800 border border-red-500/20 p-6 rounded-lg mb-6">
-            <h2 class="text-xl font-semibold mb-2 text-red-400">Error Loading Backlog</h2>
-            <p class="text-red-300 mb-4">{error}</p>
-            <p class="text-gray-400 text-sm">Using sample data for demonstration.</p>
-          </div>
+          <ErrorDisplay 
+            {error} 
+            context="Loading backlog"
+            onRetry={() => loadBacklogData()}
+            onUseSample={() => {
+              const sampleBacklog = createSampleBacklog();
+              loadBacklog(sampleBacklog);
+              setError(null);
+            }}
+          />
         {:else if backlog}
           <!-- Backlog Overview -->
           <div class="mb-6">

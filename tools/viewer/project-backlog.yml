@@ -481,6 +481,14 @@ phases:
           - VIEWER-016
         notes:
           - "2025-07-15: Dependencies updated to: VIEWER-014"
+          - "2025-07-16 02:49:02 p.m. EDT: 2025-07-16 14:47:00 p.m. EDT: Implemented blocked status detection for
+            dependency-based UI state management. Tasks now display as blocked when their dependencies are not
+            completed, regardless of their data status. Added visual indicators including lock icons, dependency
+            notices, and enhanced styling for blocked tasks. VIEWER-015 now correctly shows as blocked since VIEWER-014
+            is not completed."
+          - "2025-07-16 02:51:23 p.m. EDT: 2025-07-16 14:51:00 p.m. EDT: Enhanced filter functionality to include
+            blocked status as a filter option. Users can now filter tasks by blocked status to see only tasks that are
+            blocked by incomplete dependencies. Updated filterOptions store to use effective status for filter options."
       - id: VIEWER-016
         title: Implement Error Handling and Validation
         status: ready

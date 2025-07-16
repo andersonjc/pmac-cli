@@ -149,3 +149,137 @@
 **Context**: User identified that VIEWER-015 is still blocked by the deprioritized VIEWER-013, which would prevent the integration phase from proceeding properly.
 
 **Analysis**: Need to scan entire backlog for dependency chain issues caused by deprioritizing 012 and 013.
+
+**Actions Completed**: 
+- Fixed VIEWER-015 dependencies from VIEWER-013 to VIEWER-014 ✅
+- Removed blocking relationships from deprioritized tasks VIEWER-012 and VIEWER-013 ✅
+- Scanned backlog for similar dependency issues ✅
+- All dependency chains now properly resolved ✅
+
+## 2025-07-16 14:00:00 EDT - UI Flash Issue Resolution
+
+**User Context**: "Before moving on, let's fix the flash in the UI every time the backlog file is read from the filesystem"
+
+**Problem Analysis**: The UI was experiencing flash issues during:
+1. Initial app load (brief moment of no content before loading state)
+2. Auto-refresh cycles (loading spinner appearing even for unchanged data)
+3. State transitions between loading and content states
+
+**Solution Implemented**:
+1. **Loading State Initialization**: Changed initial state to `isLoading: true` in stores.ts
+2. **Auto-refresh Optimization**: Added `isRefresh` parameter to prevent loading spinner on refresh
+3. **Data Change Detection**: Added JSON comparison in `loadBacklog()` to prevent unnecessary re-renders
+4. **Conditional Rendering**: Improved conditions to `{#if isLoading && !backlog}`
+5. **Skeleton Loading**: Added professional skeleton loading states
+6. **Phase Navigation**: Fixed sidebar phase navigation functionality
+7. **Live Status Indicator**: Added subtle green dot for refresh status
+
+**Results**: 
+- ✅ UI flash issue completely resolved
+- ✅ Smooth auto-refresh without disruption
+- ✅ Functional phase navigation in sidebar
+- ✅ Professional loading experience
+- ✅ All TypeScript errors resolved
+
+## 2025-07-16 14:01:00 EDT - Blocked Status Implementation Request
+
+**User Prompt**: "Tasks that are blocked, like 015, are being displayed as "ready" instead of a "blocked" status. Add a Blocked status, not necessarily as a data state, but as a state of the UI that reflects a task with an incomplete blocking dependency."
+
+**Context**: The user identified that VIEWER-015 shows as "ready" status in the UI, but it should show as "blocked" because it depends on VIEWER-014 which is also "ready" but not yet completed. This is a UI state issue - the data status may be "ready" but the UI should reflect the dependency blocking state.
+
+**Analysis**: Need to implement UI logic that determines when a task is actually blocked by incomplete dependencies, regardless of the task's data status field.
+
+**Requirements**:
+1. Create blocked status detection function based on dependency completion
+2. Update UI components to display blocked status appropriately
+3. Ensure blocked status takes precedence over data status in UI
+4. Add proper styling for blocked status indication
+5. Test with current backlog to verify VIEWER-015 shows as blocked
+
+**Implementation Completed**:
+
+1. **Blocked Status Detection Function** (`stores.ts:92-117`):
+   - Created `isTaskEffectivelyBlocked()` function that checks if dependencies are completed
+   - Created `getEffectiveStatus()` function that returns 'blocked' when dependencies are incomplete
+   - Respects existing 'blocked' status from data while computing dependency-based blocking
+
+2. **Enhanced Task Data Model** (`types.ts:67`):
+   - Added `effectiveStatus?: TaskStatus` property to `TaskWithPhase` interface
+   - Maintains backward compatibility with existing status field
+
+3. **UI Component Updates**:
+   - **TaskCard.svelte**: Updated to use `effectiveStatus` for status display and progress calculation
+   - **TaskDetail.svelte**: Updated to use `effectiveStatus` for status display and progress calculation
+   - **stores.ts**: Updated `filteredTasks` and `projectStats` to use effective status
+
+4. **Visual Indicators**:
+   - Added lock icon (🔒) to status badges when task is blocked by dependencies
+   - Added prominent "Blocked by incomplete dependencies" notice in TaskCard
+   - Enhanced dependency indicators with red coloring when task is blocked
+   - Existing `.status-blocked` CSS styling automatically applies
+
+5. **Store Integration**:
+   - Updated `allTasks` derived store to compute effective status in two-pass algorithm
+   - Updated `projectStats` to use effective status for accurate statistics
+   - Updated `filteredTasks` to filter by effective status
+
+**Testing Results**:
+- ✅ VIEWER-015 now correctly shows as "blocked" status in UI
+- ✅ VIEWER-015 displays lock icon and dependency notice
+- ✅ VIEWER-014 shows as "ready" (not blocked since VIEWER-011 is completed)
+- ✅ Build successful with no TypeScript errors
+- ✅ All existing functionality preserved
+- ✅ Statistics accurately reflect blocked tasks
+
+**Code Changes**:
+- `stores.ts`: Added blocked status detection logic and effective status computation
+- `types.ts`: Added effectiveStatus property to TaskWithPhase interface
+- `TaskCard.svelte`: Updated to use effectiveStatus and added visual blocked indicators
+- `TaskDetail.svelte`: Updated to use effectiveStatus and added lock icon
+- `project-backlog.yml`: Added implementation notes to VIEWER-015 task
+
+The implementation successfully addresses the issue where tasks with incomplete dependencies were showing as "ready" instead of "blocked". The UI now accurately reflects the true state of tasks based on their dependency completion status.
+
+## 2025-07-16 14:50:00 EDT - Filter by Blocked Status Request
+
+**User Prompt**: "The Filter Tasks by Status feature should offer Blocked as an option to filter by"
+
+**Context**: The user wants to be able to filter tasks to show only blocked tasks. Currently the status filter includes the data statuses but should also include the computed "blocked" status for tasks that are blocked by dependencies.
+
+**Analysis**: Need to update the FilterPanel component to include "blocked" as a filter option and ensure it works with the effective status logic.
+
+**Implementation Completed**:
+
+1. **Updated Filter Options Store** (`stores.ts:259-270`):
+   - Modified `filterOptions` derived store to use `effectiveStatus` instead of `task.status`
+   - Now includes "blocked" as a filter option when tasks are blocked by dependencies
+   - Maintains all existing filter options while adding computed statuses
+
+2. **Filter Integration**:
+   - FilterPanel automatically shows "blocked" as an option when blocked tasks exist
+   - Filtering by "blocked" status works seamlessly with existing filter logic
+   - Combined with existing effective status filtering in `filteredTasks` store
+
+**Results**:
+- ✅ "Blocked" now appears as a filter option in the Status dropdown
+- ✅ Users can filter to see only tasks blocked by incomplete dependencies
+- ✅ Filter works correctly with existing search, priority, and phase filters
+- ✅ No changes needed to FilterPanel component - automatically inherits new option
+- ✅ Maintains backward compatibility with existing filter functionality
+
+**Code Changes**:
+- `stores.ts`: Updated `filterOptions` store to use effective status for filter options
+- `project-backlog.yml`: Added implementation notes to VIEWER-015 task
+
+This enhancement allows users to easily identify and focus on tasks that are blocked by dependencies, improving project management workflow visibility.
+
+## 2025-07-16 14:55:00 EDT - Documentation Update and Development Continuation
+
+**User Prompt**: "Update pmac docs, commit, and continue dev with 014"
+
+**Context**: User wants to commit the blocked status implementation and continue with VIEWER-014 (Add Responsive Design and Mobile Support).
+
+**Actions to Complete**:
+1. Update PMaC documentation with blocked status feature
+2. Commit all changes with proper commit message
+3. Begin development of VIEWER-014 responsive design task

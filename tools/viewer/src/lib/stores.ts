@@ -12,6 +12,7 @@ import type {
   ProjectStats,
   FilterState,
   AppState,
+  Task,
 } from './types';
 
 // ===== MAIN APPLICATION STATE =====
@@ -20,7 +21,7 @@ import type {
  * Main application state store
  */
 export const appState = writable<AppState>({
-  isLoading: false,
+  isLoading: true,
   backlog: null,
   error: null,
   lastUpdated: null,
@@ -87,13 +88,47 @@ export const collapsedPhases = writable<Set<string>>(new Set());
 // ===== DERIVED STORES =====
 
 /**
- * All tasks with phase information
+ * Determine if a task is effectively blocked by incomplete dependencies
+ */
+function isTaskEffectivelyBlocked(task: Task, allTasks: TaskWithPhase[]): boolean {
+  // If task is already marked as blocked, respect that
+  if (task.status === 'blocked') return true;
+  
+  // If task is completed or in progress, it's not blocked
+  if (task.status === 'completed' || task.status === 'in_progress' || task.status === 'testing') {
+    return false;
+  }
+  
+  // Check if any dependencies are not completed
+  for (const depId of task.dependencies) {
+    const dependency = allTasks.find(t => t.id === depId);
+    if (!dependency || dependency.status !== 'completed') {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+/**
+ * Get effective status for a task (considering dependencies)
+ */
+function getEffectiveStatus(task: Task, allTasks: TaskWithPhase[]): TaskStatus {
+  if (isTaskEffectivelyBlocked(task, allTasks)) {
+    return 'blocked';
+  }
+  return task.status;
+}
+
+/**
+ * All tasks with phase information and effective status
  */
 export const allTasks = derived(appState, $appState => {
   if (!$appState.backlog) return [];
 
   const tasks: TaskWithPhase[] = [];
 
+  // First pass: collect all tasks
   for (const [phaseName, phase] of Object.entries($appState.backlog.phases)) {
     for (const task of phase.tasks) {
       tasks.push({
@@ -102,6 +137,11 @@ export const allTasks = derived(appState, $appState => {
         phaseTitle: phase.title,
       });
     }
+  }
+
+  // Second pass: compute effective status for each task
+  for (const task of tasks) {
+    task.effectiveStatus = getEffectiveStatus(task, tasks);
   }
 
   return tasks;
@@ -113,9 +153,9 @@ export const allTasks = derived(appState, $appState => {
 export const filteredTasks = derived([allTasks, filterState], ([$allTasks, $filterState]) => {
   let filtered = $allTasks;
 
-  // Filter by status
+  // Filter by status (using effective status)
   if ($filterState.status) {
-    filtered = filtered.filter(task => task.status === $filterState.status);
+    filtered = filtered.filter(task => (task.effectiveStatus || task.status) === $filterState.status);
   }
 
   // Filter by priority
@@ -187,14 +227,17 @@ export const projectStats = derived(allTasks, $allTasks => {
       phaseStats.totalHours += task.estimated_hours;
       stats.totalHours += task.estimated_hours;
 
-      if (task.status === 'completed') {
+      // Use effective status for statistics
+      const effectiveStatus = task.effectiveStatus || task.status;
+      
+      if (effectiveStatus === 'completed') {
         phaseStats.completed++;
         stats.completedTasks++;
         phaseStats.completedHours += task.estimated_hours;
         stats.completedHours += task.estimated_hours;
-      } else if (task.status === 'in_progress' || task.status === 'testing') {
+      } else if (effectiveStatus === 'in_progress' || effectiveStatus === 'testing') {
         phaseStats.inProgress++;
-      } else if (task.status === 'blocked') {
+      } else if (effectiveStatus === 'blocked') {
         phaseStats.blocked++;
       } else {
         phaseStats.pending++;
@@ -219,7 +262,9 @@ export const filterOptions = derived([allTasks, appState], ([$allTasks, $appStat
   const phases = new Set<string>();
 
   for (const task of $allTasks) {
-    statuses.add(task.status);
+    // Use effective status for filter options
+    const effectiveStatus = task.effectiveStatus || task.status;
+    statuses.add(effectiveStatus);
     priorities.add(task.priority);
     phases.add(task.phase);
   }
@@ -281,12 +326,26 @@ export const userPreferences = writable({
  * Load backlog data into the store
  */
 export function loadBacklog(backlog: ProjectBacklog) {
-  appState.update(state => ({
-    ...state,
-    backlog,
-    error: null,
-    lastUpdated: new Date().toISOString(),
-  }));
+  appState.update(state => {
+    // Only update if backlog actually changed to prevent unnecessary re-renders
+    const newBacklogStr = JSON.stringify(backlog);
+    const currentBacklogStr = state.backlog ? JSON.stringify(state.backlog) : null;
+    
+    if (newBacklogStr === currentBacklogStr) {
+      // Data hasn't changed, just update timestamp without triggering re-render
+      return {
+        ...state,
+        lastUpdated: new Date().toISOString(),
+      };
+    }
+    
+    return {
+      ...state,
+      backlog,
+      error: null,
+      lastUpdated: new Date().toISOString(),
+    };
+  });
 }
 
 /**

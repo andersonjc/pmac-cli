@@ -5,17 +5,20 @@
   export let task: TaskWithPhase;
   export let onClick: ((_task: TaskWithPhase) => void) | undefined = undefined;
 
+  // Get effective status (considering dependencies)
+  $: effectiveStatus = task.effectiveStatus || task.status;
+  
   // Calculate progress percentage
   $: progressPercentage =
     task.actual_hours && task.estimated_hours
       ? Math.min((task.actual_hours / task.estimated_hours) * 100, 100)
-      : task.status === 'completed'
+      : effectiveStatus === 'completed'
         ? 100
         : 0;
 
   // Format status text for display
   $: statusText =
-    task.status === 'in_progress' ? 'in progress' : task.status.replace('_', ' ').toLowerCase();
+    effectiveStatus === 'in_progress' ? 'in progress' : effectiveStatus.replace('_', ' ').toLowerCase();
 
   // Handle click
   function handleClick() {
@@ -27,6 +30,9 @@
   // Format dependencies and blocks
   $: hasDependencies = task.dependencies && task.dependencies.length > 0;
   $: hasBlocks = task.blocks && task.blocks.length > 0;
+  
+  // Check if task is blocked due to dependencies
+  $: isBlockedByDependencies = effectiveStatus === 'blocked' && task.status !== 'blocked';
 </script>
 
 <article
@@ -44,8 +50,13 @@
 
       <div class="flex items-center gap-2 shrink-0">
         <!-- Status Badge -->
-        <span class="{TASK_STATUS_COLORS[task.status]} px-2 py-1 rounded text-xs border capitalize">
+        <span class="{TASK_STATUS_COLORS[effectiveStatus]} px-2 py-1 rounded text-xs border capitalize">
           {statusText}
+          {#if isBlockedByDependencies}
+            <svg class="w-3 h-3 inline ml-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+            </svg>
+          {/if}
         </span>
 
         <!-- Priority Badge -->
@@ -117,20 +128,32 @@
     </div>
   {/if}
 
+  <!-- Blocked by Dependencies Notice -->
+  {#if isBlockedByDependencies}
+    <div class="bg-red-600/10 border border-red-500/20 rounded-md p-2 mb-3">
+      <div class="flex items-center gap-2 text-xs text-red-400">
+        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+        </svg>
+        <span>Blocked by incomplete dependencies</span>
+      </div>
+    </div>
+  {/if}
+
   <!-- Dependencies and Blocks -->
   {#if hasDependencies || hasBlocks}
     <div class="border-t border-gray-700 pt-3">
       <div class="flex items-center gap-4 text-xs">
         {#if hasDependencies}
           <div class="flex items-center gap-1">
-            <svg class="w-3 h-3 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-3 h-3 {isBlockedByDependencies ? 'text-red-500' : 'text-orange-500'}" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fill-rule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                 clip-rule="evenodd"
               />
             </svg>
-            <span class="text-orange-400">
+            <span class="{isBlockedByDependencies ? 'text-red-400' : 'text-orange-400'}">
               Depends on: {task.dependencies.join(', ')}
             </span>
           </div>

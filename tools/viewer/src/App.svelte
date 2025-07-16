@@ -17,6 +17,9 @@
     saveUserPreferences,
     openTaskDetail,
     closeTaskDetail,
+    filterState,
+    setPhaseFilter,
+    allTasks,
   } from './lib/stores';
   import FilterPanel from './components/FilterPanel.svelte';
   import PhaseGroup from './components/PhaseGroup.svelte';
@@ -52,8 +55,11 @@
   let currentBacklogPath = '';
 
   // Load backlog from configured path
-  async function loadBacklogData() {
-    setLoading(true);
+  async function loadBacklogData(isRefresh = false) {
+    // Only show loading spinner for initial load, not for refresh
+    if (!isRefresh) {
+      setLoading(true);
+    }
 
     try {
       // Find the correct backlog file
@@ -84,14 +90,16 @@
         loadBacklog(sampleBacklog);
       }
     } finally {
-      setLoading(false);
+      if (!isRefresh) {
+        setLoading(false);
+      }
     }
   }
 
   // Setup auto-refresh if enabled
   function setupAutoRefresh() {
     if (config.enableAutoRefresh && config.refreshInterval > 0) {
-      refreshInterval = setInterval(loadBacklogData, config.refreshInterval);
+      refreshInterval = setInterval(() => loadBacklogData(true), config.refreshInterval);
     }
   }
 
@@ -349,18 +357,50 @@ phases:
       <h3 class="text-sm font-medium text-gray-300 mb-3 uppercase tracking-wide">Phases</h3>
       {#if backlog}
         <ul class="space-y-1">
+          <!-- All Phases Option -->
+          <li>
+            <button
+              class="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-700 transition-colors
+                     {$filterState.phase === null
+                ? 'bg-gray-700 text-blue-400'
+                : 'text-gray-300'}"
+              on:click={() => {
+                // Clear phase filter to show all tasks
+                setPhaseFilter(null);
+                // Update app state selection for UI highlighting
+                appState.update(state => ({
+                  ...state,
+                  viewState: { ...state.viewState, selection: { ...state.viewState.selection, selectedPhase: null } },
+                }));
+              }}
+            >
+              <div class="flex items-center justify-between">
+                <span>All Phases</span>
+                <span class="text-xs text-gray-400">
+                  {$allTasks.length}
+                </span>
+              </div>
+              <div class="text-xs text-gray-400 mt-1">
+                {Math.round($projectStats.completionPercentage)}% complete
+              </div>
+            </button>
+          </li>
           {#each Object.entries(backlog.phases) as [phaseId, phase]}
             <li>
               <button
                 class="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-700 transition-colors
-                       {$appState.viewState.selection.selectedPhase === phaseId
+                       {$filterState.phase === phaseId
                   ? 'bg-gray-700 text-blue-400'
                   : 'text-gray-300'}"
-                on:click={() =>
+                on:click={() => {
+                  // Update filter state to show only tasks from this phase
+                  setPhaseFilter(phaseId);
+                  // Update app state selection for UI highlighting
                   appState.update(state => ({
                     ...state,
                     viewState: { ...state.viewState, selection: { ...state.viewState.selection, selectedPhase: phaseId } },
-                  }))}
+                  }));
+                }}
               >
                 <div class="flex items-center justify-between">
                   <span>{phase.title}</span>
@@ -376,7 +416,20 @@ phases:
           {/each}
         </ul>
       {:else}
-        <div class="text-gray-400 text-sm">Loading phases...</div>
+        <!-- Skeleton loading state -->
+        <ul class="space-y-1">
+          {#each Array(5) as _, i}
+            <li>
+              <div class="px-3 py-2 rounded-md">
+                <div class="flex items-center justify-between">
+                  <div class="h-4 bg-gray-700 rounded animate-pulse" style="width: {60 + (i * 10)}%"></div>
+                  <div class="h-3 bg-gray-700 rounded animate-pulse w-6"></div>
+                </div>
+                <div class="h-3 bg-gray-700 rounded animate-pulse w-12 mt-2"></div>
+              </div>
+            </li>
+          {/each}
+        </ul>
       {/if}
     </nav>
 
@@ -438,6 +491,11 @@ phases:
             <div class="text-sm text-gray-400">
               {$filteredTasks.length} tasks
             </div>
+            <!-- Subtle refresh indicator -->
+            <div class="flex items-center space-x-2">
+              <div class="w-2 h-2 bg-green-500 rounded-full {isLoading ? 'animate-pulse' : ''}"></div>
+              <span class="text-xs text-gray-500">Live</span>
+            </div>
           {/if}
           {#if config.enableAutoRefresh}
             <div class="text-xs text-green-500 hidden lg:block">
@@ -473,20 +531,18 @@ phases:
     <!-- Main Content -->
     <div class="flex-1 overflow-y-auto">
       <div class="p-6">
-        {#if isLoading}
+        {#if isLoading && !backlog}
           <div class="flex items-center justify-center min-h-64">
             <div class="spinner"></div>
             <span class="ml-4 text-gray-400">Loading project backlog...</span>
           </div>
-        {:else if error}
+        {:else if error && !backlog}
           <div class="bg-gray-800 border border-red-500/20 p-6 rounded-lg mb-6">
             <h2 class="text-xl font-semibold mb-2 text-red-400">Error Loading Backlog</h2>
             <p class="text-red-300 mb-4">{error}</p>
             <p class="text-gray-400 text-sm">Using sample data for demonstration.</p>
           </div>
-        {/if}
-
-        {#if backlog}
+        {:else if backlog}
           <!-- Backlog Overview -->
           <div class="mb-6">
             <BacklogOverview />

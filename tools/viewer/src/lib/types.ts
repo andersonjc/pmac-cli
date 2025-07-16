@@ -114,6 +114,7 @@ export interface FilterState {
 export interface TaskWithPhase extends Task {
   phase: string;
   phaseTitle: string;
+  effectiveStatus?: TaskStatus; // Computed status that considers dependencies
 }
 
 export interface PhaseStats {

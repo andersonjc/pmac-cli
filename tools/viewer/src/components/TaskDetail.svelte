@@ -40,17 +40,23 @@
       .replace(/\*(.*?)\*/g, '<em>$1</em>');
   }
 
+  // Get effective status (considering dependencies)
+  $: effectiveStatus = task.effectiveStatus || task.status;
+  
   // Format progress percentage
   $: progressPercentage =
     task.actual_hours && task.estimated_hours
       ? Math.min((task.actual_hours / task.estimated_hours) * 100, 100)
-      : task.status === 'completed'
+      : effectiveStatus === 'completed'
         ? 100
         : 0;
 
   // Format status text
   $: statusText =
-    task.status === 'in_progress' ? 'in progress' : task.status.replace('_', ' ').toLowerCase();
+    effectiveStatus === 'in_progress' ? 'in progress' : effectiveStatus.replace('_', ' ').toLowerCase();
+  
+  // Check if task is blocked due to dependencies
+  $: isBlockedByDependencies = effectiveStatus === 'blocked' && task.status !== 'blocked';
 </script>
 
 <!-- Modal backdrop -->
@@ -87,10 +93,15 @@
               <!-- Status Badge -->
               <span
                 class="{TASK_STATUS_COLORS[
-                  task.status
+                  effectiveStatus
                 ]} px-2 py-1 rounded text-xs border capitalize"
               >
                 {statusText}
+                {#if isBlockedByDependencies}
+                  <svg class="w-3 h-3 inline ml-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                  </svg>
+                {/if}
               </span>
 
               <!-- Priority Badge -->

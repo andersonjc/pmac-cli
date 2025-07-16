@@ -12,6 +12,28 @@
         background-color: rgb(17 24 39);
         color: rgb(243 244 246);
         font-family: system-ui, -apple-system, sans-serif;
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      /* Ensure app container doesn't overflow */
+      #app {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      
+      /* Force all elements to stay within viewport */
+      * {
+        box-sizing: border-box;
+      }
+      
+      /* Prevent horizontal scrolling */
+      html {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
       }
       
       /* Loading indicator */

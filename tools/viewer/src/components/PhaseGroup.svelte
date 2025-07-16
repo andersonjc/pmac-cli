@@ -33,7 +33,7 @@
   $: formattedStatus = phase.status.replace('_', ' ').toLowerCase();
 </script>
 
-<div class="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
+<div class="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden max-w-full">
   <!-- Phase Header -->
   <header
     class="p-4 bg-gray-750 border-b border-gray-700 cursor-pointer hover:bg-gray-700 transition-colors"
@@ -65,7 +65,7 @@
           </svg>
 
           <!-- Phase Title -->
-          <h2 class="text-xl font-semibold text-gray-100 truncate">
+          <h2 class="text-xl font-semibold text-gray-100 truncate min-w-0">
             {phase.title}
           </h2>
 
@@ -81,11 +81,11 @@
         </p>
 
         <!-- Phase Metadata -->
-        <div class="flex items-center gap-4 text-xs text-gray-400">
-          <span class="capitalize">Status: {formattedStatus}</span>
-          <span>Duration: {phase.estimated_duration}</span>
-          <span>Tasks: {stats.total}</span>
-          <span>Hours: {stats.totalHours}</span>
+        <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-gray-400">
+          <span class="capitalize whitespace-nowrap">Status: {formattedStatus}</span>
+          <span class="whitespace-nowrap">Duration: {phase.estimated_duration}</span>
+          <span class="whitespace-nowrap">Tasks: {stats.total}</span>
+          <span class="whitespace-nowrap">Hours: {stats.totalHours}</span>
         </div>
       </div>
 
@@ -147,7 +147,7 @@
   {#if !isCollapsed}
     <div id="phase-{phaseId}-content" class="p-4" transition:slide|local={{ duration: 200 }}>
       <!-- Task Status Summary -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-750 rounded-lg">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-750 rounded-lg min-w-0">
         <div class="text-center">
           <div class="text-lg font-bold text-green-400">{stats.completed}</div>
           <div class="text-xs text-gray-400">Completed</div>

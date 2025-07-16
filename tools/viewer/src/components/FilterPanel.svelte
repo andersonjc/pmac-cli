@@ -90,7 +90,7 @@
     {/if}
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 min-w-0">
     <!-- Search -->
     <div>
       <label class="block text-sm font-medium text-gray-300 mb-2"> 

@@ -72,7 +72,7 @@
   >
     <!-- Modal content -->
     <div
-      class="bg-gray-800 border border-gray-700 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+      class="bg-gray-800 border border-gray-700 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto min-w-0"
     >
       <!-- Modal header -->
       <header class="sticky top-0 bg-gray-800 border-b border-gray-700 p-6 z-10">

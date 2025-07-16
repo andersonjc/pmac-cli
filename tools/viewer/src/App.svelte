@@ -329,7 +329,7 @@ phases:
   }
 </script>
 
-<main class="min-h-screen bg-gray-900 text-gray-100 flex">
+<main class="min-h-screen bg-gray-900 text-gray-100 flex overflow-x-hidden w-full">
   <!-- Mobile menu overlay -->
   {#if mobileMenuOpen}
     <div
@@ -340,16 +340,16 @@ phases:
 
   <!-- Sidebar Navigation -->
   <aside
-    class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col {mobileMenuOpen
+    class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col flex-shrink-0 {mobileMenuOpen
       ? 'fixed inset-y-0 left-0 z-50 md:relative md:z-auto'
       : 'hidden md:flex'}"
   >
     <!-- Sidebar Header -->
-    <div class="p-4 border-b border-gray-700">
-      <h2 class="text-lg font-semibold text-gray-100">
+    <div class="p-4 border-b border-gray-700 min-w-0">
+      <h2 class="text-lg font-semibold text-gray-100 truncate">
         {$projectTitle}
       </h2>
-      <p class="text-xs text-gray-400 mt-1">PMaC Backlog Viewer</p>
+      <p class="text-xs text-gray-400 mt-1 truncate">PMaC Backlog Viewer</p>
     </div>
 
     <!-- Phase Navigation -->
@@ -449,14 +449,14 @@ phases:
   </aside>
 
   <!-- Main Content Area -->
-  <div class="flex-1 flex flex-col">
+  <div class="flex-1 flex flex-col min-w-0">
     <!-- Main Header -->
-    <header class="bg-gray-800 border-b border-gray-700 p-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
+    <header class="bg-gray-800 border-b border-gray-700 p-4 min-w-0">
+      <div class="flex items-center justify-between min-w-0">
+        <div class="flex items-center min-w-0 flex-1">
           <!-- Mobile menu button -->
           <button
-            class="md:hidden mr-4 p-2 rounded-md text-gray-400 hover:text-gray-100 hover:bg-gray-700"
+            class="md:hidden mr-4 p-2 rounded-md text-gray-400 hover:text-gray-100 hover:bg-gray-700 flex-shrink-0"
             on:click={() => (mobileMenuOpen = !mobileMenuOpen)}
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -469,36 +469,36 @@ phases:
             </svg>
           </button>
 
-          <div>
-            <h1 class="text-xl font-bold text-gray-100">
+          <div class="min-w-0 flex-1">
+            <h1 class="text-xl font-bold text-gray-100 truncate">
               {$projectTitle}
             </h1>
-            <p class="text-gray-400 text-sm">
+            <p class="text-gray-400 text-sm truncate">
               Dark mode visualization tool for PMaC project backlogs
             </p>
           </div>
         </div>
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
           {#if currentBacklogPath}
-            <div class="text-xs text-gray-500 hidden md:block">
+            <div class="text-xs text-gray-500 hidden lg:block truncate max-w-48">
               Loading from: {currentBacklogPath}
             </div>
           {/if}
           {#if backlog}
-            <div class="text-sm text-gray-400 hidden sm:block">
+            <div class="text-sm text-gray-400 hidden sm:block whitespace-nowrap">
               {Object.keys(backlog.phases).length} phases
             </div>
-            <div class="text-sm text-gray-400">
+            <div class="text-sm text-gray-400 whitespace-nowrap">
               {$filteredTasks.length} tasks
             </div>
             <!-- Subtle refresh indicator -->
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-2 flex-shrink-0">
               <div class="w-2 h-2 bg-green-500 rounded-full {isLoading ? 'animate-pulse' : ''}"></div>
-              <span class="text-xs text-gray-500">Live</span>
+              <span class="text-xs text-gray-500 whitespace-nowrap">Live</span>
             </div>
           {/if}
           {#if config.enableAutoRefresh}
-            <div class="text-xs text-green-500 hidden lg:block">
+            <div class="text-xs text-green-500 hidden lg:block whitespace-nowrap">
               Auto-refresh: {config.refreshInterval / 1000}s
             </div>
           {/if}
@@ -529,8 +529,8 @@ phases:
     </header>
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto">
-      <div class="p-6">
+    <div class="flex-1 overflow-y-auto overflow-x-hidden">
+      <div class="p-4 sm:p-6 max-w-full min-w-0">
         {#if isLoading && !backlog}
           <div class="flex items-center justify-center min-h-64">
             <div class="spinner"></div>

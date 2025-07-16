@@ -36,7 +36,7 @@
 </script>
 
 <article
-  class="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer"
+  class="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:bg-gray-700 active:bg-gray-600 transition-colors cursor-pointer touch-manipulation max-w-full overflow-hidden"
   on:click={handleClick}
   on:keydown={e => e.key === 'Enter' && handleClick()}
   tabindex="0"
@@ -143,32 +143,32 @@
   <!-- Dependencies and Blocks -->
   {#if hasDependencies || hasBlocks}
     <div class="border-t border-gray-700 pt-3">
-      <div class="flex items-center gap-4 text-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs">
         {#if hasDependencies}
-          <div class="flex items-center gap-1">
-            <svg class="w-3 h-3 {isBlockedByDependencies ? 'text-red-500' : 'text-orange-500'}" fill="currentColor" viewBox="0 0 20 20">
+          <div class="flex items-start gap-1 flex-1 min-w-0">
+            <svg class="w-3 h-3 {isBlockedByDependencies ? 'text-red-500' : 'text-orange-500'} mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fill-rule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                 clip-rule="evenodd"
               />
             </svg>
-            <span class="{isBlockedByDependencies ? 'text-red-400' : 'text-orange-400'}">
+            <span class="{isBlockedByDependencies ? 'text-red-400' : 'text-orange-400'} break-words">
               Depends on: {task.dependencies.join(', ')}
             </span>
           </div>
         {/if}
 
         {#if hasBlocks}
-          <div class="flex items-center gap-1">
-            <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+          <div class="flex items-start gap-1 flex-1 min-w-0">
+            <svg class="w-3 h-3 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fill-rule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                 clip-rule="evenodd"
               />
             </svg>
-            <span class="text-red-400">
+            <span class="text-red-400 break-words">
               Blocks: {task.blocks.join(', ')}
             </span>
           </div>

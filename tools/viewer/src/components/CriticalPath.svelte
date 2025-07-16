@@ -1,10 +1,32 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from 'svelte';
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import type { TaskWithPhase, DependencyNode, DependencyEdge } from '../lib/types';
 
   export let tasks: TaskWithPhase[] = [];
   export let width = 800;
   export let height = 600;
+  
+  // Responsive sizing
+  let containerElement: HTMLDivElement;
+  let responsiveWidth = width;
+  let responsiveHeight = height;
+  
+  function updateDimensions() {
+    if (containerElement) {
+      const containerWidth = containerElement.offsetWidth;
+      responsiveWidth = Math.max(containerWidth - 40, 320); // Min width 320px with 40px padding
+      responsiveHeight = Math.max(Math.min(responsiveWidth * 0.6, 600), 300); // Aspect ratio 5:3, max 600px, min 300px
+    }
+  }
+  
+  onMount(() => {
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+  });
+  
+  onDestroy(() => {
+    window.removeEventListener('resize', updateDimensions);
+  });
 
   const dispatch = createEventDispatcher<{
     taskSelect: { task: TaskWithPhase };
@@ -28,9 +50,11 @@
 
   // Layout constants
   const NODE_RADIUS = 25;
-  const NODE_SPACING_X = 200;
-  const NODE_SPACING_Y = 120;
-  const LEVELS_PADDING = 80;
+  
+  // Responsive spacing values
+  $: NODE_SPACING_X = Math.max(responsiveWidth / 6, 120); // Adaptive based on width
+  $: NODE_SPACING_Y = Math.max(responsiveHeight / 8, 80); // Adaptive based on height
+  $: LEVELS_PADDING = Math.max(responsiveWidth / 20, 40); // Adaptive padding
 
   // Calculate critical path using topological sort and longest path
   function calculateCriticalPath(taskList: TaskWithPhase[]): {
@@ -183,7 +207,7 @@
     for (let level = 0; level <= maxLevel; level++) {
       const levelTaskIds = levelNodes.get(level) || [];
       const levelHeight = levelTaskIds.length * NODE_SPACING_Y;
-      const startY = (height - levelHeight) / 2;
+      const startY = (responsiveHeight - levelHeight) / 2;
 
       levelTaskIds.forEach((taskId, index) => {
         const node = nodeMap.get(taskId);
@@ -251,6 +275,75 @@
   }
 
   function handleWheel(event: WheelEvent) {
+    event.preventDefault();
+    
+    const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1;
+    scale = Math.max(0.1, Math.min(scale * zoomFactor, 3));
+  }
+  
+  // Touch event handlers for mobile support
+  let touchStartDistance = 0;
+  let touchStartScale = 1;
+  
+  function handleTouchStart(event: TouchEvent) {
+    event.preventDefault();
+    
+    if (event.touches.length === 1) {
+      // Single touch - start panning
+      isDragging = true;
+      lastMouseX = event.touches[0].clientX;
+      lastMouseY = event.touches[0].clientY;
+    } else if (event.touches.length === 2) {
+      // Two touches - start zooming
+      isDragging = false;
+      const touch1 = event.touches[0];
+      const touch2 = event.touches[1];
+      touchStartDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      touchStartScale = scale;
+    }
+  }
+  
+  function handleTouchMove(event: TouchEvent) {
+    event.preventDefault();
+    
+    if (event.touches.length === 1 && isDragging) {
+      // Single touch - panning
+      const touch = event.touches[0];
+      const deltaX = touch.clientX - lastMouseX;
+      const deltaY = touch.clientY - lastMouseY;
+      
+      translateX += deltaX;
+      translateY += deltaY;
+      
+      lastMouseX = touch.clientX;
+      lastMouseY = touch.clientY;
+    } else if (event.touches.length === 2) {
+      // Two touches - zooming
+      const touch1 = event.touches[0];
+      const touch2 = event.touches[1];
+      const currentDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      
+      const scaleRatio = currentDistance / touchStartDistance;
+      scale = Math.max(0.1, Math.min(touchStartScale * scaleRatio, 3));
+    }
+  }
+  
+  function handleTouchEnd(event: TouchEvent) {
+    event.preventDefault();
+    
+    if (event.touches.length === 0) {
+      isDragging = false;
+    }
+  }
+  
+  // Simplified wheel handler
+  function handleWheelSimple(event: WheelEvent) {
     event.preventDefault();
     
     const rect = svgElement.getBoundingClientRect();
@@ -349,14 +442,18 @@
   </div>
 
   <!-- SVG Visualization -->
-  <div class="graph-container border border-gray-700 rounded-lg overflow-hidden bg-gray-800">
+  <div class="graph-container border border-gray-700 rounded-lg overflow-hidden bg-gray-800 min-w-0 max-w-full" bind:this={containerElement}>
     <svg
       bind:this={svgElement}
-      {width}
-      {height}
-      class="cursor-grab active:cursor-grabbing"
+      width={responsiveWidth}
+      height={responsiveHeight}
+      viewBox="0 0 {responsiveWidth} {responsiveHeight}"
+      class="cursor-grab active:cursor-grabbing w-full h-auto"
       on:mousedown={handleMouseDown}
-      on:wheel={handleWheel}
+      on:wheel={handleWheelSimple}
+      on:touchstart={handleTouchStart}
+      on:touchmove={handleTouchMove}
+      on:touchend={handleTouchEnd}
     >
       <defs>
         <!-- Arrowhead marker -->

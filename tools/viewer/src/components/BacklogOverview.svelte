@@ -32,9 +32,9 @@
   }
 </script>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 max-w-full">
   <!-- Project Summary Card -->
-  <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+  <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 min-w-0 max-w-full">
     <div class="flex items-center gap-3 mb-4">
       <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,7 +78,7 @@
 
   <!-- Project Metadata Card -->
   {#if backlog}
-    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 min-w-0 max-w-full">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,27 +92,27 @@
       </div>
 
       <div class="space-y-3">
-        <div class="flex justify-between">
-          <span class="text-sm text-gray-400">Version:</span>
-          <span class="text-sm text-gray-100 font-mono">{backlog.metadata.version}</span>
+        <div class="flex justify-between items-start">
+          <span class="text-sm text-gray-400 flex-shrink-0">Version:</span>
+          <span class="text-sm text-gray-100 font-mono break-all text-right">{backlog.metadata.version}</span>
         </div>
-        <div class="flex justify-between">
-          <span class="text-sm text-gray-400">Last Updated:</span>
-          <span class="text-sm text-gray-100">{formatDate(backlog.metadata.last_updated)}</span>
+        <div class="flex justify-between items-start">
+          <span class="text-sm text-gray-400 flex-shrink-0">Last Updated:</span>
+          <span class="text-sm text-gray-100 break-all text-right">{formatDate(backlog.metadata.last_updated)}</span>
         </div>
-        <div class="flex justify-between">
-          <span class="text-sm text-gray-400">Current Sprint:</span>
-          <span class="text-sm text-gray-100 capitalize">{backlog.metadata.current_sprint}</span>
+        <div class="flex justify-between items-start">
+          <span class="text-sm text-gray-400 flex-shrink-0">Current Sprint:</span>
+          <span class="text-sm text-gray-100 capitalize break-all text-right">{backlog.metadata.current_sprint}</span>
         </div>
         {#if backlog.epic_summary}
-          <div class="flex justify-between">
-            <span class="text-sm text-gray-400">Duration:</span>
-            <span class="text-sm text-gray-100">{backlog.epic_summary.estimated_duration}</span>
+          <div class="flex justify-between items-start">
+            <span class="text-sm text-gray-400 flex-shrink-0">Duration:</span>
+            <span class="text-sm text-gray-100 break-all text-right">{backlog.epic_summary.estimated_duration}</span>
           </div>
         {/if}
-        <div class="flex justify-between">
-          <span class="text-sm text-gray-400">Phases:</span>
-          <span class="text-sm text-gray-100">{Object.keys(backlog.phases).length}</span>
+        <div class="flex justify-between items-start">
+          <span class="text-sm text-gray-400 flex-shrink-0">Phases:</span>
+          <span class="text-sm text-gray-100 break-all text-right">{Object.keys(backlog.phases).length}</span>
         </div>
       </div>
     </div>
@@ -120,7 +120,7 @@
 
   <!-- Timeline Card -->
   {#if backlog?.epic_summary}
-    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 min-w-0 max-w-full">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

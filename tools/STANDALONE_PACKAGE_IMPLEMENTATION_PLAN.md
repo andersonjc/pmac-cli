@@ -9,6 +9,7 @@ This document outlines the strategy for converting the PMaC (Project Management 
 ## Implementation Effort Estimate: MEDIUM (3-4 weeks)
 
 ### Current Project Analysis
+
 - **CLI Tool**: ~1 main TypeScript file (pmac.ts) - well-structured, 900+ lines
 - **Viewer**: 9 Svelte components + 3 TypeScript library files
 - **Templates**: Pre-existing project templates and documentation
@@ -18,7 +19,9 @@ This document outlines the strategy for converting the PMaC (Project Management 
 ## Repository Architecture Strategy
 
 ### Current State Analysis
+
 The current PMaC repository at https://github.com/andersonjc/pmac combines:
+
 - **Methodology documentation** (core PMaC concepts, principles, workflows)
 - **Development tools** (CLI, viewer, build system)
 - **Templates and examples** (project-backlog.yml, CLAUDE.md, etc.)
@@ -31,6 +34,7 @@ The current PMaC repository at https://github.com/andersonjc/pmac combines:
 #### Repository Separation Benefits
 
 **Development Benefits:**
+
 - **Independent versioning**: Tools can iterate rapidly without affecting methodology stability
 - **Focused repositories**: Each repo has single responsibility and clear purpose
 - **Easier maintenance**: Separate CI/CD, testing, and release processes
@@ -38,12 +42,14 @@ The current PMaC repository at https://github.com/andersonjc/pmac combines:
 - **Cleaner git history**: Tool development vs methodology refinement tracked separately
 
 **User Experience Benefits:**
+
 - **Clear adoption path**: Users can adopt methodology without tools, or tools without full methodology
 - **Reduced complexity**: No need to understand viewer code to use methodology
 - **Faster tool installation**: Lightweight npm package without methodology docs
 - **Better discoverability**: Tools show up in npm search, methodology in GitHub/documentation
 
 **Technical Benefits:**
+
 - **Clean dependencies**: Tools repo only contains what's needed for npm package
 - **Optimized for use case**: Methodology optimized for reading/forking, tools for installation
 - **Easier testing**: Tools can have comprehensive CI/CD without methodology overhead
@@ -52,6 +58,7 @@ The current PMaC repository at https://github.com/andersonjc/pmac combines:
 ### Proposed Repository Structure
 
 #### PMaC Methodology Repository (Current - Refactored)
+
 **Repository**: `https://github.com/andersonjc/pmac` (keep existing URL)
 **Focus**: Methodology documentation, templates, examples, case studies
 
@@ -65,22 +72,11 @@ pmac-methodology/
 │   ├── CLAUDE.md
 │   ├── prompts-log.md
 │   └── ADR-template.md
-├── examples/                         # Real project examples
-│   ├── web-app-example/
-│   ├── api-service-example/
-│   └── mobile-app-example/
-├── case-studies/                     # Success stories
-│   ├── 50-person-team.md
-│   ├── legacy-migration.md
-│   └── startup-mvp.md
-├── docs/                            # Extended documentation
-│   ├── getting-started.md
-│   ├── ai-assistant-integration.md
-│   └── team-adoption.md
 └── LICENSE
 ```
 
 #### PMaC Tools Repository (New)
+
 **Repository**: `https://github.com/andersonjc/pmac-cli` (new)
 **Focus**: Standalone npm package for PMaC tooling
 
@@ -106,7 +102,8 @@ pmac-cli/
 ### Cross-Repository Linking Strategy
 
 #### In PMaC Methodology Repository README:
-```markdown
+
+````markdown
 ## Tools and Installation
 
 To use PMaC with your projects, install the official CLI tools:
@@ -116,15 +113,18 @@ npm install -g @pmac/cli
 # or
 npx @pmac/cli --help
 ```
+````
 
 **Features:**
+
 - ✅ Task management CLI
-- ✅ Interactive backlog viewer  
+- ✅ Interactive backlog viewer
 - ✅ Project templates
 - ✅ Validation tools
 
 **Documentation:** [PMaC CLI Documentation](https://github.com/andersonjc/pmac-cli)
-```
+
+````
 
 #### In PMaC Tools Repository README:
 ```markdown
@@ -137,13 +137,15 @@ Official tooling for the [PMaC methodology](https://github.com/andersonjc/pmac).
 npm install -g @pmac/cli
 pmac init    # Initialize PMaC in your project
 pmac viewer  # Launch interactive backlog viewer
-```
+````
 
 ### Learn PMaC Methodology
+
 - 📚 [Complete Methodology Guide](https://github.com/andersonjc/pmac)
 - 📖 [Examples and Case Studies](https://github.com/andersonjc/pmac/tree/main/examples)
 - 🎯 [Templates](https://github.com/andersonjc/pmac/tree/main/templates)
-```
+
+````
 
 ## Package Naming Strategy
 
@@ -161,9 +163,10 @@ pmac viewer  # Launch interactive backlog viewer
     "pmac": "./bin/pmac.js"
   }
 }
-```
+````
 
 ### Recommended Package Names (in order of preference)
+
 1. `@pmac/cli` - Scoped package (preferred)
 2. `project-management-as-code` - Descriptive name
 3. `pmac-toolkit` - Simple alternative
@@ -172,6 +175,7 @@ pmac viewer  # Launch interactive backlog viewer
 ## Technical Architecture
 
 ### Standalone Package Structure
+
 ```
 @pmac/cli/
 ├── package.json           # Unique name, "pmac" binary
@@ -200,17 +204,20 @@ pmac viewer  # Launch interactive backlog viewer
 ### Key Technical Decisions
 
 **Pre-built Viewer Assets**
+
 - Build viewer during package creation, not in target projects
 - Include all assets in published package
 - CLI serves assets using Node.js built-in http server
 - No runtime build dependencies needed
 
 **Minimal Runtime Dependencies**
+
 - Only core dependencies: yaml parser, Node.js built-ins
 - No Svelte, Vite, or build tools in production package
 - Keeps package size small and installation fast
 
 **Universal Compatibility**
+
 - Works with any project type (not just Node.js)
 - No package.json modifications required in target projects
 - Self-contained methodology and tooling
@@ -218,9 +225,11 @@ pmac viewer  # Launch interactive backlog viewer
 ## Phase-by-Phase Implementation Guide
 
 ### Phase 0: Repository Setup and Migration (1 week)
+
 **Effort**: 8-10 hours
 
 **Tasks**:
+
 1. **Create new PMaC CLI repository** (`https://github.com/andersonjc/pmac-cli`)
 2. **Extract tools from current repository** to new repository
 3. **Refactor current repository** to focus on methodology
@@ -228,6 +237,7 @@ pmac viewer  # Launch interactive backlog viewer
 5. **Update documentation** to reflect new repository structure
 
 **Repository Setup Steps**:
+
 ```bash
 # Create new repository
 gh repo create andersonjc/pmac-cli --public
@@ -244,6 +254,7 @@ mkdir -p bin lib viewer tests docs
 ```
 
 **Current Repository Refactoring**:
+
 ```bash
 # In existing pmac repository
 mkdir -p examples case-studies docs
@@ -254,27 +265,32 @@ rm -rf tools/ node_modules/ dist/ coverage/
 ```
 
 **Key Deliverables**:
+
 - New `pmac-cli` repository with tools extracted
 - Refactored `pmac` repository focused on methodology
 - Updated README files with cross-repository links
 - Initial package.json for `@pmac/cli`
 
 ### Phase 1: Package Restructuring (1 week)
+
 **Effort**: 6-8 hours
 
 **Tasks**:
+
 1. Create new package structure with `bin/`, `lib/`, `viewer/`, `templates/`
 2. Update package.json with unique name and binary configuration
 3. Pre-build viewer assets during package build process
 4. Update CLI to serve viewer from package assets instead of local tools/
 
 **Key Files to Modify**:
+
 - `package.json` - Update name to `@pmac/cli`, add bin configuration
 - `tools/pmac.ts` → `lib/cli.js` - Update viewer serving logic
 - New `bin/pmac.js` - Entry point wrapper
 - New `lib/server.js` - HTTP server for viewer assets
 
 **Build Process Changes**:
+
 ```bash
 # During package build
 npm run build:viewer  # Creates static assets in viewer/
@@ -283,15 +299,18 @@ npm run package       # Includes assets in npm package
 ```
 
 ### Phase 2: Standalone Asset Generation (3-4 days)
+
 **Effort**: 4-6 hours
 
 **Tasks**:
+
 1. Create build script to generate static viewer assets
 2. Implement HTTP server in CLI for serving pre-built viewer
 3. Remove dependency on local viewer development setup
 4. Test viewer functionality with bundled assets
 
 **CLI Server Integration**:
+
 ```javascript
 // In lib/server.js
 const viewerPath = path.join(__dirname, '../viewer');
@@ -302,6 +321,7 @@ const server = http.createServer((req, res) => {
 ```
 
 **Viewer Command Changes**:
+
 ```javascript
 // In lib/cli.js
 case 'viewer':
@@ -314,9 +334,11 @@ case 'viewer':
 ```
 
 ### Phase 3: Distribution & Testing (3-4 days)
+
 **Effort**: 4-6 hours
 
 **Tasks**:
+
 1. Set up npm publishing workflow
 2. Test global installation (`npm install -g @pmac/cli`)
 3. Test local installation and npx usage
@@ -324,6 +346,7 @@ case 'viewer':
 5. Create installation documentation
 
 **Installation Methods to Test**:
+
 ```bash
 # Global installation
 npm install -g @pmac/cli
@@ -338,15 +361,18 @@ npx @pmac/cli --help
 ```
 
 **Cross-platform Testing**:
+
 - Windows (WSL and native)
 - macOS (Intel and Apple Silicon)
 - Linux (Ubuntu/Debian)
 - Different Node.js versions (18, 20, 22)
 
 ### Phase 4: Migration & Documentation (2-3 days)
+
 **Effort**: 2-4 hours
 
 **Tasks**:
+
 1. Update existing projects to use new package
 2. Create migration guide for both repositories
 3. Update all documentation references
@@ -354,10 +380,12 @@ npx @pmac/cli --help
 5. Create comprehensive cross-repository documentation
 
 **Migration Guide Content**:
-```markdown
+
+````markdown
 # Migrating to Standalone PMaC Package
 
 ## Before (Current)
+
 ```bash
 # Clone pmac repository
 git clone https://github.com/andersonjc/pmac
@@ -365,8 +393,10 @@ cd pmac
 pnpm install
 pnpm pmac list
 ```
+````
 
 ## After (Standalone Package)
+
 ```bash
 # Install globally
 npm install -g @pmac/cli
@@ -378,16 +408,19 @@ npx pmac list
 ```
 
 ## Repository Changes
+
 - **Methodology**: https://github.com/andersonjc/pmac
 - **Tools**: https://github.com/andersonjc/pmac-cli
 
 ## Benefits
+
 - No repository cloning required
 - Works with any project type
 - Clean dependency management
 - Consistent versioning
 - Separated concerns (methodology vs tools)
-```
+
+````
 
 **Documentation Updates Required**:
 - Update methodology repository README
@@ -447,9 +480,10 @@ pmac update <task-id> <status> [note]  # Update task status
 pmac viewer                  # Launch viewer (serves pre-built assets)
 pmac validate                # Validate backlog format
 pmac --help                  # Show all commands
-```
+````
 
 ### Viewer Integration
+
 ```bash
 pmac viewer                  # Start viewer server
 pmac viewer --port 8080      # Custom port
@@ -460,18 +494,21 @@ pmac viewer --backlog path/to/backlog.yml  # Custom backlog file
 ## Testing Strategy
 
 ### Unit Tests
+
 - CLI command parsing
 - Backlog YAML parsing
 - Task status updates
 - Template generation
 
 ### Integration Tests
+
 - Viewer asset serving
 - HTTP server functionality
 - Cross-platform compatibility
 - Package installation scenarios
 
 ### End-to-End Tests
+
 - Complete workflow from init to viewer
 - Multiple project types
 - Global vs local installation
@@ -480,12 +517,14 @@ pmac viewer --backlog path/to/backlog.yml  # Custom backlog file
 ## Success Metrics
 
 ### Technical Metrics
+
 - Package size < 10MB
 - Installation time < 30 seconds
 - Viewer startup time < 5 seconds
 - Cross-platform compatibility 100%
 
 ### User Experience Metrics
+
 - Zero configuration required
 - Single command installation
 - Familiar command interface
@@ -494,12 +533,14 @@ pmac viewer --backlog path/to/backlog.yml  # Custom backlog file
 ## Future Enhancements
 
 ### Phase 5: Advanced Features (Future)
+
 - **Plugin system**: Allow custom viewers and commands
 - **Cloud integration**: Sync backlogs across teams
 - **IDE extensions**: VSCode, JetBrains integration
 - **CI/CD integration**: GitHub Actions, GitLab CI
 
 ### Phase 6: Ecosystem (Future)
+
 - **Template marketplace**: Community-contributed templates
 - **Methodology extensions**: Agile, Kanban, etc.
 - **Export formats**: PDF, Excel, Jira integration
@@ -510,6 +551,7 @@ pmac viewer --backlog path/to/backlog.yml  # Custom backlog file
 ### Step-by-Step Migration Plan
 
 #### Step 1: Create New Tools Repository (Week 1)
+
 ```bash
 # Create new repository
 gh repo create andersonjc/pmac-cli --public \
@@ -522,6 +564,7 @@ cd pmac-cli
 ```
 
 #### Step 2: Extract Tools from Current Repository (Week 1)
+
 ```bash
 # In pmac-cli repository
 cp -r ../pmac/tools/* .
@@ -537,6 +580,7 @@ mv viewer/ ./viewer/
 ```
 
 #### Step 3: Update Current Repository to Focus on Methodology (Week 2)
+
 ```bash
 # In existing pmac repository
 mkdir -p examples case-studies docs/guides
@@ -556,6 +600,7 @@ mkdir -p case-studies
 ```
 
 #### Step 4: Update Cross-Repository Documentation (Week 2)
+
 ```bash
 # Update README files
 # Add getting-started guides
@@ -564,6 +609,7 @@ mkdir -p case-studies
 ```
 
 #### Step 5: Test and Validate (Week 3)
+
 ```bash
 # Test tool installation from new repository
 npm install -g @pmac/cli
@@ -577,16 +623,19 @@ pmac --help
 ### Cross-Repository Maintenance Strategy
 
 #### Synchronized Releases
+
 - **Tools versioning**: Semantic versioning for npm package
 - **Methodology versioning**: Git tags for methodology releases
 - **Coordination**: Tools releases reference methodology version
 
 #### Documentation Synchronization
+
 - **Shared templates**: Templates kept in sync between repositories
 - **Version compatibility**: Document which tool versions work with which methodology versions
 - **Release notes**: Cross-reference between repositories
 
 #### Community Management
+
 - **Issue tracking**: Clear guidelines on which repository to use for issues
 - **Pull requests**: Separate contribution guidelines for methodology vs tools
 - **Discussions**: Use methodology repo for methodology discussions, tools repo for tool issues
@@ -594,18 +643,21 @@ pmac --help
 ### Long-term Benefits
 
 #### For Methodology Repository
+
 - **Cleaner git history**: Only methodology changes tracked
 - **Better documentation**: Focus on examples, case studies, guides
 - **Easier onboarding**: Users can learn methodology without tool complexity
 - **Community contributions**: Easier to contribute methodology improvements
 
 #### For Tools Repository
+
 - **Rapid iteration**: Can release tool updates without methodology changes
 - **Better CI/CD**: Focused testing and deployment
 - **npm ecosystem**: Better discoverability through npm search
 - **Developer experience**: Standard npm installation and usage
 
 #### For Users
+
 - **Flexible adoption**: Can use methodology without tools, or tools without full methodology
 - **Faster setup**: npm install instead of repository cloning
 - **Better support**: Issues go to appropriate repository

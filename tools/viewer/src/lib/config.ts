@@ -27,6 +27,11 @@ export const DEFAULT_CONFIG: ViewerConfig = {
 export function getConfig(): ViewerConfig {
   const config = { ...DEFAULT_CONFIG };
 
+  // Check environment variables first
+  if (typeof window !== 'undefined' && import.meta.env.VITE_BACKLOG_PATH) {
+    config.backlogPath = import.meta.env.VITE_BACKLOG_PATH;
+  }
+
   // Check URL parameters
   if (typeof window !== 'undefined') {
     const urlParams = new URLSearchParams(window.location.search);
@@ -139,6 +144,11 @@ export const PROD_CONFIG = {
 export function getEnvironmentConfig(): ViewerConfig {
   const isProduction = import.meta.env.PROD;
   const baseConfig = isProduction ? PROD_CONFIG : DEV_CONFIG;
+
+  // Check for environment variable override
+  if (import.meta.env.VITE_BACKLOG_PATH) {
+    baseConfig.backlogPath = import.meta.env.VITE_BACKLOG_PATH;
+  }
 
   // Merge with URL parameters
   const urlConfig = getConfig();

@@ -540,7 +540,7 @@ phases:
       - id: VIEWER-017
         title: Implement Component Testing Suite
         status: ready
-        priority: critical
+        priority: low
         estimated_hours: 8
         actual_hours: 0
         assignee: claude-code
@@ -560,11 +560,12 @@ phases:
           - VIEWER-016
         blocks:
           - VIEWER-018
-        notes: []
+        notes:
+          - "2025-07-17 11:28:17 a.m. EDT: Deprioritized for MVP release - moved to low priority"
       - id: VIEWER-018
         title: Performance Testing and Optimization
         status: ready
-        priority: medium
+        priority: low
         estimated_hours: 5
         actual_hours: 0
         assignee: claude-code
@@ -584,7 +585,8 @@ phases:
           - VIEWER-017
         blocks:
           - VIEWER-019
-        notes: []
+        notes:
+          - "2025-07-17 11:28:23 a.m. EDT: Deprioritized for MVP release - moved to low priority"
   deployment:
     title: Deployment & Documentation
     description: Final deployment and documentation
@@ -593,17 +595,17 @@ phases:
     tasks:
       - id: VIEWER-019
         title: Create User Documentation
-        status: ready
+        status: completed
         priority: high
         estimated_hours: 4
         actual_hours: 0
         assignee: claude-code
         requirements:
-          - Write comprehensive README for viewer
-          - Create user guide with screenshots
+          - Write comprehensive README for viewer, separate from main project README
+          - Create user guide with screenshots, prioritizing local usage vs deployment to a remote environment
           - Document CLI integration commands
           - Add troubleshooting guide
-          - Create developer contribution guide
+          - Create developer contribution guide as part of README
         acceptance_criteria:
           - README explains installation and usage clearly
           - User guide includes visual examples
@@ -611,14 +613,18 @@ phases:
           - Troubleshooting covers common issues
           - Contribution guide enables future development
         dependencies:
-          - VIEWER-018
+          - VIEWER-016
         blocks:
           - VIEWER-020
-        notes: []
+        notes:
+          - "2025-07-17: Dependencies updated to: VIEWER-016"
+          - "2025-07-17 11:28:53 a.m. EDT: Starting user documentation for MVP release"
+          - "2025-07-17 11:32:41 a.m. EDT: Comprehensive user documentation created - README with installation, usage,
+            troubleshooting, and developer guide complete"
       - id: VIEWER-020
         title: Package and Distribution Setup
         status: ready
-        priority: critical
+        priority: low
         estimated_hours: 3
         actual_hours: 0
         assignee: claude-code
@@ -637,13 +643,14 @@ phases:
         dependencies:
           - VIEWER-019
         blocks: []
-        notes: []
+        notes:
+          - "2025-07-17 11:28:29 a.m. EDT: Deprioritized for MVP release - moved to low priority"
 epic_summary:
   total_estimated_hours: 94
   estimated_duration: 4-5 weeks
   critical_path:
-    - VIEWER-001 → VIEWER-002 → VIEWER-003 → VIEWER-005 → VIEWER-006 → VIEWER-008 → VIEWER-010 → VIEWER-012 → VIEWER-014
-      → VIEWER-015 → VIEWER-016 → VIEWER-017 → VIEWER-018 → VIEWER-019 → VIEWER-020
+    - VIEWER-001 → VIEWER-002 → VIEWER-003 → VIEWER-005 → VIEWER-006 → VIEWER-008 → VIEWER-010 → VIEWER-014 → VIEWER-015
+      → VIEWER-016 → VIEWER-019
   success_criteria:
     technical:
       - Dark mode Svelte application with responsive design
@@ -651,8 +658,7 @@ epic_summary:
       - Interactive task visualization with filtering
       - Critical path analysis with dependency graph
       - PMaC CLI integration with subcommands
-      - Comprehensive test coverage (90%+)
-      - Performance targets met (load < 2s, parse < 500ms)
+      - Comprehensive user documentation for MVP release
     business:
       - Intuitive interface for PMaC methodology users
       - Seamless integration with existing PMaC workflow

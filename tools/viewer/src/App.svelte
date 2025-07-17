@@ -499,7 +499,7 @@ phases:
               {$projectTitle}
             </h1>
             <p class="text-gray-400 text-sm truncate">
-              Dark mode visualization tool for PMaC project backlogs
+              Visualization tool for PMaC project backlogs
             </p>
           </div>
         </div>

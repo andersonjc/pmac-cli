@@ -784,7 +784,6 @@ Examples:
     
     // Set viewer configuration
     const viewerPath = join(projectRoot, 'tools', 'viewer');
-    const viewerConfigPath = join(viewerPath, 'src', 'lib', 'config.ts');
     
     if (!existsSync(viewerPath)) {
       console.error(`❌ Viewer not found at: ${viewerPath}`);
@@ -792,17 +791,18 @@ Examples:
       process.exit(1);
     }
     
-    // Update viewer configuration with backlog path
-    this.updateViewerConfig(viewerConfigPath, this.backlogPath);
-    
-    // Execute viewer command
+    // Execute viewer command with environment variable for backlog path
     const command = mode === 'dev' ? 'viewer:dev' : 'viewer:build';
     console.log(`🚀 Starting ${mode} mode...`);
     
     const child = spawn('pnpm', ['run', command], {
       cwd: projectRoot,
       stdio: 'inherit',
-      shell: true
+      shell: true,
+      env: {
+        ...process.env,
+        VITE_BACKLOG_PATH: this.backlogPath
+      }
     });
     
     child.on('error', (error) => {
@@ -843,33 +843,6 @@ Examples:
     return null;
   }
   
-  private updateViewerConfig(configPath: string, backlogPath: string): void {
-    if (!existsSync(configPath)) {
-      console.error(`❌ Viewer config not found: ${configPath}`);
-      return;
-    }
-    
-    try {
-      let configContent = readFileSync(configPath, 'utf8');
-      
-      // Update the backlog path in the config
-      const backlogPathPattern = /backlogPath:\s*['"]([^'"]*)['"],?/;
-      const replacement = `backlogPath: '${backlogPath}',`;
-      
-      if (backlogPathPattern.test(configContent)) {
-        configContent = configContent.replace(backlogPathPattern, replacement);
-      } else {
-        // If pattern not found, add it to the default config
-        const configPattern = /(export function getEnvironmentConfig\(\)\s*\{[^}]*return\s*\{[^}]*)/;
-        configContent = configContent.replace(configPattern, `$1\n    backlogPath: '${backlogPath}',`);
-      }
-      
-      writeFileSync(configPath, configContent, 'utf8');
-      console.log(`✅ Updated viewer config with backlog path: ${backlogPath}`);
-    } catch (error) {
-      console.error(`❌ Failed to update viewer config: ${error}`);
-    }
-  }
 }
 
 // CLI Interface

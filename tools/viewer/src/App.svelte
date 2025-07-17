@@ -86,7 +86,7 @@
         if (parseResult.warnings && parseResult.warnings.length > 0) {
           console.warn('Backlog loaded with warnings:', parseResult.warnings);
           // Store warnings for display
-          appState.update(state => ({ ...state, warnings: parseResult.warnings }));
+          appState.update((state) => ({ ...state, warnings: parseResult.warnings }));
         } else {
           setError(null);
         }
@@ -374,7 +374,7 @@ phases:
       <h2 class="text-lg font-semibold text-gray-100 truncate">
         {$projectTitle}
       </h2>
-      <p class="text-xs text-gray-400 mt-1 truncate">PMaC Backlog Viewer</p>
+      <p class="text-xs text-gray-400 mt-1 truncate">Visualize your project's backlog</p>
     </div>
 
     <!-- Phase Navigation -->
@@ -393,7 +393,7 @@ phases:
                 // Clear phase filter to show all tasks
                 setPhaseFilter(null);
                 // Update app state selection for UI highlighting
-                appState.update(state => ({
+                appState.update((state) => ({
                   ...state,
                   viewState: { ...state.viewState, selection: { ...state.viewState.selection, selectedPhase: null } },
                 }));
@@ -421,7 +421,7 @@ phases:
                   // Update filter state to show only tasks from this phase
                   setPhaseFilter(phaseId);
                   // Update app state selection for UI highlighting
-                  appState.update(state => ({
+                  appState.update((state) => ({
                     ...state,
                     viewState: { ...state.viewState, selection: { ...state.viewState.selection, selectedPhase: phaseId } },
                   }));
@@ -531,7 +531,7 @@ phases:
           <!-- Manual refresh button -->
           <button
             class="text-gray-400 hover:text-gray-100 p-1 rounded-md hover:bg-gray-700 transition-colors"
-            on:click={loadBacklogData}
+            on:click={() => loadBacklogData(true)}
             disabled={isLoading}
             title="Refresh backlog data"
           >
@@ -586,7 +586,7 @@ phases:
             <header
               class="p-4 bg-gray-750 border-b border-gray-700 cursor-pointer hover:bg-gray-700 transition-colors"
               on:click={() => criticalPathExpanded = !criticalPathExpanded}
-              on:keydown={e => e.key === 'Enter' && (criticalPathExpanded = !criticalPathExpanded)}
+              on:keydown={(e) => e.key === 'Enter' && (criticalPathExpanded = !criticalPathExpanded)}
               tabindex="0"
               role="button"
               aria-expanded={criticalPathExpanded}

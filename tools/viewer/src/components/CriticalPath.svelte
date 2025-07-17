@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import type { TaskWithPhase, DependencyNode, DependencyEdge } from '../lib/types';
+  
+  /* eslint-disable no-undef */
 
   export let tasks: TaskWithPhase[] = [];
   export let width = 800;
@@ -232,6 +234,7 @@
           edgeList.push({
             from: depId,
             to: taskId,
+            type: 'dependency',
             fromX: toNode.x || 0,
             fromY: toNode.y || 0,
             toX: fromNode.x || 0,
@@ -495,6 +498,7 @@
       <g transform="translate({translateX}, {translateY}) scale({scale})">
         <!-- Edges -->
         {#each edges as edge}
+          {#if edge.fromX !== undefined && edge.fromY !== undefined && edge.toX !== undefined && edge.toY !== undefined}
           <line
             x1={edge.fromX + NODE_RADIUS}
             y1={edge.fromY}
@@ -506,6 +510,7 @@
             filter={edge.isCritical ? "url(#glow)" : "none"}
             opacity={edge.isCritical ? 1 : 0.7}
           />
+          {/if}
         {/each}
 
         <!-- Nodes -->

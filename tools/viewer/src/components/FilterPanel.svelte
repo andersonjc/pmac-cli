@@ -93,13 +93,14 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 min-w-0">
     <!-- Search -->
     <div>
-      <label class="block text-sm font-medium text-gray-300 mb-2"> 
+      <label for="search-input" class="block text-sm font-medium text-gray-300 mb-2"> 
         <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         Search 
       </label>
       <input
+        id="search-input"
         type="text"
         class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         placeholder="Search tasks..."
@@ -110,8 +111,9 @@
 
     <!-- Status Filter -->
     <div>
-      <label class="block text-sm font-medium text-gray-300 mb-2"> Status </label>
+      <label for="status-select" class="block text-sm font-medium text-gray-300 mb-2"> Status </label>
       <select
+        id="status-select"
         class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         bind:value={$filterState.status}
         on:change={handleStatusChange}
@@ -129,8 +131,9 @@
 
     <!-- Priority Filter -->
     <div>
-      <label class="block text-sm font-medium text-gray-300 mb-2"> Priority </label>
+      <label for="priority-select" class="block text-sm font-medium text-gray-300 mb-2"> Priority </label>
       <select
+        id="priority-select"
         class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         bind:value={$filterState.priority}
         on:change={handlePriorityChange}
@@ -144,8 +147,9 @@
 
     <!-- Phase Filter -->
     <div>
-      <label class="block text-sm font-medium text-gray-300 mb-2"> Phase </label>
+      <label for="phase-select" class="block text-sm font-medium text-gray-300 mb-2"> Phase </label>
       <select
+        id="phase-select"
         class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         bind:value={$filterState.phase}
         on:change={handlePhaseChange}

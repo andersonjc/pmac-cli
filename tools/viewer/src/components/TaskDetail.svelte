@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import type { TaskWithPhase } from '../lib/types';
   import { TASK_STATUS_COLORS, TASK_PRIORITY_COLORS } from '../lib/types';
 
@@ -15,9 +15,9 @@
     dispatch('close');
   }
 
-  // Handle ESC key
-  function handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
+  // Handle ESC key globally when modal is open
+  function handleDocumentKeydown(event: KeyboardEvent) {
+    if (isOpen && event.key === 'Escape') {
       closeModal();
     }
   }
@@ -26,6 +26,15 @@
   function handleBackdropClick(event: MouseEvent) {
     if (event.target === event.currentTarget) {
       closeModal();
+    }
+  }
+
+  // Handle backdrop keyboard events
+  function handleBackdropKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      if (event.target === event.currentTarget) {
+        closeModal();
+      }
     }
   }
 
@@ -57,6 +66,15 @@
   
   // Check if task is blocked due to dependencies
   $: isBlockedByDependencies = effectiveStatus === 'blocked' && task.status !== 'blocked';
+
+  // Handle ESC key globally when modal is open
+  onMount(() => {
+    document.addEventListener('keydown', handleDocumentKeydown);
+  });
+
+  onDestroy(() => {
+    document.removeEventListener('keydown', handleDocumentKeydown);
+  });
 </script>
 
 <!-- Modal backdrop -->
@@ -64,8 +82,7 @@
   <div
     class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
     on:click={handleBackdropClick}
-    on:keydown={handleKeydown}
-    tabindex="-1"
+    on:keydown={handleBackdropKeydown}
     role="dialog"
     aria-modal="true"
     aria-labelledby="task-title"

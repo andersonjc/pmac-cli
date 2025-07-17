@@ -35,12 +35,10 @@
   $: isBlockedByDependencies = effectiveStatus === 'blocked' && task.status !== 'blocked';
 </script>
 
-<article
-  class="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:bg-gray-700 active:bg-gray-600 transition-colors cursor-pointer touch-manipulation max-w-full overflow-hidden"
+<button
+  class="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:bg-gray-700 active:bg-gray-600 transition-colors cursor-pointer touch-manipulation max-w-full overflow-hidden w-full text-left"
   on:click={handleClick}
-  on:keydown={e => e.key === 'Enter' && handleClick()}
-  tabindex="0"
-  role="button"
+  type="button"
 >
   <!-- Header with ID, Status, Priority, Title, and Phase -->
   <header class="mb-3">
@@ -194,13 +192,14 @@
       />
     </svg>
   </div>
-</article>
+</button>
 
 <style>
   .line-clamp-1 {
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
+    line-clamp: 1;
     overflow: hidden;
   }
 </style>

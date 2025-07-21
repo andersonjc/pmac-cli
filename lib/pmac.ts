@@ -4,6 +4,12 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { resolve, dirname, join } from 'path';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { spawn } from 'child_process';
+import { createServer } from 'http';
+import { readFile } from 'fs/promises';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 interface Task {
   id: string;
@@ -743,7 +749,7 @@ Analysis & Validation:
   phases                          List all phases and their details
 
 Viewer:
-  viewer [dev|build]              Start PMaC Backlog Viewer (dev mode by default)
+  viewer                          Start PMaC Backlog Viewer
 
 Bulk Operations:
   bulk-phase <phase> <status>      Update all tasks in a phase to given status
@@ -758,11 +764,11 @@ Examples:
   pnpm pmac list in_progress high
   pnpm pmac update PMAC-002 testing "Implementation complete"
   pnpm pmac phases
-  pnpm pmac viewer dev
+  pnpm pmac viewer
 `);
   }
   
-  startViewer(mode: 'dev' | 'build'): void {
+  async startViewer(): Promise<void> {
     console.log('🔍 PMaC Backlog Viewer');
     console.log('======================');
     
@@ -775,57 +781,97 @@ Examples:
     
     console.log(`📁 Using backlog file: ${this.backlogPath}`);
     
-    // Determine project root (where package.json is located)
-    const projectRoot = this.findProjectRoot();
-    if (!projectRoot) {
-      console.error('❌ Could not find project root (package.json not found)');
+    // Path to pre-built viewer assets (in npm package)
+    const viewerAssetsPath = resolve(__dirname, '../dist/viewer');
+    
+    if (!existsSync(viewerAssetsPath)) {
+      console.error(`❌ Pre-built viewer assets not found at: ${viewerAssetsPath}`);
+      console.error('This might be a development environment. Run: pnpm build:viewer');
       process.exit(1);
     }
     
-    // Set viewer configuration
-    const viewerPath = join(projectRoot, 'tools', 'viewer');
-    
-    if (!existsSync(viewerPath)) {
-      console.error(`❌ Viewer not found at: ${viewerPath}`);
-      console.error('Please ensure the PMaC Viewer is installed in tools/viewer/');
-      process.exit(1);
-    }
-    
-    // Execute viewer command with environment variable for backlog path
-    const command = mode === 'dev' ? 'viewer:dev' : 'viewer:build';
-    console.log(`🚀 Starting ${mode} mode...`);
-    
-    const child = spawn('pnpm', ['run', command], {
-      cwd: projectRoot,
-      stdio: 'inherit',
-      shell: true,
-      env: {
-        ...process.env,
-        VITE_BACKLOG_PATH: this.backlogPath
+    const port = 5173;
+    const server = createServer(async (req, res) => {
+      try {
+        // Set CORS headers for local development
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        
+        let filePath = req.url === '/' ? '/index.html' : req.url;
+        
+        // Handle backlog API endpoint
+        if (filePath === '/api/backlog') {
+          const backlogContent = readFileSync(this.backlogPath, 'utf8');
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({
+            content: backlogContent,
+            path: this.backlogPath
+          }));
+          return;
+        }
+        
+        // Serve static files
+        const fullPath = join(viewerAssetsPath, filePath);
+        
+        if (!existsSync(fullPath)) {
+          // Fallback to index.html for SPA routing
+          const indexPath = join(viewerAssetsPath, 'index.html');
+          if (existsSync(indexPath)) {
+            const content = await readFile(indexPath, 'utf8');
+            res.setHeader('Content-Type', 'text/html');
+            res.end(content);
+          } else {
+            res.statusCode = 404;
+            res.end('Not Found');
+          }
+          return;
+        }
+        
+        const content = await readFile(fullPath);
+        
+        // Set content type based on extension
+        const ext = filePath.split('.').pop()?.toLowerCase();
+        const contentTypes: Record<string, string> = {
+          'html': 'text/html',
+          'js': 'application/javascript',
+          'css': 'text/css',
+          'json': 'application/json',
+          'png': 'image/png',
+          'svg': 'image/svg+xml'
+        };
+        
+        if (ext && contentTypes[ext]) {
+          res.setHeader('Content-Type', contentTypes[ext]);
+        }
+        
+        res.end(content);
+      } catch (error) {
+        console.error('Server error:', error);
+        res.statusCode = 500;
+        res.end('Internal Server Error');
       }
     });
     
-    child.on('error', (error) => {
-      console.error(`❌ Failed to start viewer: ${error.message}`);
-      process.exit(1);
-    });
-    
-    child.on('exit', (code) => {
-      if (code !== 0) {
-        console.error(`❌ Viewer exited with code ${code}`);
-        process.exit(code || 1);
-      }
+    server.listen(port, () => {
+      console.log(`🚀 PMaC Viewer running at http://localhost:${port}`);
+      console.log(`📁 Serving backlog: ${this.backlogPath}`);
+      console.log(`⌨️  Press Ctrl+C to stop`);
     });
     
     // Handle graceful shutdown
     process.on('SIGINT', () => {
       console.log('\n🛑 Stopping viewer...');
-      child.kill('SIGINT');
+      server.close(() => {
+        process.exit(0);
+      });
     });
     
     process.on('SIGTERM', () => {
       console.log('\n🛑 Stopping viewer...');
-      child.kill('SIGTERM');
+      server.close(() => {
+        process.exit(0);
+      });
     });
   }
   
@@ -954,14 +1000,7 @@ switch (command) {
     break;
 
   case 'viewer':
-    const mode = args[0] || 'dev';
-    if (!['dev', 'build'].includes(mode)) {
-      console.error('Usage: pnpm pmac viewer [dev|build]');
-      console.error('  dev   - Start development server (default)');
-      console.error('  build - Build production version');
-      process.exit(1);
-    }
-    cli.startViewer(mode as 'dev' | 'build');
+    await cli.startViewer();
     break;
 
   case 'help':

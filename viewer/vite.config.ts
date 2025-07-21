@@ -9,12 +9,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   plugins: [
     svelte({
-      configFile: resolve(__dirname, '../../svelte.config.js'),
+      configFile: resolve(__dirname, '../svelte.config.js'),
     }),
   ],
   root: resolve(__dirname),
   build: {
-    outDir: resolve(__dirname, '../../dist/viewer'),
+    outDir: resolve(__dirname, '../dist/viewer'),
     emptyOutDir: true,
     sourcemap: true,
     rollupOptions: {

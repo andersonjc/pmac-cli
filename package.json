@@ -1,8 +1,8 @@
 {
-  "name": "pmac",
+  "name": "@pmac/cli",
   "version": "1.0.0",
   "type": "module",
-  "description": "Project Management as Code (PMaC) - A file-based methodology and toolkit for AI-assisted software development with backlog viewer",
+  "description": "CLI tools for Project Management as Code (PMaC) - Standalone npm package with interactive backlog viewer",
   "keywords": [
     "project-management",
     "ai-assisted-development",
@@ -13,40 +13,35 @@
     "svelte",
     "backlog-viewer"
   ],
-  "homepage": "https://github.com/andersonjc/pmac#readme",
+  "homepage": "https://github.com/andersonjc/pmac-cli#readme",
   "bugs": {
-    "url": "https://github.com/andersonjc/pmac/issues"
+    "url": "https://github.com/andersonjc/pmac-cli/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andersonjc/pmac.git"
+    "url": "git+https://github.com/andersonjc/pmac-cli.git"
   },
   "license": "MIT",
   "author": "John C. Anderson (https://github.com/andersonjc)",
-  "main": "tools/pmac.ts",
+  "main": "bin/pmac.ts",
   "bin": {
-    "pmac": "./tools/pmac.ts"
+    "pmac": "./bin/pmac.ts"
   },
   "scripts": {
-    "pmac": "tsx tools/pmac.ts",
-    "viewer:dev": "vite --config tools/viewer/vite.config.ts",
-    "viewer:build": "vite build --config tools/viewer/vite.config.ts",
-    "viewer:preview": "vite preview --config tools/viewer/vite.config.ts",
-    "viewer:check": "svelte-check --tsconfig ./tsconfig.json",
+    "pmac": "tsx bin/pmac.ts",
+    "build": "pnpm build:viewer && tsc --noEmit",
+    "build:viewer": "vite build --config viewer/vite.config.ts",
+    "dev:viewer": "vite --config viewer/vite.config.ts",
+    "preview:viewer": "vite preview --config viewer/vite.config.ts",
     "test": "pnpm test:cli && pnpm test:viewer",
     "test:cli": "vitest --config vitest.config.ts",
-    "test:cli:coverage": "vitest --config vitest.config.ts --coverage",
-    "test:cli:watch": "vitest --config vitest.config.ts --watch",
-    "test:viewer": "cd tools/viewer && vitest",
-    "test:viewer:coverage": "cd tools/viewer && vitest --coverage",
-    "test:viewer:watch": "cd tools/viewer && vitest --watch",
-    "test:coverage": "pnpm test:cli:coverage && pnpm test:viewer:coverage",
-    "build": "tsc --noEmit && npm run viewer:build",
-    "lint": "eslint 'tools/**/*.ts' 'tools/**/*.js'",
-    "lint:viewer": "eslint 'tools/viewer/src/**/*.ts' 'tools/viewer/src/**/*.svelte'",
-    "format": "prettier --write 'tools/**/*.ts' 'tools/**/*.js'",
-    "format:viewer": "prettier --write 'tools/viewer/src/**/*.{ts,svelte,js}'",
-    "format:all": "pnpm format && pnpm format:viewer"
+    "test:viewer": "cd viewer && vitest",
+    "test:coverage": "pnpm test:cli --coverage && pnpm test:viewer --coverage",
+    "lint": "eslint 'lib/**/*.ts' 'bin/**/*.ts'",
+    "lint:viewer": "eslint 'viewer/src/**/*.ts' 'viewer/src/**/*.svelte'",
+    "format": "prettier --write 'lib/**/*.ts' 'bin/**/*.ts'",
+    "format:viewer": "prettier --write 'viewer/src/**/*.{ts,svelte,js}'",
+    "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
     "@eslint/js": "^9.31.0",
@@ -78,13 +73,11 @@
     "node": ">=18.0.0"
   },
   "files": [
-    "tools/",
+    "bin/",
+    "lib/",
+    "viewer/",
     "templates/",
     "README.md",
-    "LICENSE",
-    "CLAUDE.md",
-    "project-management-as-code.md",
-    ".gitignore",
-    "tsconfig.json"
+    "LICENSE"
   ]
 }

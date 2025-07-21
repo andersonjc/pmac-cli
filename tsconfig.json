@@ -22,14 +22,14 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "$lib/*": ["tools/viewer/src/lib/*"],
-      "$components/*": ["tools/viewer/src/components/*"]
+      "$lib/*": ["viewer/src/lib/*"],
+      "$components/*": ["viewer/src/components/*"]
     }
   },
   "include": [
-    "tools/viewer/src/**/*.ts",
-    "tools/viewer/src/**/*.svelte",
-    "tools/viewer/src/vite-env.d.ts"
+    "viewer/src/**/*.ts",
+    "viewer/src/**/*.svelte",
+    "viewer/src/vite-env.d.ts"
   ],
   "exclude": [
     "node_modules",

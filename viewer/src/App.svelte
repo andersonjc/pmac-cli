@@ -55,7 +55,7 @@
   let refreshInterval: ReturnType<typeof setInterval> | undefined;
   let currentBacklogPath = '';
 
-  // Load backlog from configured path
+  // Load backlog from API endpoint or configured path
   async function loadBacklogData(isRefresh = false) {
     // Only show loading spinner for initial load, not for refresh
     if (!isRefresh) {
@@ -63,16 +63,29 @@
     }
 
     try {
-      // Find the correct backlog file
-      currentBacklogPath = await findBacklogFile(config.backlogPath);
+      let yamlContent: string;
+      
+      // Try API endpoint first (for packaged mode)
+      try {
+        const apiResponse = await fetch('/api/backlog');
+        if (apiResponse.ok) {
+          const apiData = await apiResponse.json();
+          yamlContent = apiData.content;
+          currentBacklogPath = apiData.path || 'API endpoint';
+        } else {
+          throw new Error('API endpoint not available');
+        }
+      } catch (apiError) {
+        // Fall back to direct file access (for development mode)
+        currentBacklogPath = await findBacklogFile(config.backlogPath);
+        const response = await fetch(currentBacklogPath);
 
-      const response = await fetch(currentBacklogPath);
+        if (!response.ok) {
+          throw new Error(`Failed to load backlog from ${currentBacklogPath}: ${response.status}`);
+        }
 
-      if (!response.ok) {
-        throw new Error(`Failed to load backlog from ${currentBacklogPath}: ${response.status}`);
+        yamlContent = await response.text();
       }
-
-      const yamlContent = await response.text();
       const parseResult = parseBacklogYaml(yamlContent, { 
         validateSchema: true, 
         strict: false, 

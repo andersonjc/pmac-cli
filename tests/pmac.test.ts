@@ -489,7 +489,7 @@ describe('PMaC CLI Integration Tests', () => {
 
     it('should work with nested directory paths', () => {
       // Create a nested directory structure
-      const nestedPath = 'tools/viewer/test-nested-backlog.yml';
+      const nestedPath = 'viewer/test-nested-backlog.yml';
       writeFileSync(nestedPath, readFileSync(TEST_BACKLOG_PATH, 'utf8'));
 
       try {

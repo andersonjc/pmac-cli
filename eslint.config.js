@@ -7,8 +7,8 @@ export default [
   js.configs.recommended,
   // CLI tools configuration
   {
-    files: ['tools/**/*.ts', 'tools/**/*.test.ts'],
-    ignores: ['tools/viewer/**/*'],
+    files: ['lib/**/*.ts', 'bin/**/*.ts', 'tests/**/*.ts'],
+    ignores: ['viewer/**/*'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -45,7 +45,7 @@ export default [
   },
   // Viewer TypeScript files configuration
   {
-    files: ['tools/viewer/src/**/*.ts'],
+    files: ['viewer/src/**/*.ts'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -90,7 +90,7 @@ export default [
   // Viewer Svelte files configuration
   ...sveltePlugin.configs['flat/recommended'],
   {
-    files: ['tools/viewer/src/**/*.svelte'],
+    files: ['viewer/src/**/*.svelte'],
     languageOptions: {
       parserOptions: {
         parser: tsparser

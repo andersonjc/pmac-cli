@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   plugins: [
     svelte({
-      configFile: resolve(__dirname, '../../svelte.config.js'),
+      configFile: resolve(__dirname, '../svelte.config.js'),
     }),
   ],
   test: {

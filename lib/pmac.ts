@@ -3,7 +3,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { resolve, dirname, join } from 'path';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
-import { spawn } from 'child_process';
+// import { spawn } from 'child_process'; // Removed - no longer needed in packaged mode
 import { createServer } from 'http';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -798,7 +798,7 @@ Examples:
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
         
-        let filePath = req.url === '/' ? '/index.html' : req.url;
+        const filePath = req.url === '/' ? '/index.html' : req.url;
         
         // Handle backlog API endpoint
         if (filePath === '/api/backlog') {

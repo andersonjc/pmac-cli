@@ -75,7 +75,7 @@
         } else {
           throw new Error('API endpoint not available');
         }
-      } catch (apiError) {
+      } catch (_apiError) {
         // Fall back to direct file access (for development mode)
         currentBacklogPath = await findBacklogFile(config.backlogPath);
         const response = await fetch(currentBacklogPath);

@@ -78,7 +78,7 @@ export const BACKLOG_PATHS = {
   PARENT: '../project-backlog.yml',
 
   // Viewer directory (current implementation)
-  VIEWER: './tools/viewer/project-backlog.yml',
+  VIEWER: './viewer/project-backlog.yml',
 };
 
 /**

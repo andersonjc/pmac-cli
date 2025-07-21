@@ -56,7 +56,7 @@ Refer to the complete PMaC methodology in `project-management-as-code.md` for:
 
 ```bash
 pnpm pmac list                                    # View tasks (project-backlog.yml at root)
-pnpm pmac --backlog tools/viewer/project-backlog.yml list  # View tasks (custom path from root)
+pnpm pmac --backlog viewer/project-backlog.yml list  # View tasks (custom path from root)
 pnpm pmac update TASK-001 in_progress "Starting work"     # Update task status
 pnpm pmac validate                                # Check dependencies
 ```

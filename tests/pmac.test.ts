@@ -393,7 +393,7 @@ describe('PMaC CLI Integration Tests', () => {
   describe('Custom Backlog Path Support', () => {
     it('should work with explicit backlog path from root', () => {
       // Create a custom backlog in a subdirectory
-      const customPath = 'tools/test-custom-backlog.yml';
+      const customPath = 'tests/test-custom-backlog.yml';
       writeFileSync(customPath, readFileSync(TEST_BACKLOG_PATH, 'utf8'));
 
       try {
@@ -401,7 +401,7 @@ describe('PMaC CLI Integration Tests', () => {
 
         expect(result.exitCode).toBe(0);
         expect(result.stdout).toContain('Using backlog file:');
-        expect(result.stdout).toContain('tools/test-custom-backlog.yml');
+        expect(result.stdout).toContain('tests/test-custom-backlog.yml');
         expect(result.stdout).toContain('TEST-001: Test Task 1');
         expect(result.stdout).toContain('TEST-002: Test Task 2');
       } finally {
@@ -412,7 +412,7 @@ describe('PMaC CLI Integration Tests', () => {
     });
 
     it('should work with custom backlog for task operations', () => {
-      const customPath = 'tools/test-operations-backlog.yml';
+      const customPath = 'tests/test-operations-backlog.yml';
       writeFileSync(customPath, readFileSync(TEST_BACKLOG_PATH, 'utf8'));
 
       try {
@@ -470,7 +470,7 @@ describe('PMaC CLI Integration Tests', () => {
   describe('Path Resolution Logic', () => {
     it('should resolve relative paths correctly', () => {
       // Test that relative paths work from any directory
-      const customPath = 'tools/test-relative-path.yml';
+      const customPath = 'tests/test-relative-path.yml';
       writeFileSync(customPath, readFileSync(TEST_BACKLOG_PATH, 'utf8'));
 
       try {

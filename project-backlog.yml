@@ -22,7 +22,7 @@ phases:
         actual_hours: 0
         assignee: claude-code
         requirements:
-          - Create complete directory structure in ./tools/viewer/
+          - Create complete directory structure in ./viewer/
           - Initialize package.json with required dependencies
           - Set up Vite configuration for Svelte + TypeScript
           - Configure Tailwind CSS with dark mode support

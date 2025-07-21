@@ -78,8 +78,8 @@ describe('PMaC CLI Unit Tests', () => {
         expect(defaultPath).toBe('/test/root/project-backlog.yml');
 
         // Test custom path resolution
-        const customPath = resolve(process.cwd(), 'tools/viewer/project-backlog.yml');
-        expect(customPath).toBe('/test/root/tools/viewer/project-backlog.yml');
+        const customPath = resolve(process.cwd(), 'viewer/project-backlog.yml');
+        expect(customPath).toBe('/test/root/viewer/project-backlog.yml');
       } finally {
         mockCwd.mockRestore();
       }
@@ -92,8 +92,8 @@ describe('PMaC CLI Unit Tests', () => {
         // Test various custom path scenarios
         const testCases = [
           {
-            input: 'tools/viewer/project-backlog.yml',
-            expected: '/project/root/tools/viewer/project-backlog.yml',
+            input: 'viewer/project-backlog.yml',
+            expected: '/project/root/viewer/project-backlog.yml',
           },
           {
             input: 'custom/path/backlog.yml',
@@ -126,9 +126,9 @@ describe('PMaC CLI Unit Tests', () => {
       try {
         // Test that various equivalent paths resolve to the same result
         const paths = [
-          'tools/viewer/project-backlog.yml',
-          './tools/viewer/project-backlog.yml',
-          'tools/viewer/../viewer/project-backlog.yml',
+          'viewer/project-backlog.yml',
+          './viewer/project-backlog.yml',
+          'viewer/../viewer/project-backlog.yml',
         ];
 
         const resolved = paths.map(path => resolve(process.cwd(), path));
@@ -137,7 +137,7 @@ describe('PMaC CLI Unit Tests', () => {
         expect(resolved[0]).toBe(resolved[1]);
 
         // All should resolve to the same canonical path
-        const canonical = '/project/root/tools/viewer/project-backlog.yml';
+        const canonical = '/project/root/viewer/project-backlog.yml';
         expect(resolved[0]).toBe(canonical);
         expect(resolved[2]).toBe(canonical);
       } finally {

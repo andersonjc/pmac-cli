@@ -2,6 +2,8 @@
 
 A file-based methodology for AI-assisted software development.
 
+> **Note:** This is a local copy included with @pmac/cli for offline access and AI integration. The canonical version of this methodology is maintained at: https://github.com/andersonjc/pmac/blob/master/project-management-as-code.md
+
 ## The Problem
 
 Traditional PM tools (Jira, Linear, Asana) don't integrate with AI assistants. Context gets lost, decisions aren't tracked, and there's no standard way to maintain project continuity when working with AI.

@@ -2119,4 +2119,80 @@ Systematically scanned and updated all remaining `tools/` references in active c
 
 ---
 
+## 2025-07-21 14:00:00 EDT
+
+**User Prompt:**
+
+> Evaluate README.md, tools/PMAC_CLI_README.md, and viewer/README.md, consolidating all into one readme at root that describes the tools that support the pmac methodology, linking to the methodology documentation on github, and documenting how to use the cli and viewer tools clearly and concisely.
+
+**Context:** User requested consolidation of multiple README files into a comprehensive single README at root that covers both CLI and viewer tools supporting PMaC methodology.
+
+**Solution Implemented:**
+Successfully consolidated three README files into a single comprehensive document:
+
+1. **Analysis**: Reviewed existing README.md (262 lines), tools/PMAC_CLI_README.md (503 lines), and viewer/README.md (296 lines)
+2. **Content Consolidation**: Merged key sections from all three files, eliminating redundancy
+3. **Restructured Organization**: Created logical flow covering overview, installation, CLI commands, viewer features, examples, and methodology
+4. **Updated Links**: Referenced GitHub methodology documentation and npm package
+5. **Practical Focus**: Emphasized real-world usage patterns and AI integration
+6. **Brand Consistency**: Positioned as @pmac/cli tools supporting PMaC methodology
+
+**Key Sections in Consolidated README:**
+- Overview and benefits of PMaC methodology
+- Installation instructions for @pmac/cli package
+- Complete CLI command reference with examples
+- Interactive viewer documentation
+- Project structure and file explanations
+- Workflow examples with AI integration
+- PMaC methodology principles and protocols
+- Contributing guidelines and support resources
+
+**Results:**
+- ✅ Single comprehensive README covering all functionality
+- ✅ Clear installation and usage instructions
+- ✅ Proper linking to methodology documentation on GitHub
+- ✅ Concise but complete coverage of CLI and viewer tools
+- ✅ Professional presentation suitable for npm package distribution
+- ✅ Examples focused on AI-assisted development workflows
+
+---
+
+## 2025-07-21 14:30:00 EDT
+
+**User Prompt:**
+
+> Read the CLAUDE.md and update, making sure all directives are relevant to the project as it now exists. Also, help me decide: should the project-management-as-code.md file be included with this repo, or should it be referenced on github. I like having a local version so that the AI can read it anytime it needs to, but I also want to keep the methodology documentation in one place and up to date with the progress of that project.
+
+**Context:** User requested comprehensive update of CLAUDE.md to reflect current @pmac/cli package structure and decision on whether to include local copy of methodology documentation.
+
+**Solution Implemented:**
+
+**CLAUDE.md Updates:**
+1. **Updated Project Context**: Added description of @pmac/cli as standalone npm package with package structure overview
+2. **Fixed File References**: Removed non-existent project-requirements.md references, updated to use README.md
+3. **Updated CLI Examples**: Corrected command syntax to use `pnpm pmac viewer` instead of deprecated patterns
+4. **Removed Irrelevant Sections**: Replaced web API/authentication testing guidance with CLI/viewer-specific testing requirements
+5. **Added Viewer Development**: Included Svelte development workflow, component structure, and testing guidance
+6. **Updated Architecture Patterns**: Changed from generic project-requirements.md to package-specific patterns (lib/, viewer/, tests/)
+7. **Enhanced Testing Standards**: Focused on CLI integration tests and viewer unit tests instead of API/model testing
+
+**Project-Management-as-Code.md Decision:**
+**Decision: Keep local copy with GitHub reference**
+
+**Implementation:**
+1. **Added Header**: Included note referencing canonical GitHub version for updates
+2. **Package.json Update**: Added `project-management-as-code.md` to files array for npm distribution
+3. **Local Benefits**: Enables AI offline access, self-contained package, version alignment
+4. **GitHub Reference**: Clear pointer to canonical source for methodology updates
+
+**Results:**
+- ✅ CLAUDE.md fully updated for current package structure and removed irrelevant guidance
+- ✅ Local methodology documentation available with proper GitHub reference
+- ✅ Package includes complete context for AI-assisted development
+- ✅ All CLI commands and file references verified for current structure
+- ✅ Testing standards aligned with CLI/viewer architecture instead of web APIs
+- ✅ Viewer development workflow properly documented
+
+---
+
 _This log implements the "Complete conversation history" requirement of PMaC methodology, ensuring all development decisions are preserved and traceable through version control alongside the code they influenced._

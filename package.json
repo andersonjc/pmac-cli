@@ -78,6 +78,7 @@
     "viewer/",
     "templates/",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "project-management-as-code.md"
   ]
 }

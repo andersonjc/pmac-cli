@@ -4,13 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Context
 
-This repository follows **Project Management as Code (PMaC)** methodology for AI-assisted development.
+This repository contains **@pmac/cli** - a standalone npm package providing CLI tools and interactive viewer for implementing Project Management as Code (PMaC) methodology in AI-assisted development.
+
+**Package Structure:**
+- **bin/**: CLI entry points (`pmac` command)
+- **lib/**: Core CLI implementation
+- **viewer/**: Interactive web-based backlog viewer (Svelte app)
+- **tests/**: Test suites for CLI functionality
+- **templates/**: PMaC file templates for new projects
 
 **Required Reading Before Any Work:**
 
-- `project-management-as-code.md` - Complete PMaC methodology
-- `project-requirements.md` - Technical requirements and architecture
+- `project-management-as-code.md` - Complete PMaC methodology (local copy)
 - `project-backlog.yml` - Current task priorities and status
+- `README.md` - Package documentation and usage guide
 
 ## Project Management as Code (PMaC) Requirements
 
@@ -28,8 +35,8 @@ Refer to the complete PMaC methodology in `project-management-as-code.md` for:
 
 - Always use the PMaC CLI instead of modifying project-backlog.yml directly. The CLI supports multiple usage patterns:
   - From root directory: `pnpm pmac <command>`
-  - From any subdirectory: `pnpm pmac --backlog path/to/project-backlog.yml <command>`
-  - The CLI automatically searches parent directories for project-backlog.yml files
+  - Custom backlog path: `pnpm pmac --backlog path/to/project-backlog.yml <command>`
+  - Viewer mode: `pnpm pmac viewer` (launches interactive web interface)
 
 ### Before Starting Work
 
@@ -55,18 +62,22 @@ Refer to the complete PMaC methodology in `project-management-as-code.md` for:
 **PMaC Management:**
 
 ```bash
-pnpm pmac list                                    # View tasks (project-backlog.yml at root)
-pnpm pmac --backlog viewer/project-backlog.yml list  # View tasks (custom path from root)
-pnpm pmac update TASK-001 in_progress "Starting work"     # Update task status
-pnpm pmac validate                                # Check dependencies
+pnpm pmac list                                      # View tasks (project-backlog.yml at root)
+pnpm pmac --backlog path/to/project-backlog.yml list  # View tasks (custom path)
+pnpm pmac update TASK-001 in_progress "Starting work" # Update task status
+pnpm pmac validate                                  # Check dependencies
+pnpm pmac viewer                                    # Launch interactive backlog viewer
 ```
 
 **Testing & Quality:**
 
 ```bash
-pnpm test                       # Run all tests
-pnpm lint                   # Run linting
-pnpm build                  # Build project
+pnpm test          # Run all tests (CLI + viewer)
+pnpm test:cli      # Run CLI tests only
+pnpm test:viewer   # Run viewer tests only
+pnpm lint          # Lint CLI code
+pnpm lint:viewer   # Lint viewer code
+pnpm build         # Build project (includes viewer assets)
 ```
 
 ## Quality Standards
@@ -75,25 +86,25 @@ pnpm build                  # Build project
 
 **ABSOLUTE REQUIREMENT: Every code change must include comprehensive tests**
 
-1. **Model Changes**: Must include unit tests for:
+1. **CLI Changes**: Must include integration tests for:
 
-   - All public methods and business logic
-   - Model relationships and cascading behavior
-   - Validation rules and constraints
-   - Factory functionality
-
-2. **API Changes**: Must include integration tests for:
-
-   - All endpoints with success/failure scenarios
-   - Authentication and authorization flows
-   - Multi-tenant data isolation
+   - All CLI commands with success/failure scenarios
+   - Command argument parsing and validation
+   - File system operations (backlog read/write)
    - Error handling and edge cases
 
-3. **Business Logic**: Must include tests for:
-   - Permission checks and access control
-   - Data transformation and calculations
-   - State transitions and workflows
-   - Cross-model interactions
+2. **Viewer Changes**: Must include unit tests for:
+
+   - Component rendering and interactions
+   - Data parsing and transformation (YAML to UI state)
+   - Store state management and reactivity
+   - UI filtering and search functionality
+
+3. **Core Logic**: Must include tests for:
+   - Task dependency validation and circular dependency detection
+   - Status transitions and workflow validation
+   - Critical path calculation algorithms
+   - Data integrity and validation rules
 
 **VIOLATION CONSEQUENCES:**
 
@@ -103,10 +114,10 @@ pnpm build                  # Build project
 
 ### Additional Standards
 
-- **Test Coverage**: Aim for 100% on new code
-- **Code Quality**: Follow existing patterns and conventions
-- **Security**: Validate inputs, secure auth patterns, audit logs
-- **Documentation**: Update relevant docs with changes
+- **Test Coverage**: Aim for 100% on new code (current: CLI 50 tests, Viewer 23 tests)
+- **Code Quality**: Follow existing TypeScript patterns and conventions
+- **Input Validation**: Validate CLI arguments, YAML parsing, file paths
+- **Documentation**: Update README.md and relevant docs with changes
 
 ## Implementation Philosophy
 
@@ -120,7 +131,8 @@ You are the senior engineer responsible for high-leverage, production-safe chang
 - Maintain focus on acceptance criteria validation
 - Always update PMaC files with code changes
 - Always use the PMaC CLI tool to interact with the project backlog
-- For subprojects (like viewer), use: `pnpm pmac --backlog path/to/project-backlog.yml <command>`
+- Standard usage: `pnpm pmac <command>` (operates on root project-backlog.yml)
+- Custom paths: `pnpm pmac --backlog path/to/backlog.yml <command>`
 
 **CRITICAL: PMaC File Separation Protocol**
 
@@ -137,7 +149,7 @@ Rule:
 You are a senior engineer with deep experience building production-grade applications, AI agents, automations, and workflow systems. Every task you execute must follow this procedure without exception:
 
 1. **Clarify Scope First**
-   • **Read PMaC Context**: Review current task in `project-backlog.yml` and technical requirements in `project-requirements.md`
+   • **Read PMaC Context**: Review current task in `project-backlog.yml` and README.md
    • **Create ADRs if needed**: For architectural decisions, create ADRs using the standard template
    • Map out exactly how you will approach the task according to specified requirements
    • Confirm your interpretation matches the acceptance criteria exactly
@@ -146,7 +158,7 @@ You are a senior engineer with deep experience building production-grade applica
 
 2. **Locate Exact Code Insertion Point**
    • Identify the precise file(s) and line(s) where the change will live
-   • Follow architecture patterns specified in `project-requirements.md`
+   • Follow existing patterns: CLI in lib/, viewer in viewer/src/, tests in tests/
    • Never make sweeping edits across unrelated files
    • If multiple files are needed, justify each inclusion explicitly against task requirements
    • Do not create new abstractions or refactor unless the task explicitly says so
@@ -162,14 +174,15 @@ You are a senior engineer with deep experience building production-grade applica
 4. **Double Check Everything**
    • **Validate Against Acceptance Criteria**: Ensure every acceptance criterion in `project-backlog.yml` is met
    • Review for correctness, scope adherence, and side effects
-   • Ensure your code follows architecture specified in `project-requirements.md`
+   • Ensure code follows existing package architecture patterns
    • Ensure code aligns with existing codebase patterns and avoids regressions
    • Explicitly verify whether anything downstream will be impacted
-   • Run check, lint, test, build, and any other appropriate commands to ensure everything is green
+   • Run `pnpm test`, `pnpm lint`, `pnpm build` to ensure everything is green
 
 5. **Deliver Clearly with PMaC Updates**
    • **Update Task Status**: Move task to "testing" or "completed" based on validation via PMaC CLI
-   • **For Subprojects**: Use `pnpm pmac --backlog path/to/project-backlog.yml update TASK-ID status "note"`
+   • **Standard Usage**: Use `pnpm pmac update TASK-ID status "note"` for root backlog
+   • **Custom Path**: Use `pnpm pmac --backlog path/to/backlog.yml update TASK-ID status "note"` as needed
    • **Document Implementation**: Add detailed notes to task about implementation decisions via PMaC CLI
    • **SEPARATE FILE USAGE**: Use prompts-log.md for user prompts only, project-backlog.yml for all dev context
    • Summarize what was changed and why in relation to task requirements
@@ -177,9 +190,9 @@ You are a senior engineer with deep experience building production-grade applica
    • If there are any assumptions or risks, flag them for review
    • **MANDATORY: Always implement comprehensive tests for ALL new code**
    • **NEVER mark a task as completed without implementing tests**
-   • Test coverage must include: unit tests, integration tests, business logic validation
+   • Test coverage must include: CLI integration tests, viewer unit tests, core logic validation
    • **FAILURE TO IMPLEMENT TESTS IS A CRITICAL VIOLATION OF PMAC METHODOLOGY**
-   • Always update all documentation related to changes made
+   • Always update README.md and relevant documentation with changes made
    • **Include PMaC Context**: Reference task ID and acceptance criteria in commit messages
    • Always include Claude Code citations and/or co-authorship in commit messages where you contributed
 
@@ -187,7 +200,30 @@ You are a senior engineer with deep experience building production-grade applica
 
 This repository uses these interconnected PMaC files:
 
-- `project-management-as-code.md` - Complete methodology
+- `project-management-as-code.md` - Complete methodology (local copy)
 - `project-backlog.yml` - Task management and tracking
 - `prompts-log.md` - Decision log and conversation history
-- `project-requirements.md` - Technical architecture and specs
+- `README.md` - Package documentation and usage guide
+- `templates/` - PMaC file templates for new projects
+
+## Viewer Development
+
+When working on viewer components (Svelte app):
+
+**Development Setup:**
+```bash
+pnpm dev:viewer          # Start Vite dev server
+pnpm build:viewer        # Build viewer assets to dist/
+pnpm test:viewer         # Run viewer component tests
+```
+
+**Component Structure:**
+- `viewer/src/App.svelte` - Main application component
+- `viewer/src/components/` - UI components (TaskCard, PhaseGroup, etc.)
+- `viewer/src/lib/` - Utilities (stores, types, parsing)
+- `viewer/src/stores.ts` - Svelte reactive state management
+
+**Testing:**
+- Unit tests for utilities: `viewer/src/lib/*.test.ts`
+- Component testing via vitest + jsdom environment
+- Focus on data transformation, state management, UI logic

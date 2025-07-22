@@ -113,14 +113,8 @@ Launch a web-based viewer for visual project management:
 # Start viewer for current directory
 pmac viewer
 
-# Viewer with custom backlog path
-pmac viewer --backlog path/to/project-backlog.yml
-
-# Development mode with live reload
-pmac viewer --dev
-
-# Build static version
-pmac viewer --build
+# Viewer with custom backlog path (global flag)
+pmac --backlog path/to/project-backlog.yml viewer
 ```
 
 ### Viewer Features

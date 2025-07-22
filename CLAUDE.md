@@ -161,6 +161,13 @@ You are the senior engineer responsible for high-leverage, production-safe chang
 - **Asset Pre-building**: Pre-build viewer assets during package build, not at runtime
 - **Package Testing**: Always test with `npm pack` and local installation before publishing
 
+**Command Line Tool Restrictions**
+
+- **NEVER use `timeout` command**: Does not exist on macOS by default
+- **Alternative for process timeouts**: Use Node.js child_process options like `timeout` parameter in execSync
+- **Alternative for server testing**: Use curl with `--max-time` flag or Node.js fetch with AbortController
+- **Process management**: Use built-in Node.js process signals and timers instead of shell timeout
+
 ## Senior Engineer Task Execution Rule
 
 Applies to: All Tasks

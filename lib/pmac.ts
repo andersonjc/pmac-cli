@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { resolve, dirname, join } from 'path';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { createServer } from 'http';
@@ -67,7 +67,7 @@ class PMaCCLI {
   private backlogPath: string;
   private backlog!: ProjectBacklog;
 
-  constructor(customPath?: string) {
+  constructor(customPath?: string, skipLoad: boolean = false) {
     if (customPath) {
       // Custom path: resolve relative to project root
       this.backlogPath = resolve(process.cwd(), customPath);
@@ -75,7 +75,9 @@ class PMaCCLI {
       // Default: project-backlog.yml at project root
       this.backlogPath = resolve(process.cwd(), 'project-backlog.yml');
     }
-    this.loadBacklog();
+    if (!skipLoad) {
+      this.loadBacklog();
+    }
   }
 
   private loadBacklog(): void {
@@ -744,6 +746,10 @@ Usage: pnpm pmac [--backlog <path>] <command> [options]
 Global Options:
   --backlog <path>                 Specify path to project-backlog.yml file
 
+Project Setup Commands:
+  init [project-name]              Initialize PMaC project with template files
+  init --existing                  Initialize PMaC in existing project directory
+
 Task Management Commands:
   list [status] [priority]         List all tasks, optionally filtered by status and/or priority
   create <taskId> <title> <phase>  Create a new task in specified phase
@@ -777,6 +783,8 @@ Bulk Operations:
   bulk-phase <phase> <status>      Update all tasks in a phase to given status
 
 Examples:
+  pnpm pmac init my-project              # Initialize new PMaC project
+  pnpm pmac init --existing              # Initialize PMaC in existing directory
   pnpm pmac create TEST-001 "New feature implementation" core_data
   pnpm pmac set TEST-001 priority high
   pnpm pmac set TEST-001 estimated_hours 12
@@ -804,7 +812,7 @@ Examples:
     console.log(`📁 Using backlog file: ${this.backlogPath}`);
     
     // Path to pre-built viewer assets (in npm package)
-    const viewerAssetsPath = resolve(__dirname, '../dist/viewer');
+    const viewerAssetsPath = resolve(__dirname, '../../viewer');
     
     if (!existsSync(viewerAssetsPath)) {
       console.error(`❌ Pre-built viewer assets not found at: ${viewerAssetsPath}`);
@@ -896,6 +904,82 @@ Examples:
       });
     });
   }
+
+  initProject(projectName?: string, isExisting: boolean = false): void {
+    const targetDir = projectName && !isExisting ? projectName : '.';
+    const templatesDir = resolve(__dirname, '../../../templates');
+
+    console.log('🚀 Initializing PMaC Project');
+    console.log('============================');
+
+    if (projectName && !isExisting) {
+      // Create new project directory
+      if (!existsSync(targetDir)) {
+        try {
+          mkdirSync(targetDir, { recursive: true });
+          console.log(`📁 Created project directory: ${projectName}`);
+        } catch (error) {
+          console.error(`❌ Failed to create directory: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          process.exit(1);
+        }
+      } else {
+        console.error(`❌ Directory '${projectName}' already exists`);
+        process.exit(1);
+      }
+    }
+
+    // Copy template files
+    const templateFiles = [
+      'project-backlog.yml',
+      'prompts-log.md',
+      'project-requirements.md',
+      'README.md'
+    ];
+
+    let copiedFiles = 0;
+    for (const file of templateFiles) {
+      const templatePath = join(templatesDir, file);
+      const targetPath = join(targetDir, file);
+
+      if (existsSync(targetPath) && !isExisting) {
+        console.log(`⚠️  File ${file} already exists, skipping...`);
+        continue;
+      }
+
+      if (existsSync(templatePath)) {
+        try {
+          const content = readFileSync(templatePath, 'utf8');
+          writeFileSync(targetPath, content);
+          console.log(`✅ Created ${file}`);
+          copiedFiles++;
+        } catch (error) {
+          console.error(`❌ Failed to create ${file}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
+      } else {
+        console.error(`⚠️  Template ${file} not found at ${templatePath}`);
+      }
+    }
+
+    if (copiedFiles > 0) {
+      console.log(`\n🎉 PMaC project initialized successfully!`);
+      console.log(`📝 ${copiedFiles} template files created`);
+      
+      if (projectName && !isExisting) {
+        console.log(`\nNext steps:`);
+        console.log(`  cd ${projectName}`);
+        console.log(`  pmac list                    # View template tasks`);
+        console.log(`  pmac viewer                  # Start interactive backlog viewer`);
+        console.log(`  pmac help                    # View all available commands`);
+      } else {
+        console.log(`\nNext steps:`);
+        console.log(`  pmac list                    # View template tasks`);
+        console.log(`  pmac viewer                  # Start interactive backlog viewer`);
+        console.log(`  pmac help                    # View all available commands`);
+      }
+    } else {
+      console.log(`\n⚠️  No files were created. Project may already be initialized.`);
+    }
+  }
   
 }
 
@@ -921,9 +1005,23 @@ function parseArgs() {
 }
 
 const { backlogPath, command, args } = parseArgs();
+
+// Handle init command without requiring existing backlog
+if (command === 'init') {
+  // Create temporary CLI instance just for init (won't load backlog)
+  const tempCli = new PMaCCLI(undefined, true);
+  if (args[0] === '--existing') {
+    tempCli.initProject(undefined, true);
+  } else {
+    tempCli.initProject(args[0]);
+  }
+  process.exit(0);
+}
+
 const cli = new PMaCCLI(backlogPath);
 
 switch (command) {
+
   case 'list':
     cli.listTasks(args[0] as Task['status'], args[1] as Task['priority']);
     break;

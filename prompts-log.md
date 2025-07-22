@@ -6,51 +6,6 @@ _Complete conversation history for AI-assisted development of PMaC Backlog Viewe
 
 ---
 
-## 12/22/2024 21:03:21 - User
-
-Evaluate the staged changes and commit with a complete and concise summary. Then fully build, install, and test the package locally. Note: you often try to use the `timeout` command, which doesn't exist. Either install it or make a note to not use it again and what to use instead.
-
-## 12/22/2024 21:03:47 - User  
-
-[Request interrupted by user for tool use]Update CLAUDE.md with this directive about `timeout`, then proceed
-
-## 12/22/2024 21:03:48 - User
-
-Also, log prompts
-
-## 12/22/2024 21:05:49 - User
-
-[Request interrupted by user for tool use]In pmac-test, I cannot start the viewer: ❯ npx pmac viewer             
-🔍 PMaC Backlog Viewer
-======================
-📁 Using backlog file: /Users/andersonjc/Sites/pmac-test/project-backlog.yml
-❌ Pre-built viewer assets not found at: /Users/andersonjc/Sites/pmac-test/node_modules/@pmac/cli/dist/cli/dist/viewer
-This might be a development environment. Run: pnpm build:viewer\
-\
-What should the user be expected to do to run the viewer on their current project's backlog. The viewer application should be pre-built, but the backlog's data won't be baked into the npm package, it'll be coming from the current project's working directory where the package is being installed and run. \
-\
-Also, the project's README includes some commands like `init` and `viewer --dev` or `viewer --build` that don't seem to exist in the CLI tool as coded. Evaluate all the commands available and scrub all project documentation for any references that are erroneous, misleading, or incomplete.
-
-## 12/22/2024 21:07:30 - User
-
-[Request interrupted by user for tool use]Address the need to read the backlog data from the user's working directory, such as ./pmac-test/project-backlog.yml and not from a pre-built asset directory
-
-## 12/22/2024 21:08:16 - User
-
-[Request interrupted by user for tool use]Log prompts, then proceed
-
-## 12/22/2024 21:31:36 - User
-
-The README says:\
-pmac init --existing
-
-# The CLI will create:
-# - project-backlog.yml (task management)
-# - prompts-log.md (decision history)  
-# - CLAUDE.md (AI assistant instructions)\
-\
-Instead, it creates a README.md and not a CLAUDE.md. It should really do both. Update the functionality and the documentation. Log prompts.
-
 ## Project Metadata
 
 - **Project**: PMaC Backlog Viewer
@@ -2237,6 +2192,51 @@ Successfully consolidated three README files into a single comprehensive documen
 - ✅ All CLI commands and file references verified for current structure
 - ✅ Testing standards aligned with CLI/viewer architecture instead of web APIs
 - ✅ Viewer development workflow properly documented
+
+## 2025-07-22 15:30:00 EDT
+
+Evaluate the staged changes and commit with a complete and concise summary. Then fully build, install, and test the package locally. Note: you often try to use the `timeout` command, which doesn't exist. Either install it or make a note to not use it again and what to use instead.
+
+## 2025-07-22 16:03:00 EDT  
+
+[Request interrupted by user for tool use]Update CLAUDE.md with this directive about `timeout`, then proceed
+
+## 2025-07-22 16:03:00 EDT
+
+Also, log prompts
+
+## 2025-07-22 16:05:00 EDT
+
+[Request interrupted by user for tool use]In pmac-test, I cannot start the viewer: ❯ npx pmac viewer             
+🔍 PMaC Backlog Viewer
+======================
+📁 Using backlog file: /Users/andersonjc/Sites/pmac-test/project-backlog.yml
+❌ Pre-built viewer assets not found at: /Users/andersonjc/Sites/pmac-test/node_modules/@pmac/cli/dist/cli/dist/viewer
+This might be a development environment. Run: pnpm build:viewer\
+\
+What should the user be expected to do to run the viewer on their current project's backlog. The viewer application should be pre-built, but the backlog's data won't be baked into the npm package, it'll be coming from the current project's working directory where the package is being installed and run. \
+\
+Also, the project's README includes some commands like `init` and `viewer --dev` or `viewer --build` that don't seem to exist in the CLI tool as coded. Evaluate all the commands available and scrub all project documentation for any references that are erroneous, misleading, or incomplete.
+
+## 2025-07-22 16:07:00 EDT
+
+[Request interrupted by user for tool use]Address the need to read the backlog data from the user's working directory, such as ./pmac-test/project-backlog.yml and not from a pre-built asset directory
+
+## 2025-07-22 16:08:00 EDT
+
+[Request interrupted by user for tool use]Log prompts, then proceed
+
+## 2025-07-22 16:31:00 EDT
+
+The README says:\
+pmac init --existing
+
+# The CLI will create:
+# - project-backlog.yml (task management)
+# - prompts-log.md (decision history)  
+# - CLAUDE.md (AI assistant instructions)\
+\
+Instead, it creates a README.md and not a CLAUDE.md. It should really do both. Update the functionality and the documentation. Log prompts.
 
 ---
 

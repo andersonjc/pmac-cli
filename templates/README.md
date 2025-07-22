@@ -52,19 +52,19 @@ This project includes a CLI tool for managing PMaC workflows:
 
 ```bash
 # View current tasks
-pnpm pmac list
+pmac list
 
 # Update task status
-pnpm pmac update TASK-001 in_progress "Starting implementation"
+pmac update TASK-001 in_progress "Starting implementation"
 
 # View critical path
-pnpm pmac critical-path
+pmac critical-path
 
 # Validate dependencies
-pnpm pmac validate
+pmac validate
 
 # See all available commands
-pnpm pmac help
+pmac help
 ```
 
 ## Architecture Overview
@@ -103,8 +103,8 @@ pnpm format       # Format code
 pnpm typecheck    # Type checking (if using TypeScript)
 
 # PMaC Management
-pnpm pmac list    # View tasks
-pnpm pmac help    # PMaC CLI help
+pmac list    # View tasks
+pmac help    # PMaC CLI help
 ```
 
 ### Testing
@@ -133,9 +133,6 @@ pnpm test:coverage
 ├── prompts-log.md                   # Decision log
 ├── CLAUDE.md                        # AI instructions
 ├── [project]-requirements.md        # Technical requirements
-├── tools/
-│   ├── pmac.ts                      # PMaC CLI tool
-│   └── pmac.test.ts                 # CLI tests
 ├── [src/app/lib/etc.]/              # Application code
 ├── tests/                           # Test files
 ├── docs/                            # Additional documentation

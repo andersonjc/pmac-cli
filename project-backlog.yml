@@ -1,12 +1,12 @@
 metadata:
   project: PMaC Backlog Viewer
-  version: 1.0.0-mvp
-  last_updated: 2025-07-14
+  version: 1.0.0
+  last_updated: 2025-07-22
   current_sprint: foundation
-  pmac_methodology: ../../project-management-as-code.md
+  pmac_methodology: project-management-as-code.md
   technical_requirements: project-requirements.md
   decision_log: prompts-log.md
-  ai_instructions: ../../CLAUDE.md
+  ai_instructions: CLAUDE.md
 phases:
   foundation:
     title: Foundation & Setup
@@ -623,7 +623,7 @@ phases:
             troubleshooting, and developer guide complete"
       - id: VIEWER-020
         title: Package and Distribution Setup
-        status: ready
+        status: completed
         priority: low
         estimated_hours: 3
         actual_hours: 0
@@ -645,6 +645,7 @@ phases:
         blocks: []
         notes:
           - "2025-07-17 11:28:29 a.m. EDT: Deprioritized for MVP release - moved to low priority"
+          - "2025-07-22 17:04:29 a.m. EDT: Completed as part of @pmac/cli NPM package"
 epic_summary:
   total_estimated_hours: 94
   estimated_duration: 4-5 weeks

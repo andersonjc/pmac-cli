@@ -811,8 +811,10 @@ Examples:
     
     console.log(`📁 Using backlog file: ${this.backlogPath}`);
     
-    // Path to pre-built viewer assets (in npm package)
-    const viewerAssetsPath = resolve(__dirname, '../../viewer');
+    // Path to pre-built viewer assets
+    // In development: from bin/ or lib/ to dist/viewer/
+    // In production: from dist/cli/lib/ to dist/viewer/
+    const viewerAssetsPath = resolve(__dirname, '../dist/viewer');
     
     if (!existsSync(viewerAssetsPath)) {
       console.error(`❌ Pre-built viewer assets not found at: ${viewerAssetsPath}`);

@@ -18,7 +18,7 @@ export const DEFAULT_CONFIG: ViewerConfig = {
   backlogPath: './project-backlog.yml',
   refreshInterval: 5000, // 5 seconds
   enableAutoRefresh: true,
-  fallbackToSample: true,
+  fallbackToSample: false,
 };
 
 /**
@@ -119,8 +119,8 @@ export const DEV_CONFIG = {
   enableAutoRefresh: true,
   refreshInterval: 2000, // 2 seconds for development
 
-  // Always fallback to sample data in development
-  fallbackToSample: true,
+  // No fallback to sample data
+  fallbackToSample: false,
 };
 
 /**

@@ -4,7 +4,6 @@
   export let warnings: string[] = [];
   export let showDetails: boolean = false;
   export let onRetry: (() => void) | undefined = undefined;
-  export let onUseSample: (() => void) | undefined = undefined;
 
   // Parse error message to extract different types of errors
   $: errorType = getErrorType(error);
@@ -47,18 +46,29 @@
       suggestions.push('Check your YAML indentation (use spaces, not tabs)');
       suggestions.push('Ensure all strings with special characters are quoted');
       suggestions.push('Verify that colons are followed by a space');
+      suggestions.push('Use "pmac validate" to check your project-backlog.yml file');
     } else if (type === 'validation') {
       suggestions.push('Check that all required fields are present');
       suggestions.push('Verify your task IDs are unique');
       suggestions.push('Ensure task dependencies reference existing tasks');
+      suggestions.push('Run "pmac validate" to check for issues');
     } else if (type === 'network') {
       suggestions.push('Check your internet connection');
       suggestions.push('Verify the backlog file path is correct');
       suggestions.push('Try refreshing the page');
+      suggestions.push('Use "pmac --backlog path/to/file.yml viewer" to specify custom path');
     } else if (type === 'file') {
-      suggestions.push('Check that the backlog file exists');
-      suggestions.push('Verify file permissions');
-      suggestions.push('Ensure the file path is correct');
+      suggestions.push('Run "pmac init --existing" to create project-backlog.yml in current directory');
+      suggestions.push('Run "pmac init project-name" to create a new PMaC project');
+      suggestions.push('Ensure you\'re in a directory with a project-backlog.yml file');
+      suggestions.push('Use "pmac --backlog path/to/file.yml viewer" to specify custom backlog path');
+      suggestions.push('Check that the backlog file exists and has proper read permissions');
+    } else {
+      // General PMaC setup guidance for unknown errors
+      suggestions.push('Run "pmac init --existing" to initialize PMaC in current directory');
+      suggestions.push('Ensure you have a project-backlog.yml file in your project directory');
+      suggestions.push('Use "pmac help" to see all available commands');
+      suggestions.push('Use "pmac --backlog custom/path.yml viewer" for custom backlog locations');
     }
 
     return suggestions;
@@ -154,14 +164,6 @@
           </button>
         {/if}
         
-        {#if onUseSample}
-          <button
-            class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md text-sm font-medium transition-colors"
-            on:click={onUseSample}
-          >
-            📋 Use Sample Data
-          </button>
-        {/if}
         
         <button
           class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-md text-sm font-medium transition-colors"

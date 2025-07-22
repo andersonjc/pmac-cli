@@ -118,12 +118,6 @@
       }
       
       setError(errorMessage);
-
-      // Create sample backlog as fallback if enabled
-      if (config.fallbackToSample) {
-        const sampleBacklog = createSampleBacklog();
-        loadBacklog(sampleBacklog);
-      }
     } finally {
       if (!isRefresh) {
         setLoading(false);
@@ -158,122 +152,6 @@
     }
   });
 
-  function createSampleBacklog(): ProjectBacklog {
-    return {
-      metadata: {
-        project: 'PMaC Backlog Viewer Demo',
-        version: '1.0.0-demo',
-        last_updated: '2025-01-15',
-        current_sprint: 'foundation',
-        pmac_methodology: 'project-management-as-code.md',
-        technical_requirements: 'project-requirements.md',
-        decision_log: 'prompts-log.md',
-        ai_instructions: 'CLAUDE.md',
-      },
-      phases: {
-        foundation: {
-          title: 'Foundation & Setup',
-          description: 'Initial project setup and configuration',
-          status: 'in_progress',
-          estimated_duration: '1 week',
-          tasks: [
-            {
-              id: 'DEMO-001',
-              title: 'Project Structure Setup',
-              status: 'completed',
-              priority: 'critical',
-              estimated_hours: 4,
-              actual_hours: 3,
-              assignee: 'claude-code',
-              requirements: [
-                'Create directory structure',
-                'Set up build configuration',
-                'Initialize TypeScript',
-              ],
-              acceptance_criteria: [
-                'All directories created',
-                'Build passes successfully',
-                'TypeScript compiles without errors',
-              ],
-              dependencies: [],
-              blocks: ['DEMO-002'],
-              notes: ['2025-01-15: Completed successfully with dark mode theme'],
-            },
-            {
-              id: 'DEMO-002',
-              title: 'YAML Parser Implementation',
-              status: 'completed',
-              priority: 'high',
-              estimated_hours: 6,
-              actual_hours: 5,
-              assignee: 'claude-code',
-              requirements: ['Parse YAML files', 'Validate schema', 'Handle errors gracefully'],
-              acceptance_criteria: [
-                'Parses valid YAML successfully',
-                'Validates against schema',
-                'Provides user-friendly error messages',
-              ],
-              dependencies: ['DEMO-001'],
-              blocks: ['DEMO-003'],
-              notes: ['2025-01-15: Comprehensive parser with validation complete'],
-            },
-            {
-              id: 'DEMO-003',
-              title: 'UI Components Development',
-              status: 'in_progress',
-              priority: 'high',
-              estimated_hours: 8,
-              actual_hours: 2,
-              assignee: 'claude-code',
-              requirements: ['Create task cards', 'Build phase groups', 'Add dark mode styling'],
-              acceptance_criteria: [
-                'Task cards display correctly',
-                'Phase groups are collapsible',
-                'Dark mode theme is consistent',
-              ],
-              dependencies: ['DEMO-002'],
-              blocks: [],
-              notes: ['2025-01-15: Started development with basic layout'],
-            },
-          ],
-        },
-      },
-      epic_summary: {
-        total_estimated_hours: 18,
-        estimated_duration: '1 week',
-        critical_path: ['DEMO-001 → DEMO-002 → DEMO-003'],
-        success_criteria: {
-          technical: [
-            'Dark mode Svelte application',
-            'YAML parsing with validation',
-            'TypeScript type safety',
-          ],
-          business: ['Intuitive PMaC backlog visualization', 'Professional developer interface'],
-          pmac_methodology: ['Complete audit trail', 'Traceable requirements'],
-        },
-      },
-      risks: {
-        high: [
-          {
-            risk: 'Complex dependency visualization',
-            mitigation: 'Start with simple implementation',
-          },
-        ],
-        medium: [
-          {
-            risk: 'Mobile responsiveness',
-            mitigation: 'Progressive enhancement approach',
-          },
-        ],
-        low: [
-          {
-            risk: 'Bundle size optimization',
-            mitigation: 'Use tree shaking and code splitting',
-          },
-        ],
-      },
-    };
-  }
 
   function runParserTests() {
     testResults = '';
@@ -579,11 +457,6 @@ phases:
             {error} 
             context="Loading backlog"
             onRetry={() => loadBacklogData()}
-            onUseSample={() => {
-              const sampleBacklog = createSampleBacklog();
-              loadBacklog(sampleBacklog);
-              setError(null);
-            }}
           />
         {:else if backlog}
           <!-- Backlog Overview -->

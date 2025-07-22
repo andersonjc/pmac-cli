@@ -39,6 +39,18 @@ Also, the project's README includes some commands like `init` and `viewer --dev`
 
 [Request interrupted by user for tool use]Log prompts, then proceed
 
+## 12/22/2024 21:31:36 - User
+
+The README says:\
+pmac init --existing
+
+# The CLI will create:
+# - project-backlog.yml (task management)
+# - prompts-log.md (decision history)  
+# - CLAUDE.md (AI assistant instructions)\
+\
+Instead, it creates a README.md and not a CLAUDE.md. It should really do both. Update the functionality and the documentation. Log prompts.
+
 ## Project Metadata
 
 - **Project**: PMaC Backlog Viewer

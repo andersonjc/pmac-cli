@@ -933,7 +933,8 @@ Examples:
       'project-backlog.yml',
       'prompts-log.md',
       'project-requirements.md',
-      'README.md'
+      'README.md',
+      'CLAUDE.md'
     ];
 
     let copiedFiles = 0;

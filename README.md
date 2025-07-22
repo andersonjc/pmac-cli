@@ -57,6 +57,8 @@ pmac init --existing
 # The CLI will create:
 # - project-backlog.yml (task management)
 # - prompts-log.md (decision history)  
+# - project-requirements.md (technical specs)
+# - README.md (project documentation)
 # - CLAUDE.md (AI assistant instructions)
 ```
 

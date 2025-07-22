@@ -218,25 +218,6 @@ phases:
         notes: []
 ```
 
-### CLAUDE.md (AI Instructions)
-```markdown
-# AI Assistant Instructions
-
-This project follows PMaC methodology. Before any work:
-
-1. Read current task from project-backlog.yml
-2. Update task status to "in_progress" 
-3. Follow exact requirements and acceptance criteria
-4. Log all prompts and decisions in prompts-log.md
-5. Update task notes with implementation decisions
-6. Validate ALL acceptance criteria before marking complete
-
-## Commands
-- Update tasks: `pmac update TASK-ID status "note"`
-- View dependencies: `pmac critical-path`
-- Validate project: `pmac validate`
-```
-
 ## Integration with AI Development
 
 PMaC is designed specifically for AI-assisted development:

@@ -28,6 +28,9 @@
   "bin": {
     "pmac": "./dist/cli/bin/pmac.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "pmac": "tsx bin/pmac.ts",
     "build": "pnpm build:cli && pnpm build:viewer && pnpm test:cli",

@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dark mode base styles */
+@layer base {
+  html {
+    @apply bg-gray-900 text-gray-100;
+  }
+  
+  body {
+    @apply bg-pmac-bg-primary text-pmac-text-primary font-sans;
+  }
+}
+
+/* Component styles following dark mode design system */
+@layer components {
+  /* Status indicators */
+  .status-completed {
+    @apply bg-green-600/20 text-green-400 border-green-500/30;
+  }
+  
+  .status-in-progress {
+    @apply bg-blue-600/20 text-blue-400 border-blue-500/30;
+  }
+  
+  .status-pending {
+    @apply bg-gray-600/20 text-gray-400 border-gray-500/30;
+  }
+  
+  .status-blocked {
+    @apply bg-red-600/20 text-red-400 border-red-500/30;
+  }
+
+  /* Priority indicators */
+  .priority-critical {
+    @apply bg-red-500/10 text-red-300 border-red-500/20;
+  }
+  
+  .priority-high {
+    @apply bg-orange-500/10 text-orange-300 border-orange-500/20;
+  }
+  
+  .priority-medium {
+    @apply bg-yellow-500/10 text-yellow-300 border-yellow-500/20;
+  }
+  
+  .priority-low {
+    @apply bg-green-500/10 text-green-300 border-green-500/20;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-pmac-bg-secondary border border-gray-700 rounded-lg shadow-dark;
+  }
+  
+  .card-hover {
+    @apply hover:bg-pmac-bg-tertiary hover:border-gray-600 transition-colors duration-200;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-pmac-bg-tertiary hover:bg-gray-600 text-pmac-text-primary px-4 py-2 rounded-md transition-colors duration-200;
+  }
+
+  /* Form styles */
+  .input {
+    @apply bg-pmac-bg-secondary border border-gray-600 text-pmac-text-primary px-3 py-2 rounded-md focus:border-blue-500 focus:outline-none;
+  }
+
+  /* Modal styles */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm;
+  }
+  
+  .modal-content {
+    @apply bg-pmac-bg-secondary border border-gray-700 rounded-lg shadow-dark-lg;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgb(75 85 99);
+    border-top: 4px solid rgb(59 130 246);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+
+/* Utility classes for dark mode */
+@layer utilities {
+  .text-shadow-dark {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  .scrollbar-dark {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(55 65 81) rgb(31 41 55);
+  }
+  
+  .scrollbar-dark::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .scrollbar-dark::-webkit-scrollbar-track {
+    @apply bg-pmac-bg-secondary;
+  }
+  
+  .scrollbar-dark::-webkit-scrollbar-thumb {
+    @apply bg-pmac-bg-tertiary rounded-full;
+  }
+  
+  .scrollbar-dark::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-600;
+  }
+}

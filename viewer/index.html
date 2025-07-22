@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PMaC Backlog Viewer</title>
+    <meta name="description" content="Visualization tool for PMaC project backlogs" />
+    <style>
+      /* Prevent flash of unstyled content */
+      body {
+        background-color: rgb(17 24 39);
+        color: rgb(243 244 246);
+        font-family: system-ui, -apple-system, sans-serif;
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      /* Ensure app container doesn't overflow */
+      #app {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      
+      /* Force all elements to stay within viewport */
+      * {
+        box-sizing: border-box;
+      }
+      
+      /* Prevent horizontal scrolling */
+      html {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      /* Loading indicator */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: rgb(17 24 39);
+      }
+      
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgb(55 65 81);
+        border-top: 3px solid rgb(59 130 246);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

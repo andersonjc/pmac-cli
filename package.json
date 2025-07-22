@@ -1,5 +1,5 @@
 {
-  "name": "@pmac/cli",
+  "name": "pmac-cli",
   "version": "1.0.0",
   "type": "module",
   "description": "CLI tools for Project Management as Code (PMaC) - Standalone npm package with interactive backlog viewer",
@@ -26,10 +26,7 @@
   "main": "dist/cli/lib/pmac.js",
   "types": "dist/cli/lib/pmac.d.ts",
   "bin": {
-    "pmac": "./dist/cli/bin/pmac.js"
-  },
-  "publishConfig": {
-    "access": "public"
+    "pmac": "dist/cli/bin/pmac.js"
   },
   "scripts": {
     "pmac": "tsx bin/pmac.ts",
@@ -87,5 +84,9 @@
     "README.md",
     "LICENSE",
     "project-management-as-code.md"
-  ]
+  ],
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  }
 }

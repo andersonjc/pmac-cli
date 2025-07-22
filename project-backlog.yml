@@ -645,7 +645,7 @@ phases:
         blocks: []
         notes:
           - "2025-07-17 11:28:29 a.m. EDT: Deprioritized for MVP release - moved to low priority"
-          - "2025-07-22 17:04:29 a.m. EDT: Completed as part of @pmac/cli NPM package"
+          - "2025-07-22 17:04:29 a.m. EDT: Completed as part of pmac-cli NPM package"
 epic_summary:
   total_estimated_hours: 94
   estimated_duration: 4-5 weeks

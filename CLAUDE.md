@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Context
 
-This repository contains **@pmac/cli** - a standalone npm package providing CLI tools and interactive viewer for implementing Project Management as Code (PMaC) methodology in AI-assisted development.
+This repository contains **pmac-cli** - a standalone npm package providing CLI tools and interactive viewer for implementing Project Management as Code (PMaC) methodology in AI-assisted development.
 
 **Package Structure:**
 - **bin/**: CLI entry points (`pmac` command)

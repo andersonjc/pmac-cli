@@ -1,14 +1,14 @@
-# @pmac/cli - Project Management as Code Tools
+# pmac-cli - Project Management as Code Tools
 
 A comprehensive CLI toolkit and interactive viewer for implementing Project Management as Code (PMaC) methodology in AI-assisted development workflows.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://typescriptlang.org/)
-[![NPM Package](https://img.shields.io/badge/npm-%40pmac%2Fcli-blue)](https://www.npmjs.com/package/@pmac/cli)
+[![NPM Package](https://img.shields.io/badge/npm-%40pmac%2Fcli-blue)](https://www.npmjs.com/package/pmac-cli)
 
 ## Overview
 
-**@pmac/cli** provides tools that support the [Project Management as Code (PMaC) methodology](https://github.com/andersonjc/pmac/blob/master/project-management-as-code.md) - a file-based approach to managing AI-assisted software development that keeps all project management data version-controlled alongside your codebase.
+**pmac-cli** provides tools that support the [Project Management as Code (PMaC) methodology](https://github.com/andersonjc/pmac/blob/master/project-management-as-code.md) - a file-based approach to managing AI-assisted software development that keeps all project management data version-controlled alongside your codebase.
 
 ### Why PMaC?
 
@@ -25,10 +25,10 @@ Traditional project management tools store data in proprietary systems that don'
 
 ```bash
 # Install globally (recommended)
-npm install -g @pmac/cli
+npm install -g pmac-cli
 
 # Or install as dev dependency
-npm install --save-dev @pmac/cli
+npm install --save-dev pmac-cli
 ```
 
 ## Quick Start
@@ -141,7 +141,7 @@ your-project/
 ├── CLAUDE.md               # AI assistant instructions
 ├── project-requirements.md # Technical architecture
 ├── src/                    # Your application code
-└── package.json            # Dependencies including @pmac/cli
+└── package.json            # Dependencies including pmac-cli
 ```
 
 ### Core PMaC Files
@@ -352,8 +352,8 @@ MIT License - See [LICENSE](LICENSE) file for details.
 - **📖 Complete Methodology**: [PMaC Documentation](https://github.com/andersonjc/pmac/blob/master/project-management-as-code.md)
 - **🐛 Issues**: [GitHub Issues](https://github.com/andersonjc/pmac-cli/issues)
 - **💬 Discussions**: [GitHub Discussions](https://github.com/andersonjc/pmac-cli/discussions)
-- **📦 NPM Package**: [@pmac/cli](https://www.npmjs.com/package/@pmac/cli)
+- **📦 NPM Package**: [pmac-cli](https://www.npmjs.com/package/pmac-cli)
 
 ---
 
-**Ready to revolutionize your AI-assisted development workflow?** Install `@pmac/cli` and experience the power of Project Management as Code. 🚀
+**Ready to revolutionize your AI-assisted development workflow?** Install `pmac-cli` and experience the power of Project Management as Code. 🚀

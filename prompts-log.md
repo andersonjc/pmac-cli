@@ -2020,7 +2020,7 @@ Updated configuration files to use the correct paths after restructuring:
 **Criteria:** Transform from tools/ directory to publishable npm package
 
 **✅ PASSED:**
-- Package.json configured as @pmac/cli with proper bin entry
+- Package.json configured as pmac-cli with proper bin entry
 - Restructured to standard npm layout (bin/, lib/, viewer/, tests/)
 - All paths updated and configurations aligned
 - CLI accessible via `pnpm pmac` command
@@ -2074,7 +2074,7 @@ pnpm pmac help                    # ✅ Shows comprehensive help
 ### ⭐ PRODUCT ASSESSMENT: EXCEEDS EXPECTATIONS
 
 **BUSINESS VALUE DELIVERED:**
-1. **Standalone Distribution:** Package can be published to npm as @pmac/cli
+1. **Standalone Distribution:** Package can be published to npm as pmac-cli
 2. **User Experience:** Simple `pnpm pmac viewer` command launches full-featured UI
 3. **Developer Experience:** Comprehensive testing, linting, and build pipeline
 4. **Maintainability:** Clean architecture with proper separation of concerns
@@ -2135,11 +2135,11 @@ Successfully consolidated three README files into a single comprehensive documen
 3. **Restructured Organization**: Created logical flow covering overview, installation, CLI commands, viewer features, examples, and methodology
 4. **Updated Links**: Referenced GitHub methodology documentation and npm package
 5. **Practical Focus**: Emphasized real-world usage patterns and AI integration
-6. **Brand Consistency**: Positioned as @pmac/cli tools supporting PMaC methodology
+6. **Brand Consistency**: Positioned as pmac-cli tools supporting PMaC methodology
 
 **Key Sections in Consolidated README:**
 - Overview and benefits of PMaC methodology
-- Installation instructions for @pmac/cli package
+- Installation instructions for pmac-cli package
 - Complete CLI command reference with examples
 - Interactive viewer documentation
 - Project structure and file explanations
@@ -2163,12 +2163,12 @@ Successfully consolidated three README files into a single comprehensive documen
 
 > Read the CLAUDE.md and update, making sure all directives are relevant to the project as it now exists. Also, help me decide: should the project-management-as-code.md file be included with this repo, or should it be referenced on github. I like having a local version so that the AI can read it anytime it needs to, but I also want to keep the methodology documentation in one place and up to date with the progress of that project.
 
-**Context:** User requested comprehensive update of CLAUDE.md to reflect current @pmac/cli package structure and decision on whether to include local copy of methodology documentation.
+**Context:** User requested comprehensive update of CLAUDE.md to reflect current pmac-cli package structure and decision on whether to include local copy of methodology documentation.
 
 **Solution Implemented:**
 
 **CLAUDE.md Updates:**
-1. **Updated Project Context**: Added description of @pmac/cli as standalone npm package with package structure overview
+1. **Updated Project Context**: Added description of pmac-cli as standalone npm package with package structure overview
 2. **Fixed File References**: Removed non-existent project-requirements.md references, updated to use README.md
 3. **Updated CLI Examples**: Corrected command syntax to use `pnpm pmac viewer` instead of deprecated patterns
 4. **Removed Irrelevant Sections**: Replaced web API/authentication testing guidance with CLI/viewer-specific testing requirements
@@ -2211,7 +2211,7 @@ Also, log prompts
 🔍 PMaC Backlog Viewer
 ======================
 📁 Using backlog file: /Users/andersonjc/Sites/pmac-test/project-backlog.yml
-❌ Pre-built viewer assets not found at: /Users/andersonjc/Sites/pmac-test/node_modules/@pmac/cli/dist/cli/dist/viewer
+❌ Pre-built viewer assets not found at: /Users/andersonjc/Sites/pmac-test/node_modules/pmac-cli/dist/cli/dist/viewer
 This might be a development environment. Run: pnpm build:viewer\
 \
 What should the user be expected to do to run the viewer on their current project's backlog. The viewer application should be pre-built, but the backlog's data won't be baked into the npm package, it'll be coming from the current project's working directory where the package is being installed and run. \

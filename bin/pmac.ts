@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env node
 
 /**
  * PMaC CLI - Entry Point
@@ -7,4 +7,4 @@
  * Learn more: https://github.com/andersonjc/pmac
  */
 
-import '../lib/pmac.ts';
+import('../lib/pmac.js');

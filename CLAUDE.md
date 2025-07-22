@@ -77,7 +77,9 @@ pnpm test:cli      # Run CLI tests only
 pnpm test:viewer   # Run viewer tests only
 pnpm lint          # Lint CLI code
 pnpm lint:viewer   # Lint viewer code
-pnpm build         # Build project (includes viewer assets)
+pnpm build         # Build project (TypeScript → JavaScript + viewer assets)
+pnpm build:cli     # Build CLI only (TypeScript compilation)
+pnpm build:viewer  # Build viewer assets only
 ```
 
 ## Quality Standards
@@ -136,10 +138,28 @@ You are the senior engineer responsible for high-leverage, production-safe chang
 
 **CRITICAL: PMaC File Separation Protocol**
 
-- **prompts-log.md**: IMMEDIATELY log user prompts verbatim with current local timestamp, before any other operations
+- **prompts-log.md**: IMMEDIATELY log user prompts verbatim with correct, current, localized timestamp, before any other operations
 - **project-backlog.yml**: Use PMaC CLI for implementation notes, milestones, decisions
 - **NO mixing**: Prompts go to prompts-log, dev context goes to backlog notes
-- **Timestamp Format**: Always use `new Date().toLocaleString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short'}).replace(',', '')` for consistency with PMaC CLI
+- **Timestamp Format**: Always use correct local timezone: `new Date().toLocaleString('en-US', {timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false}).replace(',', ' ')`
+
+## Development Environment Guidelines
+
+**CRITICAL: Working Directory Management**
+
+- **NEVER use `cd` commands**: Always use absolute paths for all file operations
+- **Current Working Directory**: You are in `/{path}/{from}/{root}/pmac-cli` - use this as base for all paths
+- **File Operations**: Use full paths like `/{path}/{from}/{root}/pmac-cli/package.json` instead of relative paths
+- **Command Execution**: Run commands with full paths to avoid directory navigation errors
+- **Path Resolution**: When referencing files, always construct full absolute paths
+
+**NPM Package Development Best Practices**
+
+- **TypeScript Compilation**: Use `tsc` or `tsup` to compile TypeScript to JavaScript for distribution
+- **Binary Configuration**: Set proper `bin` field in package.json pointing to compiled `.js` files
+- **Dependencies**: Runtime dependencies in `dependencies`, build tools in `devDependencies`
+- **Asset Pre-building**: Pre-build viewer assets during package build, not at runtime
+- **Package Testing**: Always test with `npm pack` and local installation before publishing
 
 ## Senior Engineer Task Execution Rule
 
@@ -195,6 +215,16 @@ You are a senior engineer with deep experience building production-grade applica
    • Always update README.md and relevant documentation with changes made
    • **Include PMaC Context**: Reference task ID and acceptance criteria in commit messages
    • Always include Claude Code citations and/or co-authorship in commit messages where you contributed
+
+## Tool Usage Guidelines
+
+**TodoWrite Tool Requirements**
+
+- **MANDATORY**: Use TodoWrite tool for ALL complex or multi-step tasks
+- **Task Planning**: Break down complex requests into specific, actionable todos
+- **Progress Tracking**: Mark todos as in_progress when starting, completed when finished
+- **Status Updates**: Update todo status immediately after completing each task
+- **Single Task Focus**: Only have ONE todo in_progress at any time
 
 ## PMaC File References
 

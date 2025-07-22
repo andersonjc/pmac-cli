@@ -3,7 +3,6 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { resolve, dirname, join } from 'path';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
-// import { spawn } from 'child_process'; // Removed - no longer needed in packaged mode
 import { createServer } from 'http';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -34,11 +33,34 @@ interface Phase {
   tasks: Task[];
 }
 
+interface ProjectMetadata {
+  project: string;
+  version: string;
+  description?: string;
+  owner?: string;
+  created?: string;
+  updated?: string;
+}
+
+interface EpicSummary {
+  total_estimated_hours?: number;
+  completed_hours?: number;
+  progress_percentage?: number;
+  critical_path_hours?: number;
+}
+
+interface Risk {
+  description: string;
+  probability: 'low' | 'medium' | 'high';
+  impact: 'low' | 'medium' | 'high';
+  mitigation?: string;
+}
+
 interface ProjectBacklog {
-  metadata: Record<string, any>;
+  metadata: ProjectMetadata;
   phases: Record<string, Phase>;
-  epic_summary?: Record<string, any>;
-  risks?: Record<string, any>;
+  epic_summary?: EpicSummary;
+  risks?: Record<string, Risk>;
 }
 
 class PMaCCLI {
@@ -68,8 +90,8 @@ class PMaCCLI {
       ) {
         console.log(`📁 Using backlog file: ${this.backlogPath}`);
       }
-    } catch (error: any) {
-      if (error.code === 'ENOENT') {
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
         console.error(`
 ❌ PMaC Project Not Initialized
 
@@ -85,7 +107,7 @@ Alternative option:
 
 For more information, see: project-management-as-code.md
 `);
-      } else if (error.name === 'YAMLParseError') {
+      } else if (error instanceof Error && error.name === 'YAMLParseError') {
         console.error(`
 ❌ Invalid YAML Format
 
@@ -99,7 +121,7 @@ Please check the file format and fix any syntax errors.
 ❌ Error Loading Project Backlog
 
 Failed to load 'project-backlog.yml':
-${error.message}
+${error instanceof Error ? error.message : 'Unknown error'}
 
 Please check the file permissions and format.
 `);
@@ -118,7 +140,7 @@ Please check the file permissions and format.
       });
       writeFileSync(this.backlogPath, yamlContent);
     } catch (error) {
-      console.error('Error saving project-backlog.yml:', error);
+      console.error('Error saving project-backlog.yml:', error instanceof Error ? error.message : 'Unknown error');
       process.exit(1);
     }
   }
@@ -448,7 +470,7 @@ Please check the file permissions and format.
     console.log(`   Priority: ${priority}, Estimated hours: ${estimatedHours}`);
   }
 
-  updateTaskAttribute(taskId: string, attribute: keyof Task, value: any): void {
+  updateTaskAttribute(taskId: string, attribute: keyof Task, value: string): void {
     const taskInfo = this.findTask(taskId);
     if (!taskInfo) {
       console.log(`Task ${taskId} not found`);
@@ -467,7 +489,7 @@ Please check the file permissions and format.
           return;
         }
         const oldPriority = task.priority;
-        task.priority = value;
+        task.priority = value as Task['priority'];
         if (!task.notes) task.notes = [];
         task.notes.push(`${timestamp}: Priority changed from ${oldPriority} to ${value}`);
         break;
@@ -548,7 +570,7 @@ Please check the file permissions and format.
       .filter(item => item.length > 0);
   }
 
-  private formatValue(value: any): string {
+  private formatValue(value: string | string[] | number): string {
     if (Array.isArray(value)) {
       return value.join(', ') || 'none';
     }
@@ -798,7 +820,7 @@ Examples:
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
         
-        const filePath = req.url === '/' ? '/index.html' : req.url;
+        const filePath = req.url === '/' ? '/index.html' : (req.url || '/index.html');
         
         // Handle backlog API endpoint
         if (filePath === '/api/backlog') {
@@ -847,7 +869,7 @@ Examples:
         
         res.end(content);
       } catch (error) {
-        console.error('Server error:', error);
+        console.error('Server error:', error instanceof Error ? error.message : 'Unknown error');
         res.statusCode = 500;
         res.end('Internal Server Error');
       }
@@ -873,20 +895,6 @@ Examples:
         process.exit(0);
       });
     });
-  }
-  
-  private findProjectRoot(): string | null {
-    let currentDir = process.cwd();
-    
-    while (currentDir !== '/') {
-      const packageJsonPath = join(currentDir, 'package.json');
-      if (existsSync(packageJsonPath)) {
-        return currentDir;
-      }
-      currentDir = dirname(currentDir);
-    }
-    
-    return null;
   }
   
 }

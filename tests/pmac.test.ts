@@ -79,11 +79,12 @@ const runPMaC = (args: string[]): { stdout: string; stderr: string; exitCode: nu
     const stdout = result;
 
     return { stdout, stderr: '', exitCode: 0 };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const execError = error as { stdout?: Buffer; stderr?: Buffer; message?: string; status?: number };
     return {
-      stdout: error.stdout?.toString() || '',
-      stderr: error.stderr?.toString() || error.message,
-      exitCode: error.status || 1,
+      stdout: execError.stdout?.toString() || '',
+      stderr: execError.stderr?.toString() || execError.message || 'Unknown error',
+      exitCode: execError.status || 1,
     };
   } finally {
     // Always restore original backlog in finally block
@@ -563,11 +564,12 @@ const runPMaCWithCustomPath = (
     );
 
     return { stdout: result, stderr: '', exitCode: 0 };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const execError = error as { stdout?: Buffer; stderr?: Buffer; message?: string; status?: number };
     return {
-      stdout: error.stdout?.toString() || '',
-      stderr: error.stderr?.toString() || error.message,
-      exitCode: error.status || 1,
+      stdout: execError.stdout?.toString() || '',
+      stderr: execError.stderr?.toString() || execError.message || 'Unknown error',
+      exitCode: execError.status || 1,
     };
   }
 };

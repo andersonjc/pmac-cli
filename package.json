@@ -13,7 +13,7 @@
     "svelte",
     "backlog-viewer"
   ],
-  "homepage": "https://github.com/andersonjc/pmac-cli#readme",
+  "homepage": "https://github.com/andersonjc/pmac-cli",
   "bugs": {
     "url": "https://github.com/andersonjc/pmac-cli/issues"
   },

@@ -4,7 +4,7 @@ A comprehensive CLI toolkit and interactive viewer for implementing Project Mana
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://typescriptlang.org/)
-[![NPM Package](https://img.shields.io/badge/npm-%40pmac%2Fcli-blue)](https://www.npmjs.com/package/pmac-cli)
+[![NPM Package](https://img.shields.io/badge/npm-pmac--cli-blue)](https://www.npmjs.com/package/pmac-cli)
 
 ## Overview
 
@@ -351,7 +351,6 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 - **📖 Complete Methodology**: [PMaC Documentation](https://github.com/andersonjc/pmac/blob/master/project-management-as-code.md)
 - **🐛 Issues**: [GitHub Issues](https://github.com/andersonjc/pmac-cli/issues)
-- **💬 Discussions**: [GitHub Discussions](https://github.com/andersonjc/pmac-cli/discussions)
 - **📦 NPM Package**: [pmac-cli](https://www.npmjs.com/package/pmac-cli)
 
 ---

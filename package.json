@@ -1,6 +1,6 @@
 {
   "name": "pmac-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "CLI tools for Project Management as Code (PMaC) - Standalone npm package with interactive backlog viewer",
   "keywords": [

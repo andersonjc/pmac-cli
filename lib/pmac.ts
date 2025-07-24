@@ -775,14 +775,41 @@ Please check the file permissions and format.
     return icons[priority] || '❓';
   }
 
+  private getVersion(): string {
+    let version = 'unknown';
+    try {
+      const packageJsonPath = resolve(__dirname, '../package.json');
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+      version = packageJson.version;
+    } catch {
+      // If we can't read package.json, try from different locations
+      try {
+        const altPackageJsonPath = resolve(__dirname, '../../package.json');
+        const packageJson = JSON.parse(readFileSync(altPackageJsonPath, 'utf8'));
+        version = packageJson.version;
+      } catch {
+        // Fall back to unknown if we can't find it
+      }
+    }
+    return version;
+  }
+
+  showVersion(): void {
+    console.log(this.getVersion());
+  }
+
   showHelp(): void {
+    const version = this.getVersion();
+
     console.log(`
 PMaC CLI - Project Management as Code Tool
+Version: ${version}
 
 Usage: pmac [--backlog <path>] <command> [options]
 
 Global Options:
   --backlog <path>                 Specify path to project-backlog.yml file
+  --version, -v                    Show version number
 
 Project Setup Commands:
   init [project-name]              Initialize PMaC project with template files
@@ -821,6 +848,7 @@ Bulk Operations:
   bulk-phase <phase> <status>      Update all tasks in a phase to given status
 
 Examples:
+  pmac --version                    # Show version information
   pmac init my-project              # Initialize new PMaC project
   pmac init --existing              # Initialize PMaC in existing directory
   pmac create TEST-001 "New feature implementation" core_data
@@ -1194,6 +1222,12 @@ switch (command) {
 
   case 'viewer':
     await cli.startViewer();
+    break;
+
+  case 'version':
+  case '--version':
+  case '-v':
+    cli.showVersion();
     break;
 
   case 'help':

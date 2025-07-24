@@ -777,20 +777,26 @@ Please check the file permissions and format.
 
   private getVersion(): string {
     let version = 'unknown';
-    try {
-      const packageJsonPath = resolve(__dirname, '../package.json');
-      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
-      version = packageJson.version;
-    } catch {
-      // If we can't read package.json, try from different locations
-      try {
-        const altPackageJsonPath = resolve(__dirname, '../../package.json');
-        const packageJson = JSON.parse(readFileSync(altPackageJsonPath, 'utf8'));
-        version = packageJson.version;
-      } catch {
-        // Fall back to unknown if we can't find it
+    
+    // Try to find package root by looking for package.json (similar to viewer logic)
+    let currentDir = __dirname;
+    
+    while (currentDir !== resolve(currentDir, '..')) {
+      const packageJsonPath = join(currentDir, 'package.json');
+      if (existsSync(packageJsonPath)) {
+        try {
+          const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+          if (packageJson.name === 'pmac-cli') {
+            version = packageJson.version;
+            break;
+          }
+        } catch {
+          // Continue searching if package.json is malformed
+        }
       }
+      currentDir = resolve(currentDir, '..');
     }
+    
     return version;
   }
 

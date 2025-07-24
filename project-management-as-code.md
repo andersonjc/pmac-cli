@@ -157,7 +157,7 @@ project-root/
 ## Quality Standards
 
 - **Tests**: 100% coverage on new code, all tests pass
-- **Dependencies**: Validate with `pnpm pmac validate`
+- **Dependencies**: Validate with `pmac validate`
 - **Documentation**: Update with all code changes
 - **Security**: Input validation, secure patterns, audit logs
 
@@ -202,10 +202,10 @@ Optional TypeScript CLI for enhanced workflows:
 pnpm add -D yaml tsx @types/node
 
 # Key Commands
-pnpm pmac list [status] [priority]    # List filtered tasks
-pnpm pmac update TASK-001 in_progress # Update status
-pnpm pmac validate                     # Check dependencies
-pnpm pmac critical-path                # Show critical path
+pmac list [status] [priority]    # List filtered tasks
+pmac update TASK-001 in_progress # Update status
+pmac validate                     # Check dependencies
+pmac critical-path                # Show critical path
 ```
 
 ## Getting Started

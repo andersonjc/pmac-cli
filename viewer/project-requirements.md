@@ -55,7 +55,7 @@ Create a sleek, dark mode web application for visualizing PMaC project backlogs 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   PMaC CLI      │    │   Viewer App    │    │   YAML Parser   │
-│   (pnpm pmac    │───▶│   (Svelte +     │───▶│   (project-     │
+│   (pmac         │───▶│   (Svelte +     │───▶│   (project-     │
 │    viewer)      │    │    Tailwind)    │    │   backlog.yml)  │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
         │                        │                        │
@@ -192,10 +192,10 @@ tools/viewer/
 
 **Commands**:
 ```bash
-pnpm pmac viewer                              # View ./project-backlog.yml
-pnpm pmac viewer ../project/project-backlog.yml  # Custom path
-pnpm pmac viewer --build                      # Build static version
-pnpm pmac viewer --serve                      # Serve built version
+pmac viewer                              # View ./project-backlog.yml
+pmac viewer ../project/project-backlog.yml  # Custom path
+pmac viewer --build                      # Build static version
+pmac viewer --serve                      # Serve built version
 ```
 
 **Technical Requirements**:

@@ -463,7 +463,7 @@ describe('PMaC CLI Integration Tests', () => {
       expect(result.stderr).toContain('non/existent/path.yml');
       expect(result.stderr).toContain('Alternative option:');
       expect(result.stderr).toContain(
-        '--backlog flag: pnpm pmac --backlog custom/path/project-backlog.yml'
+        '--backlog flag: pmac --backlog custom/path/project-backlog.yml'
       );
     });
   });
@@ -517,7 +517,7 @@ describe('PMaC CLI Integration Tests', () => {
       expect(result.stderr).toContain('non/existent/path.yml');
       expect(result.stderr).toContain('Alternative option:');
       expect(result.stderr).toContain(
-        '--backlog flag: pnpm pmac --backlog custom/path/project-backlog.yml'
+        '--backlog flag: pmac --backlog custom/path/project-backlog.yml'
       );
       expect(result.stderr).toContain('For more information, see: project-management-as-code.md');
     });
@@ -528,21 +528,21 @@ describe('PMaC CLI Integration Tests', () => {
       const result = runPMaC(['create', 'INCOMPLETE']);
 
       expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('Usage: pnpm pmac create <taskId> <title> <phase>');
+      expect(result.stderr).toContain('Usage: pmac create <taskId> <title> <phase>');
     });
 
     it('should show usage for incomplete update command', () => {
       const result = runPMaC(['update', 'TEST-001']);
 
       expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('Usage: pnpm pmac update <taskId> <status>');
+      expect(result.stderr).toContain('Usage: pmac update <taskId> <status>');
     });
 
     it('should show usage for incomplete set command', () => {
       const result = runPMaC(['set', 'TEST-001']);
 
       expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('Usage: pnpm pmac set <taskId> <attribute> <value>');
+      expect(result.stderr).toContain('Usage: pmac set <taskId> <attribute> <value>');
     });
   });
 });

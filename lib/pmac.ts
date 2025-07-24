@@ -105,7 +105,7 @@ To get started:
 3. Run PMaC commands to manage your project backlog
 
 Alternative option:
-- Use --backlog flag: pnpm pmac --backlog custom/path/project-backlog.yml <command>
+- Use --backlog flag: pmac --backlog custom/path/project-backlog.yml <command>
 
 For more information, see: project-management-as-code.md
 `);
@@ -741,7 +741,7 @@ Please check the file permissions and format.
     console.log(`
 PMaC CLI - Project Management as Code Tool
 
-Usage: pnpm pmac [--backlog <path>] <command> [options]
+Usage: pmac [--backlog <path>] <command> [options]
 
 Global Options:
   --backlog <path>                 Specify path to project-backlog.yml file
@@ -783,18 +783,18 @@ Bulk Operations:
   bulk-phase <phase> <status>      Update all tasks in a phase to given status
 
 Examples:
-  pnpm pmac init my-project              # Initialize new PMaC project
-  pnpm pmac init --existing              # Initialize PMaC in existing directory
-  pnpm pmac create TEST-001 "New feature implementation" core_data
-  pnpm pmac set TEST-001 priority high
-  pnpm pmac set TEST-001 estimated_hours 12
-  pnpm pmac set TEST-001 dependencies "PMAC-001,INFRA-001"
-  pnpm pmac add-dep API-002 API-001
-  pnpm pmac move TEST-001 api_foundation
-  pnpm pmac list in_progress high
-  pnpm pmac update PMAC-002 testing "Implementation complete"
-  pnpm pmac phases
-  pnpm pmac viewer
+  pmac init my-project              # Initialize new PMaC project
+  pmac init --existing              # Initialize PMaC in existing directory
+  pmac create TEST-001 "New feature implementation" core_data
+  pmac set TEST-001 priority high
+  pmac set TEST-001 estimated_hours 12
+  pmac set TEST-001 dependencies "PMAC-001,INFRA-001"
+  pmac add-dep API-002 API-001
+  pmac move TEST-001 api_foundation
+  pmac list in_progress high
+  pmac update PMAC-002 testing "Implementation complete"
+  pmac phases
+  pmac viewer
 `);
   }
   
@@ -1031,7 +1031,7 @@ switch (command) {
 
   case 'create':
     if (args.length < 3) {
-      console.error('Usage: pnpm pmac create <taskId> <title> <phase> [priority] [estimatedHours]');
+      console.error('Usage: pmac create <taskId> <title> <phase> [priority] [estimatedHours]');
       process.exit(1);
     }
     const priority = (args[3] as Task['priority']) || 'medium';
@@ -1041,7 +1041,7 @@ switch (command) {
 
   case 'update':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac update <taskId> <status> [note]');
+      console.error('Usage: pmac update <taskId> <status> [note]');
       process.exit(1);
     }
     cli.updateTaskStatus(args[0], args[1] as Task['status'], args[2]);
@@ -1049,7 +1049,7 @@ switch (command) {
 
   case 'note':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac note <taskId> <note>');
+      console.error('Usage: pmac note <taskId> <note>');
       process.exit(1);
     }
     cli.addTaskNote(args[0], args.slice(1).join(' '));
@@ -1057,7 +1057,7 @@ switch (command) {
 
   case 'set':
     if (args.length < 3) {
-      console.error('Usage: pnpm pmac set <taskId> <attribute> <value>');
+      console.error('Usage: pmac set <taskId> <attribute> <value>');
       process.exit(1);
     }
     cli.updateTaskAttribute(args[0], args[1] as keyof Task, args.slice(2).join(' '));
@@ -1065,7 +1065,7 @@ switch (command) {
 
   case 'move':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac move <taskId> <targetPhase> [position]');
+      console.error('Usage: pmac move <taskId> <targetPhase> [position]');
       process.exit(1);
     }
     const position = args[2] ? parseInt(args[2]) : undefined;
@@ -1074,7 +1074,7 @@ switch (command) {
 
   case 'add-dep':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac add-dep <taskId> <dependencyId>');
+      console.error('Usage: pmac add-dep <taskId> <dependencyId>');
       process.exit(1);
     }
     cli.addDependency(args[0], args[1]);
@@ -1082,7 +1082,7 @@ switch (command) {
 
   case 'rm-dep':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac rm-dep <taskId> <dependencyId>');
+      console.error('Usage: pmac rm-dep <taskId> <dependencyId>');
       process.exit(1);
     }
     cli.removeDependency(args[0], args[1]);
@@ -1102,7 +1102,7 @@ switch (command) {
 
   case 'bulk-phase':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac bulk-phase <phase> <status>');
+      console.error('Usage: pmac bulk-phase <phase> <status>');
       process.exit(1);
     }
     cli.bulkUpdatePhase(args[0], args[1] as Task['status']);

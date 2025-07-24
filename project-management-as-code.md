@@ -6,73 +6,11 @@ A file-based methodology for AI-assisted software development.
 
 ## The Problem
 
-Traditional PM tools (Jira, Linear, Asana) don't integrate with AI assistants. Context gets lost, decisions aren't tracked, and there's no standard way to maintain project continuity when working with AI.
+Traditional PM tools (Jira, Linear, Asana) don't integrate tightly with AI coding assistants. Context gets lost, decisions aren't tracked, and there's no standard way to maintain project continuity when working with AI.
 
 ## The Solution
 
 Version-controlled files that provide complete project context to both humans and AI assistants.
-
-## Core Files
-
-| File                          | Purpose                                                   |
-| ----------------------------- | --------------------------------------------------------- |
-| **`project-backlog.yml`**     | Tasks, dependencies, status tracking, acceptance criteria |
-| **`prompts-log.md`**          | User prompts only - verbatim conversation log            |
-| **`project-requirements.md`** | Technical architecture and specifications                 |
-| **`CLAUDE.md`**               | AI assistant instructions and project guidance            |
-
-## Architecture Decision Records (ADRs)
-
-PMaC includes standardized Architecture Decision Records (ADRs) for capturing significant architectural decisions throughout the project lifecycle.
-
-### When to Create ADRs
-
-Create ADRs when making decisions about:
-- Technology stack choices (frameworks, databases, tools)
-- Architectural patterns and approaches
-- Integration strategies and API designs
-- Security models and authentication approaches
-- Deployment and infrastructure choices
-- Data modeling and database decisions
-
-### ADR Integration with PMaC
-
-ADRs seamlessly integrate with the PMaC workflow:
-
-- **Task-Driven Creation**: ADR creation documented in project backlog tasks
-- **Decision Tracking**: ADRs referenced in task notes and implementation decisions  
-- **Complete Audit Trail**: ADR history maintained in Git alongside code changes
-- **Architecture Alignment**: ADRs ensure decisions align with project requirements
-
-### ADR Template and Process
-
-1. **Use Standard Template**: Use the provided ADR template for consistency
-2. **Sequential Numbering**: Number ADRs sequentially (ADR-001, ADR-002, etc.)
-3. **Status Management**: Track status from PROPOSED → ACCEPTED → DEPRECATED/SUPERSEDED
-4. **PMaC Integration**: Reference ADR creation in relevant backlog tasks
-
-### ADR Directory Structure
-
-**Recommended Organization:**
-```
-docs/
-└── architecture/
-    ├── README.md                    # ADR index and process documentation
-    ├── ADR-001-technology-stack.md  # Individual ADRs
-    ├── ADR-002-authentication.md
-    └── ADR-003-database-choice.md
-```
-
-**File Naming Convention:**
-- Format: `ADR-{number}-{kebab-case-title}.md`
-- Examples: `ADR-001-project-structure.md`, `ADR-002-api-versioning.md`
-- Numbers: Zero-padded to 3 digits (001, 002, etc.)
-
-**ADR Index (README.md):**
-Maintain an index in `docs/architecture/README.md` listing:
-- All ADRs with status and brief description
-- ADR process documentation
-- Links to related architectural documentation
 
 ## Key Benefits
 
@@ -81,6 +19,32 @@ Maintain an index in `docs/architecture/README.md` listing:
 - **⚡ Zero Context Loss**: Resume complex projects with full context
 - **🔄 Git Integration**: PM data evolves alongside code
 - **🏗️ Quality Assurance**: Built-in protocols ensure production-ready code
+
+## PMaC vs Traditional PM
+
+| Aspect           | Traditional Tools  | PMaC                  |
+| ---------------- | ------------------ | --------------------- |
+| AI Integration   | Manual/None        | Native                |
+| Decision Context | Lost               | Complete              |
+| Version Control  | External           | Full Integration      |
+| Audit Trail      | Platform-dependent | Git + prompts + tasks |
+| Quality Control  | External processes | Built-in protocols    |
+
+## Core Files
+
+| File                          | Purpose                                                   |
+| ----------------------------- | --------------------------------------------------------- |
+| **`project-backlog.yml`**     | Tasks, dependencies, status tracking, acceptance criteria |
+| **`prompts-log.md`**          | User prompts only - verbatim conversation log             |
+| **`project-requirements.md`** | Technical architecture and specifications                 |
+| **`CLAUDE.md`**               | AI assistant instructions and project guidance            |
+
+## Getting Started
+
+1. **Get Templates**: Copy PMaC template files from this repository to your project root
+2. **Optional CLI**: Install `npm install -g pmac-cli` for easy setup and enhanced task management
+3. **Customize**: Update files to match your project requirements
+4. **Start Working**: Pick tasks from `project-backlog.yml` and follow PMaC workflow
 
 ## Workflow
 
@@ -100,6 +64,7 @@ Maintain an index in `docs/architecture/README.md` listing:
 ### Timestamp Standards
 
 **All PMaC files must use consistent local timezone format:**
+
 - **Format**: `YYYY-MM-DD HH:MM:SS a.m./p.m. EDT` (e.g., "2025-06-24 03:25:00 p.m. EDT")
 - **Source**: JavaScript `new Date().toLocaleString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short'}).replace(',', '')`
 - **Application**: Both prompts-log.md manual entries and PMaC CLI automated timestamps
@@ -113,14 +78,16 @@ Maintain an index in `docs/architecture/README.md` listing:
 
 ### File Separation Guidelines
 
-**prompts-log.md**: 
+**prompts-log.md**:
+
 - User prompts ONLY, verbatim
 - Minimal context, just timestamp and prompt text
 - No analysis, decisions, or implementation details
 
 **project-backlog.yml** (via PMaC CLI):
+
 - Implementation decisions and rationale
-- Technical milestones and progress notes  
+- Technical milestones and progress notes
 - Architecture decisions and trade-offs
 - ADR creation and references
 - Test results and validation status
@@ -169,51 +136,37 @@ phases:
   development:
     tasks:
       - id: AUTH-001
-        title: "Implement JWT Authentication"
-        status: "ready"
-        priority: "high"
+        title: 'Implement JWT Authentication'
+        status: 'ready'
+        priority: 'high'
         estimated_hours: 8
         requirements:
-          - "Create JWT token generation endpoint"
-          - "Implement token validation middleware"
+          - 'Create JWT token generation endpoint'
+          - 'Implement token validation middleware'
         acceptance_criteria:
-          - "✅ Users can login and receive valid tokens"
-          - "✅ Protected routes validate tokens correctly"
-          - "✅ All tests pass with >95% coverage"
-        dependencies: ["SETUP-001"]
+          - '✅ Users can login and receive valid tokens'
+          - '✅ Protected routes validate tokens correctly'
+          - '✅ All tests pass with >95% coverage'
+        dependencies: ['SETUP-001']
 ```
-
-## PMaC vs Traditional PM
-
-| Aspect           | Traditional Tools  | PMaC                  |
-| ---------------- | ------------------ | --------------------- |
-| AI Integration   | Manual/None        | Native                |
-| Decision Context | Lost               | Complete              |
-| Version Control  | External           | Full Integration      |
-| Audit Trail      | Platform-dependent | Git + prompts + tasks |
-| Quality Control  | External processes | Built-in protocols    |
 
 ## PMaC CLI Tool
 
-Optional TypeScript CLI for enhanced workflows:
+Optional CLI tool available as NPM package for enhanced workflows:
 
 ```bash
 # Installation
-pnpm add -D yaml tsx @types/node
+npm install -g pmac-cli
 
 # Key Commands
 pmac list [status] [priority]    # List filtered tasks
 pmac update TASK-001 in_progress # Update status
 pmac validate                     # Check dependencies
 pmac critical-path                # Show critical path
+pmac viewer                       # Launch interactive viewer
 ```
 
-## Getting Started
-
-1. **Initialize Files**: Copy PMaC templates to your project root
-2. **Install CLI**: `pnpm add -D yaml tsx @types/node`
-3. **Configure**: Add `"pmac": "tsx tools/pmac.ts"` to package.json scripts
-4. **Start Working**: Pick tasks from `project-backlog.yml` and follow workflow
+📚 **Full CLI Documentation**: See [PMaC CLI repository](https://github.com/andersonjc/pmac-cli) for complete features and commands.
 
 ## Best Practices
 
@@ -237,6 +190,63 @@ pmac critical-path                # Show critical path
 - Validate all criteria before marking complete
 - Run tests, lint, build before committing
 - Maintain 100% test coverage on new code
+
+## Architecture Decision Records (ADRs)
+
+PMaC includes standardized Architecture Decision Records (ADRs) for capturing significant architectural decisions throughout the project lifecycle.
+
+### When to Create ADRs
+
+Create ADRs when making decisions about:
+
+- Technology stack choices (frameworks, databases, tools)
+- Architectural patterns and approaches
+- Integration strategies and API designs
+- Security models and authentication approaches
+- Deployment and infrastructure choices
+- Data modeling and database decisions
+
+### ADR Integration with PMaC
+
+ADRs seamlessly integrate with the PMaC workflow:
+
+- **Task-Driven Creation**: ADR creation documented in project backlog tasks
+- **Decision Tracking**: ADRs referenced in task notes and implementation decisions
+- **Complete Audit Trail**: ADR history maintained in Git alongside code changes
+- **Architecture Alignment**: ADRs ensure decisions align with project requirements
+
+### ADR Template and Process
+
+1. **Use Standard Template**: Use the provided ADR template for consistency
+2. **Sequential Numbering**: Number ADRs sequentially (ADR-001, ADR-002, etc.)
+3. **Status Management**: Track status from PROPOSED → ACCEPTED → DEPRECATED/SUPERSEDED
+4. **PMaC Integration**: Reference ADR creation in relevant backlog tasks
+
+### ADR Directory Structure
+
+**Recommended Organization:**
+
+```
+docs/
+└── architecture/
+    ├── README.md                    # ADR index and process documentation
+    ├── ADR-001-technology-stack.md  # Individual ADRs
+    ├── ADR-002-authentication.md
+    └── ADR-003-database-choice.md
+```
+
+**File Naming Convention:**
+
+- Format: `ADR-{number}-{kebab-case-title}.md`
+- Examples: `ADR-001-project-structure.md`, `ADR-002-api-versioning.md`
+- Numbers: Zero-padded to 3 digits (001, 002, etc.)
+
+**ADR Index (README.md):**
+Maintain an index in `docs/architecture/README.md` listing:
+
+- All ADRs with status and brief description
+- ADR process documentation
+- Links to related architectural documentation
 
 ## Common Pitfalls
 

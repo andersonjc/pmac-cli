@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [Unreleased]
+## [1.2.0] - 2025-07-24
 
 > Enhanced viewer reliability and CLI usability improvements 🔧
 

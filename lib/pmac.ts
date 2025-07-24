@@ -6,9 +6,47 @@ import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { createServer } from 'http';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
+import { createServer as createNetServer } from 'net';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+/**
+ * Find an available port starting from the given port number
+ * @param startPort The port to start checking from
+ * @param maxAttempts Maximum number of ports to try
+ * @returns Promise that resolves to an available port number
+ * @throws Error if no available port is found within maxAttempts
+ */
+async function findAvailablePort(startPort: number = 5173, maxAttempts: number = 10): Promise<number> {
+  for (let port = startPort; port < startPort + maxAttempts; port++) {
+    if (await isPortAvailable(port)) {
+      return port;
+    }
+  }
+  throw new Error(`No available port found in range ${startPort}-${startPort + maxAttempts - 1}`);
+}
+
+/**
+ * Check if a specific port is available
+ * @param port The port number to check
+ * @returns Promise that resolves to true if port is available, false otherwise
+ */
+function isPortAvailable(port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const server = createNetServer();
+    
+    server.listen(port, () => {
+      server.close(() => {
+        resolve(true);
+      });
+    });
+    
+    server.on('error', () => {
+      resolve(false);
+    });
+  });
+}
 
 interface Task {
   id: string;
@@ -812,17 +850,59 @@ Examples:
     console.log(`📁 Using backlog file: ${this.backlogPath}`);
     
     // Path to pre-built viewer assets
-    // In development: from bin/ or lib/ to dist/viewer/
-    // In production: from dist/cli/lib/ to dist/viewer/
-    const viewerAssetsPath = resolve(__dirname, '../dist/viewer');
+    // Use more robust path resolution for both development and global installations
+    let viewerAssetsPath: string;
+    
+    // Try to find package root by looking for package.json
+    let currentDir = __dirname;
+    let packageRoot: string | null = null;
+    
+    while (currentDir !== resolve(currentDir, '..')) {
+      const packageJsonPath = join(currentDir, 'package.json');
+      if (existsSync(packageJsonPath)) {
+        try {
+          const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+          if (packageJson.name === 'pmac-cli') {
+            packageRoot = currentDir;
+            break;
+          }
+        } catch {
+          // Continue searching if package.json is malformed
+        }
+      }
+      currentDir = resolve(currentDir, '..');
+    }
+    
+    if (packageRoot) {
+      viewerAssetsPath = join(packageRoot, 'dist', 'viewer');
+    } else {
+      // Fallback to relative path resolution
+      viewerAssetsPath = resolve(__dirname, '../dist/viewer');
+    }
     
     if (!existsSync(viewerAssetsPath)) {
       console.error(`❌ Pre-built viewer assets not found at: ${viewerAssetsPath}`);
-      console.error('This might be a development environment. Run: pnpm build:viewer');
+      console.error('');
+      console.error('Possible solutions:');
+      console.error('1. If this is a development environment: Run "pnpm build:viewer"');
+      console.error('2. If globally installed: Try reinstalling with "npm install -g pmac-cli"');
+      console.error('3. If using locally: Ensure package is properly built and installed');
+      console.error('');
+      console.error(`Package root detected: ${packageRoot || 'not found'}`);
+      console.error(`Current __dirname: ${__dirname}`);
       process.exit(1);
     }
     
-    const port = 5173;
+    // Find an available port, starting with the default 5173
+    let port: number;
+    try {
+      port = await findAvailablePort(5173, 10);
+    } catch (error) {
+      console.error(`❌ Unable to find an available port: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Please free up some network ports and try again.');
+      process.exit(1);
+    }
+    
     const server = createServer(async (req, res) => {
       try {
         // Set CORS headers for local development
@@ -886,7 +966,11 @@ Examples:
     });
     
     server.listen(port, () => {
-      console.log(`🚀 PMaC Viewer running at http://localhost:${port}`);
+      if (port !== 5173) {
+        console.log(`🚀 PMaC Viewer running at http://localhost:${port} (port 5173 was in use)`);
+      } else {
+        console.log(`🚀 PMaC Viewer running at http://localhost:${port}`);
+      }
       console.log(`📁 Serving backlog: ${this.backlogPath}`);
       console.log(`⌨️  Press Ctrl+C to stop`);
     });

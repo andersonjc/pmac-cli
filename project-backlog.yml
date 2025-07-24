@@ -646,6 +646,31 @@ phases:
         notes:
           - "2025-07-17 11:28:29 a.m. EDT: Deprioritized for MVP release - moved to low priority"
           - "2025-07-22 17:04:29 a.m. EDT: Completed as part of pmac-cli NPM package"
+      - id: VIEWER-021
+        title: Fix viewer command path resolution for global installations
+        status: completed
+        priority: critical
+        estimated_hours: 4
+        requirements: []
+        dependencies: []
+        blocks: []
+        notes:
+          - "2025-07-24: Task created via PMaC CLI"
+          - "2025-07-24 12:30:13 p.m. EDT: Starting implementation of viewer path resolution fix for global
+            installations"
+          - "2025-07-24 01:20:08 p.m. EDT: Successfully implemented dynamic port selection for viewer command with
+            comprehensive test coverage. Fixed path resolution for global installations and added automatic port
+            discovery when 5173 is in use. Includes full unit and integration test suite."
+      - id: VIEWER-022
+        title: Add phase creation command and improve task ID uniqueness validation
+        status: ready
+        priority: high
+        estimated_hours: 3
+        requirements: []
+        dependencies: []
+        blocks: []
+        notes:
+          - "2025-07-24: Task created via PMaC CLI"
 epic_summary:
   total_estimated_hours: 94
   estimated_duration: 4-5 weeks

@@ -34,9 +34,9 @@ Refer to the complete PMaC methodology in `project-management-as-code.md` for:
 **Additional Guidelines:**
 
 - Always use the PMaC CLI instead of modifying project-backlog.yml directly. The CLI supports multiple usage patterns:
-  - From root directory: `pnpm pmac <command>`
-  - Custom backlog path: `pnpm pmac --backlog path/to/project-backlog.yml <command>`
-  - Viewer mode: `pnpm pmac viewer` (launches interactive web interface)
+  - From root directory: `pmac <command>`
+  - Custom backlog path: `pmac --backlog path/to/project-backlog.yml <command>`
+  - Viewer mode: `pmac viewer` (launches interactive web interface)
 
 ### Before Starting Work
 
@@ -62,11 +62,11 @@ Refer to the complete PMaC methodology in `project-management-as-code.md` for:
 **PMaC Management:**
 
 ```bash
-pnpm pmac list                                      # View tasks (project-backlog.yml at root)
-pnpm pmac --backlog path/to/project-backlog.yml list  # View tasks (custom path)
-pnpm pmac update TASK-001 in_progress "Starting work" # Update task status
-pnpm pmac validate                                  # Check dependencies
-pnpm pmac viewer                                    # Launch interactive backlog viewer
+pmac list                                      # View tasks (project-backlog.yml at root)
+pmac --backlog path/to/project-backlog.yml list  # View tasks (custom path)
+pmac update TASK-001 in_progress "Starting work" # Update task status
+pmac validate                                  # Check dependencies
+pmac viewer                                    # Launch interactive backlog viewer
 ```
 
 **Testing & Quality:**
@@ -133,15 +133,15 @@ You are the senior engineer responsible for high-leverage, production-safe chang
 - Maintain focus on acceptance criteria validation
 - Always update PMaC files with code changes
 - Always use the PMaC CLI tool to interact with the project backlog
-- Standard usage: `pnpm pmac <command>` (operates on root project-backlog.yml)
-- Custom paths: `pnpm pmac --backlog path/to/backlog.yml <command>`
+- Standard usage: `pmac <command>` (operates on root project-backlog.yml)
+- Custom paths: `pmac --backlog path/to/backlog.yml <command>`
 
 **CRITICAL: PMaC File Separation Protocol**
 
 - **prompts-log.md**: IMMEDIATELY log user prompts verbatim with correct, current, localized timestamp, before any other operations
 - **project-backlog.yml**: Use PMaC CLI for implementation notes, milestones, decisions
 - **NO mixing**: Prompts go to prompts-log, dev context goes to backlog notes
-- **Timestamp Format**: Always use correct local timezone: `new Date().toLocaleString('en-US', {timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false}).replace(',', ' ')`
+- **Timestamp Format**: CRITICAL - NEVER manually type timestamps. Always use actual current date/time from environment context `<env>Today's date: YYYY-MM-DD</env>` plus current time. Format: `YYYY-MM-DD HH:MM:SS EDT/EST` matching the actual timezone. VERIFY timestamp accuracy against environment context before logging.
 
 ## Development Environment Guidelines
 
@@ -208,8 +208,8 @@ You are a senior engineer with deep experience building production-grade applica
 
 5. **Deliver Clearly with PMaC Updates**
    • **Update Task Status**: Move task to "testing" or "completed" based on validation via PMaC CLI
-   • **Standard Usage**: Use `pnpm pmac update TASK-ID status "note"` for root backlog
-   • **Custom Path**: Use `pnpm pmac --backlog path/to/backlog.yml update TASK-ID status "note"` as needed
+   • **Standard Usage**: Use `pmac update TASK-ID status "note"` for root backlog
+   • **Custom Path**: Use `pmac --backlog path/to/backlog.yml update TASK-ID status "note"` as needed
    • **Document Implementation**: Add detailed notes to task about implementation decisions via PMaC CLI
    • **SEPARATE FILE USAGE**: Use prompts-log.md for user prompts only, project-backlog.yml for all dev context
    • Summarize what was changed and why in relation to task requirements

@@ -6,9 +6,47 @@ import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 import { createServer } from 'http';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
+import { createServer as createNetServer } from 'net';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+/**
+ * Find an available port starting from the given port number
+ * @param startPort The port to start checking from
+ * @param maxAttempts Maximum number of ports to try
+ * @returns Promise that resolves to an available port number
+ * @throws Error if no available port is found within maxAttempts
+ */
+async function findAvailablePort(startPort: number = 5173, maxAttempts: number = 10): Promise<number> {
+  for (let port = startPort; port < startPort + maxAttempts; port++) {
+    if (await isPortAvailable(port)) {
+      return port;
+    }
+  }
+  throw new Error(`No available port found in range ${startPort}-${startPort + maxAttempts - 1}`);
+}
+
+/**
+ * Check if a specific port is available
+ * @param port The port number to check
+ * @returns Promise that resolves to true if port is available, false otherwise
+ */
+function isPortAvailable(port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const server = createNetServer();
+    
+    server.listen(port, () => {
+      server.close(() => {
+        resolve(true);
+      });
+    });
+    
+    server.on('error', () => {
+      resolve(false);
+    });
+  });
+}
 
 interface Task {
   id: string;
@@ -105,7 +143,7 @@ To get started:
 3. Run PMaC commands to manage your project backlog
 
 Alternative option:
-- Use --backlog flag: pnpm pmac --backlog custom/path/project-backlog.yml <command>
+- Use --backlog flag: pmac --backlog custom/path/project-backlog.yml <command>
 
 For more information, see: project-management-as-code.md
 `);
@@ -737,14 +775,47 @@ Please check the file permissions and format.
     return icons[priority] || '❓';
   }
 
+  private getVersion(): string {
+    let version = 'unknown';
+    
+    // Try to find package root by looking for package.json (similar to viewer logic)
+    let currentDir = __dirname;
+    
+    while (currentDir !== resolve(currentDir, '..')) {
+      const packageJsonPath = join(currentDir, 'package.json');
+      if (existsSync(packageJsonPath)) {
+        try {
+          const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+          if (packageJson.name === 'pmac-cli') {
+            version = packageJson.version;
+            break;
+          }
+        } catch {
+          // Continue searching if package.json is malformed
+        }
+      }
+      currentDir = resolve(currentDir, '..');
+    }
+    
+    return version;
+  }
+
+  showVersion(): void {
+    console.log(this.getVersion());
+  }
+
   showHelp(): void {
+    const version = this.getVersion();
+
     console.log(`
 PMaC CLI - Project Management as Code Tool
+Version: ${version}
 
-Usage: pnpm pmac [--backlog <path>] <command> [options]
+Usage: pmac [--backlog <path>] <command> [options]
 
 Global Options:
   --backlog <path>                 Specify path to project-backlog.yml file
+  --version, -v                    Show version number
 
 Project Setup Commands:
   init [project-name]              Initialize PMaC project with template files
@@ -783,18 +854,19 @@ Bulk Operations:
   bulk-phase <phase> <status>      Update all tasks in a phase to given status
 
 Examples:
-  pnpm pmac init my-project              # Initialize new PMaC project
-  pnpm pmac init --existing              # Initialize PMaC in existing directory
-  pnpm pmac create TEST-001 "New feature implementation" core_data
-  pnpm pmac set TEST-001 priority high
-  pnpm pmac set TEST-001 estimated_hours 12
-  pnpm pmac set TEST-001 dependencies "PMAC-001,INFRA-001"
-  pnpm pmac add-dep API-002 API-001
-  pnpm pmac move TEST-001 api_foundation
-  pnpm pmac list in_progress high
-  pnpm pmac update PMAC-002 testing "Implementation complete"
-  pnpm pmac phases
-  pnpm pmac viewer
+  pmac --version                    # Show version information
+  pmac init my-project              # Initialize new PMaC project
+  pmac init --existing              # Initialize PMaC in existing directory
+  pmac create TEST-001 "New feature implementation" core_data
+  pmac set TEST-001 priority high
+  pmac set TEST-001 estimated_hours 12
+  pmac set TEST-001 dependencies "PMAC-001,INFRA-001"
+  pmac add-dep API-002 API-001
+  pmac move TEST-001 api_foundation
+  pmac list in_progress high
+  pmac update PMAC-002 testing "Implementation complete"
+  pmac phases
+  pmac viewer
 `);
   }
   
@@ -812,17 +884,59 @@ Examples:
     console.log(`📁 Using backlog file: ${this.backlogPath}`);
     
     // Path to pre-built viewer assets
-    // In development: from bin/ or lib/ to dist/viewer/
-    // In production: from dist/cli/lib/ to dist/viewer/
-    const viewerAssetsPath = resolve(__dirname, '../dist/viewer');
+    // Use more robust path resolution for both development and global installations
+    let viewerAssetsPath: string;
+    
+    // Try to find package root by looking for package.json
+    let currentDir = __dirname;
+    let packageRoot: string | null = null;
+    
+    while (currentDir !== resolve(currentDir, '..')) {
+      const packageJsonPath = join(currentDir, 'package.json');
+      if (existsSync(packageJsonPath)) {
+        try {
+          const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+          if (packageJson.name === 'pmac-cli') {
+            packageRoot = currentDir;
+            break;
+          }
+        } catch {
+          // Continue searching if package.json is malformed
+        }
+      }
+      currentDir = resolve(currentDir, '..');
+    }
+    
+    if (packageRoot) {
+      viewerAssetsPath = join(packageRoot, 'dist', 'viewer');
+    } else {
+      // Fallback to relative path resolution
+      viewerAssetsPath = resolve(__dirname, '../dist/viewer');
+    }
     
     if (!existsSync(viewerAssetsPath)) {
       console.error(`❌ Pre-built viewer assets not found at: ${viewerAssetsPath}`);
-      console.error('This might be a development environment. Run: pnpm build:viewer');
+      console.error('');
+      console.error('Possible solutions:');
+      console.error('1. If this is a development environment: Run "pnpm build:viewer"');
+      console.error('2. If globally installed: Try reinstalling with "npm install -g pmac-cli"');
+      console.error('3. If using locally: Ensure package is properly built and installed');
+      console.error('');
+      console.error(`Package root detected: ${packageRoot || 'not found'}`);
+      console.error(`Current __dirname: ${__dirname}`);
       process.exit(1);
     }
     
-    const port = 5173;
+    // Find an available port, starting with the default 5173
+    let port: number;
+    try {
+      port = await findAvailablePort(5173, 10);
+    } catch (error) {
+      console.error(`❌ Unable to find an available port: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Please free up some network ports and try again.');
+      process.exit(1);
+    }
+    
     const server = createServer(async (req, res) => {
       try {
         // Set CORS headers for local development
@@ -886,7 +1000,11 @@ Examples:
     });
     
     server.listen(port, () => {
-      console.log(`🚀 PMaC Viewer running at http://localhost:${port}`);
+      if (port !== 5173) {
+        console.log(`🚀 PMaC Viewer running at http://localhost:${port} (port 5173 was in use)`);
+      } else {
+        console.log(`🚀 PMaC Viewer running at http://localhost:${port}`);
+      }
       console.log(`📁 Serving backlog: ${this.backlogPath}`);
       console.log(`⌨️  Press Ctrl+C to stop`);
     });
@@ -1031,7 +1149,7 @@ switch (command) {
 
   case 'create':
     if (args.length < 3) {
-      console.error('Usage: pnpm pmac create <taskId> <title> <phase> [priority] [estimatedHours]');
+      console.error('Usage: pmac create <taskId> <title> <phase> [priority] [estimatedHours]');
       process.exit(1);
     }
     const priority = (args[3] as Task['priority']) || 'medium';
@@ -1041,7 +1159,7 @@ switch (command) {
 
   case 'update':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac update <taskId> <status> [note]');
+      console.error('Usage: pmac update <taskId> <status> [note]');
       process.exit(1);
     }
     cli.updateTaskStatus(args[0], args[1] as Task['status'], args[2]);
@@ -1049,7 +1167,7 @@ switch (command) {
 
   case 'note':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac note <taskId> <note>');
+      console.error('Usage: pmac note <taskId> <note>');
       process.exit(1);
     }
     cli.addTaskNote(args[0], args.slice(1).join(' '));
@@ -1057,7 +1175,7 @@ switch (command) {
 
   case 'set':
     if (args.length < 3) {
-      console.error('Usage: pnpm pmac set <taskId> <attribute> <value>');
+      console.error('Usage: pmac set <taskId> <attribute> <value>');
       process.exit(1);
     }
     cli.updateTaskAttribute(args[0], args[1] as keyof Task, args.slice(2).join(' '));
@@ -1065,7 +1183,7 @@ switch (command) {
 
   case 'move':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac move <taskId> <targetPhase> [position]');
+      console.error('Usage: pmac move <taskId> <targetPhase> [position]');
       process.exit(1);
     }
     const position = args[2] ? parseInt(args[2]) : undefined;
@@ -1074,7 +1192,7 @@ switch (command) {
 
   case 'add-dep':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac add-dep <taskId> <dependencyId>');
+      console.error('Usage: pmac add-dep <taskId> <dependencyId>');
       process.exit(1);
     }
     cli.addDependency(args[0], args[1]);
@@ -1082,7 +1200,7 @@ switch (command) {
 
   case 'rm-dep':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac rm-dep <taskId> <dependencyId>');
+      console.error('Usage: pmac rm-dep <taskId> <dependencyId>');
       process.exit(1);
     }
     cli.removeDependency(args[0], args[1]);
@@ -1102,7 +1220,7 @@ switch (command) {
 
   case 'bulk-phase':
     if (args.length < 2) {
-      console.error('Usage: pnpm pmac bulk-phase <phase> <status>');
+      console.error('Usage: pmac bulk-phase <phase> <status>');
       process.exit(1);
     }
     cli.bulkUpdatePhase(args[0], args[1] as Task['status']);
@@ -1110,6 +1228,12 @@ switch (command) {
 
   case 'viewer':
     await cli.startViewer();
+    break;
+
+  case 'version':
+  case '--version':
+  case '-v':
+    cli.showVersion();
     break;
 
   case 'help':

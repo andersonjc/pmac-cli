@@ -107,6 +107,27 @@ pmac bulk-phase foundation completed
 pmac set TASK-001 dependencies "DEP-1,DEP-2,DEP-3"
 ```
 
+## Optional Tools
+
+### Git Pre-Commit Hook
+
+PMaC CLI includes an optional pre-commit hook that enforces PMaC compliance by ensuring PMaC files are updated whenever code changes are committed.
+
+**Installation** (optional):
+```bash
+# Copy the hook to your git hooks directory
+cp tools/resources/pmac-pre-commit-hook .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
+**What it does**:
+- Detects when code files are being committed
+- Ensures corresponding PMaC files (`project-backlog.yml`, `prompts-log.md`) are also staged
+- Auto-stages modified PMaC files if they exist but aren't staged
+- Blocks commits that don't follow PMaC methodology
+
+**Note**: This hook is a resource for teams that want to enforce PMaC compliance. It's not required to use PMaC methodology or tools.
+
 ## Interactive Backlog Viewer
 
 Launch a web-based viewer for visual project management:

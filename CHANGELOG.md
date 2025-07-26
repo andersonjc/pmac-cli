@@ -4,6 +4,54 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.3.0] - 2025-07-26
+
+> Phase management and enhanced validation with timestamp improvements 🛠
+
+### 🚀 New Features
+
+- **Phase Creation Command**: Added `pmac phase-create <phaseId> <title> <description> [duration]` command for creating new project phases
+- **Enhanced Task ID Validation**: Intelligent suggestions for alternative task IDs when duplicates are detected
+- **Pattern Validation**: Smart recommendations for better task ID conventions (uppercase, numbered patterns)
+- **Cross-Phase Uniqueness**: Clear error messages showing which phase contains existing task IDs
+
+### 🛠 Fixes
+
+- **Timestamp Standardization**: All timestamp generation now uses consistent PMaC format: `YYYY-MM-DD HH:MM:SS a.m./p.m. [LOCAL_TZ]`
+- **Dynamic Timezone Detection**: Timestamps now detect actual local timezone instead of hardcoded EDT
+- **TypeScript Compilation**: Fixed unused variable error in `suggestTaskIds` method
+- **Code Quality**: Centralized timestamp logic, eliminated code duplication
+
+### 📚 Documentation
+
+- **Task ID Uniqueness**: Updated all documentation to clarify task IDs must be unique across entire backlog
+- **Enhanced Help Text**: Phase creation command included in help output with examples
+- **Error Messages**: Improved clarity about uniqueness requirements and validation failures
+- **README Updates**: Added task ID uniqueness requirements and best practices
+
+### 🧪 Testing
+
+- Added 5 new tests for phase creation functionality
+- Added cross-phase uniqueness validation test
+- Enhanced test descriptions for better clarity
+- All 69 tests passing with new functionality
+- Comprehensive test coverage for timestamp methods
+
+### 🎯 Performance
+
+- **Centralized Logic**: All timestamp generation through single `formatTimestamp()` method
+- **Reduced Duplication**: Eliminated 24+ lines of duplicate timestamp code
+- **Improved Validation**: Faster task ID suggestion algorithms
+
+### 🔧 Internal
+
+- Cleaned up test data from project backlog
+- Improved code organization and maintainability
+- Better error handling and user experience
+- Enhanced CLI usability with smart suggestions
+
+---
+
 ## [1.2.0] - 2025-07-24
 
 > Enhanced viewer reliability and CLI usability improvements 🔧

@@ -2317,6 +2317,59 @@ Make a plan to launch on subsequent ports if 5173 is in use
 
 Ensure tests are written or updated to exercise this new functionality
 
+# Jira Integration Feature planning
+## Work done in claude.ai
+### 2025-07-26 14:22:00 EDT
+I want to create a simple way to export project management. Context like tasks and project requirements documents from a tool like Jira and import it into a project management as code Backlog file. What would be the best way to export from Jira and transform to the YAML format. Dot PMAC. uses.
+
+### 2025-07-26 14:22:00 EDT
+Bidirectional sync
+API tokens, stored separate from committed code to protect secrets
+Create a configurable mapping format with smart defaults. Only concern yourself with fields that directly map to PMaC, disregarding other custom data fields in Jira. When ingesting tasks from Jira, if structured acceptance criteria data isn't available, automatically infer what you can and write into structured data matching PMaC standards. Then, when exporting back to Jira, append the structured data to the task so that it can be used going forward. Issue IDs should be captured and stored on PMaC tasks, so that links can be constructed dynamically if needed. Add these IDs to the PMaC schema as optional for all tasks, but enforce them when relating to Jira.
+Use a best-guess approach to classifying tasks into phases. If epics are defined in Jira, use those as phases in PMaC backlog. Otherwise, attempt to map to standard PMaC phases and use a logical catchall fallback like "Development".
+Import should relate to one Jira instance at a time, one project at a time, and be driven off of a config file that PMaC can help init if it's missing, so that everyday cli commands are as terse as is reasonable.
+When exporting from Jira, scan the project and estimate if the amount of tasks/data will approach a default API rate limit. If not, proceed. If so, warn the user. Future functionality can be created to break the operation up into chunks, but that's not needed now. Do include dry-run functionality to test an import/export before making changes. Do encapsulate the import/export operations as a single transaction that can be rolled back if failures occur, especially when writing to Jira.
+Start with simple config that covers most common use cases
+Make this plan propose new pmac-cli commands in the existing codebase. New supporting modules are fine, but keep all the user's terminal interface within the cli.
+If a task being imported from Jira seems to be missing required fields, stop the import and inform the user about the exact task and fields that are missing. If optional but important fields are missing, continue but warn the user in the cli output. Same approach for export to Jira.
+
+### 2025-07-26 14:22:00 EDT
+How can this approach be simplified? For instance, remove requirements for supporting multiple Jira instances. How else?
+Once a PMaC project is linked to a Jira project, certain operations should be performed in Jira and a re-import performed, rather than trying to reorganize tasks within PMaC and attempting to push those more complex updates back to Jira. For instance, if a Jira task's dependencies need to change, do that in Jira not PMaC. Same for moving a task to a different phase. PMaC should always be free to update a task's title, status, priority, hours, but requirements, acceptance criteria, dependencies and blocks should happen on the Jira side. Propose a simple way to enforce this data protection.
+Jira API URL, project key, and other Jira-specific data should be entries in the config file, so they don't have to be specified in terminal commands.
+Don't support chunked imports for now. Either do the whole import or warn that it's too big to import.
+Maintain a flag on tasks that have been updated locally via PMaC and haven't yet been synced back to Jira, so that incremental updates are cleaner. This could be done with last updated and last synced dates, as long as those dates are reliable. Ensure those dates are written programmatically via CLI functionality and not made up by AI as predictive text inputs.
+pmac jira status should show sync status and last sync history
+Team config sharing should be through config files that are git committed to the repo
+Don't do partial failure recovery. Either the whole operation succeeds or it fails and is rolled back.
+Don't implement performance or load testing
+
+### 2025-07-26 14:22:00 EDT
+PMaC will add notes to tasks and these should map to comments in Jira on tasks
+
+There should be three operation commands: import (only pull from Jira, likely after first init), export (only push to Jira on existing tasks or new ones created in PMaC), sync (bidirectional, updates and new tasks pushed from PMaC to Jira, updates and new tasks, as well as deletes, dep changes, project reorgs pulled from Jira to PMaC)
+
+The principle is that Jira is the master and PMaC is dependent. Changes to Jira made through the API may be harder to notice or undo, whereas changes to PMaC's project-backlog.yml file are version controlled and easy to see via local diff.
+
+PMaC task IDs should equal Jira issue IDs whenever possible.
+
+Are there any fields in the PMaC task spec that I haven't specified whether they should be PMaC writable or protected?
+
+### 2025-07-26 14:22:00 EDT
+actual_hours should be pmac writable
+
+assignee, id, phases should be Jira only. ID and phase could be written by pmac if the task is being created by pmac.
+
+Shouldn't the pmac title field map to the Jira issue name field?
+
+PMaC should be able to update task status, but not change the phase of a task. Phase is writable by pmac if it is creating a new issue.
+
+Existing Jira comments should be imported as notes on tasks. Every note, whether from Jira or PMaC, should have a complete, accurate timestamp. Same timestamp creation directives apply.
+
+If a task is archived/deleted on Jira, PMaC should delete it from the local yml file. That deletion will be tracked in git commits.
+
+When an issue is being created by PMaC, it should be allowed to write requirements, ac's, deps, blocks, etc
+
 ---
 
 _This log implements the "Complete conversation history" requirement of PMaC methodology, ensuring all development decisions are preserved and traceable through version control alongside the code they influenced._

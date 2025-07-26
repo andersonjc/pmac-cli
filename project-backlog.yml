@@ -671,6 +671,187 @@ phases:
         blocks: []
         notes:
           - "2025-07-24: Task created via PMaC CLI"
+  jira_integration:
+    title: "Jira Sync Integration"
+    description: "Implement selective bidirectional sync between single Jira project and PMaC backlog with data protection rules"
+    status: "ready"
+    estimated_duration: "2-3 weeks"
+    tasks:
+      - id: JIRA-001
+        title: "Extend PMaC Schema for Jira Integration"
+        status: "ready"
+        priority: "critical"
+        estimated_hours: 6
+        requirements:
+          - "Add optional jira_id field to PMaC task schema"
+          - "Add last_updated and last_synced timestamp fields"
+          - "Add jira_synced boolean flag to track local changes"
+          - "Update TypeScript interfaces in lib/types.ts"
+          - "Maintain backward compatibility with existing backlogs"
+          - "Add validation for Jira ID format (PROJECT-123)"
+          - "Support field protection state tracking for creation vs existing tasks"
+        acceptance_criteria:
+          - "✅ PMaC tasks can optionally store jira_id"
+          - "✅ Timestamp fields track update and sync times programmatically"
+          - "✅ jira_synced flag indicates tasks modified locally"
+          - "✅ Schema distinguishes new tasks from existing Jira-synced tasks"
+          - "✅ TypeScript interfaces updated with proper typing"
+          - "✅ Schema validation enforces Jira ID format when present"
+          - "✅ All existing tests pass with schema changes"
+        dependencies: []
+        blocks:
+          - JIRA-002
+          - JIRA-003
+
+      - id: JIRA-002
+        title: "Jira Project Configuration"
+        status: "ready"
+        priority: "critical"
+        estimated_hours: 8
+        requirements:
+          - "Add jira section to existing PMaC config with connection details"
+          - "Store Jira API URL, project key, and authentication in config"
+          - "Implement secure credential storage via environment variables"
+          - "Add basic field mapping for status and priority only"
+          - "Create config validation with helpful error messages"
+          - "Add 'pmac jira init' command to configure Jira integration"
+          - "Support git-committed config sharing for teams"
+        acceptance_criteria:
+          - "✅ 'pmac jira init' adds Jira configuration to existing config"
+          - "✅ Config stores API URL, project key, and credential references"
+          - "✅ Environment variables provide secure credential storage"
+          - "✅ Simple status/priority mapping with smart defaults"
+          - "✅ Config validation provides clear error messages"
+          - "✅ Team config sharing works via git-committed files"
+          - "✅ No Jira-specific parameters required in terminal commands"
+        dependencies:
+          - JIRA-001
+        blocks:
+          - JIRA-003
+          - JIRA-004
+
+      - id: JIRA-003
+        title: "Jira API Client Implementation"
+        status: "ready"
+        priority: "critical"
+        estimated_hours: 12
+        requirements:
+          - "Implement Jira REST API v3 client with API token authentication"
+          - "Add project validation and issue count estimation"
+          - "Implement issue search with JQL and basic pagination"
+          - "Add issue creation and updating for allowed fields only"
+          - "Include basic rate limiting detection"
+          - "Add comprehensive error handling for API failures"
+          - "Support only single project, single instance operations"
+        acceptance_criteria:
+          - "✅ Client authenticates successfully with Jira Cloud API v3"
+          - "✅ Can validate project exists and estimate issue count"
+          - "✅ Issue search retrieves all project issues with pagination"
+          - "✅ Can create and update issues for title, status, priority, hours"
+          - "✅ Rate limiting detection warns before operation starts"
+          - "✅ Error handling provides actionable user feedback"
+          - "✅ All API operations focused on single project scope"
+        dependencies:
+          - JIRA-001
+          - JIRA-002
+        blocks:
+          - JIRA-004
+          - JIRA-005
+
+      - id: JIRA-004
+        title: "Data Protection & Selective Sync Engine"
+        status: "ready"
+        priority: "high"
+        estimated_hours: 16
+        requirements:
+          - "Implement creation-time vs existing task field protection rules"
+          - "Allow new tasks to set all fields (requirements, AC, deps, blocks, assignee)"
+          - "Protect complex fields on existing tasks (Jira master after first sync)"
+          - "Create PMaC-to-Jira sync for always-writable fields (title, status, priority, hours)"
+          - "Add Jira-to-PMaC import for all fields with intelligent inference"
+          - "Implement notes bidirectional sync with accurate timestamps"
+          - "Add epic-to-phase mapping with development fallback"
+          - "Add programmatic timestamp management for sync tracking"
+          - "Create data validation for required PMaC fields"
+          - "Add structured data appending to Jira descriptions for future compatibility"
+        acceptance_criteria:
+          - "✅ New PMaC tasks can specify all fields including complex ones"
+          - "✅ After first export, complex fields become Jira-protected"
+          - "✅ Existing tasks sync only always-writable fields to Jira"
+          - "✅ Notes sync bidirectionally with accurate timestamp preservation"
+          - "✅ Import transforms all Jira data to valid PMaC tasks"
+          - "✅ Epics map to phases with 'development' fallback"
+          - "✅ Timestamps updated programmatically by CLI, never manually"
+          - "✅ Required field validation stops operations with clear errors"
+          - "✅ Structured PMaC data appended to Jira for sync compatibility"
+        dependencies:
+          - JIRA-002
+          - JIRA-003
+        blocks:
+          - JIRA-005
+          - JIRA-006
+
+      - id: JIRA-005
+        title: "Three-Operation Command Implementation"
+        status: "ready"
+        priority: "high"
+        estimated_hours: 16
+        requirements:
+          - "Implement 'pmac jira import' command (uses config for all parameters)"
+          - "Implement 'pmac jira export' command for pushing PMaC changes"
+          - "Implement 'pmac jira sync' command (export then import)"
+          - "Add 'pmac jira status' showing sync status and history"
+          - "Create dry-run mode with --dry-run flag for all operations"
+          - "Implement atomic transactions - full success or full rollback"
+          - "Add issue count estimation with user warnings for large imports"
+          - "Handle new task creation with all fields vs existing task updates"
+          - "Implement notes bidirectional sync with Jira comments"
+          - "Add task deletion from PMaC when Jira issues are archived/deleted"
+          - "Create sync flags to track locally modified tasks"
+          - "Add clear error messages for missing required fields"
+        acceptance_criteria:
+          - "✅ 'pmac jira import' imports entire project and deletes archived tasks"
+          - "✅ 'pmac jira export' creates new issues with all fields, updates existing with writable fields only"
+          - "✅ 'pmac jira sync' performs export then import for full bidirectional sync"
+          - "✅ 'pmac jira status' shows last sync time, modified task count, and protection status"
+          - "✅ --dry-run shows what would change without making changes"
+          - "✅ Operations are atomic - complete success or complete rollback"
+          - "✅ Large project warnings display before operations start"
+          - "✅ New vs existing task handling follows protection rules correctly"
+          - "✅ Notes sync bidirectionally with accurate timestamp preservation"
+          - "✅ Task deletions tracked in git when Jira issues removed"
+          - "✅ Sync flags correctly identify tasks needing updates"
+          - "✅ Missing required fields stop operations with specific error details"
+        dependencies:
+          - JIRA-003
+          - JIRA-004
+        blocks:
+          - JIRA-006
+
+      - id: JIRA-006
+        title: "Documentation & Testing"
+        status: "ready"
+        priority: "medium"
+        estimated_hours: 10
+        requirements:
+          - "Create user documentation for Jira integration setup and usage"
+          - "Document data protection rules and sync limitations"
+          - "Add troubleshooting guide for common configuration issues"
+          - "Create example configuration for typical team setups"
+          - "Implement unit and integration tests for core functionality"
+          - "Add CLI help documentation and command examples"
+          - "Document team collaboration patterns using git-committed config"
+        acceptance_criteria:
+          - "✅ Setup documentation enables successful Jira integration"
+          - "✅ Data protection rules clearly documented with examples"
+          - "✅ Troubleshooting guide resolves common user issues"
+          - "✅ Example configurations accelerate team adoption"
+          - "✅ Test suite covers all major sync scenarios"
+          - "✅ CLI help provides contextual guidance and examples"
+          - "✅ Team collaboration documentation covers config sharing"
+        dependencies:
+          - JIRA-005
+        blocks: []
 epic_summary:
   total_estimated_hours: 94
   estimated_duration: 4-5 weeks

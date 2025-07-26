@@ -776,7 +776,7 @@ Please check the file permissions and format.
     // Extract base pattern and number
     const match = taskId.match(/^(.*?)(-?\d*)$/);
     if (match) {
-      const [, base, numberPart] = match;
+      const [, base] = match;
       
       // Suggest numbered variants
       for (let i = 1; i <= 5; i++) {

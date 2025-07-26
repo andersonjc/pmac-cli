@@ -663,7 +663,7 @@ phases:
             discovery when 5173 is in use. Includes full unit and integration test suite."
       - id: VIEWER-022
         title: Add phase creation command and improve task ID uniqueness validation
-        status: ready
+        status: completed
         priority: high
         estimated_hours: 3
         requirements: []
@@ -671,6 +671,59 @@ phases:
         blocks: []
         notes:
           - "2025-07-24: Task created via PMaC CLI"
+          - "2025-07-26 03:37:26 p.m. EDT: Starting implementation of phase creation command and task ID validation
+            improvements"
+          - "2025-07-26 03:40:20 p.m. EDT: Implementation completed with comprehensive test coverage. Added phase
+            creation command and enhanced task ID validation with suggestions."
+          - "2025-07-26 03:45:28 p.m. EDT: Successfully implemented phase creation command and enhanced task ID
+            validation. All tests pass (63/63). Features include: 1) phase-create command with duplicate validation, 2)
+            enhanced task ID validation with pattern recommendations and suggestions, 3) comprehensive test coverage, 4)
+            proper help documentation. Task IDs are correctly validated for uniqueness across entire backlog."
+          - "2025-07-26 03:50:00 p.m. EDT: Updated all documentation, help text, and tests to clearly specify that task
+            IDs must be unique across the entire backlog, not just within phases. Enhanced error messages provide this
+            clarification. All 64 tests pass."
+  test_new_phase:
+    title: Test Phase
+    description: Testing new phase creation
+    status: ready
+    estimated_duration: 1 week
+    tasks:
+      - id: lowercase-task
+        title: Test Task
+        status: ready
+        priority: medium
+        estimated_hours: 8
+        requirements: []
+        dependencies: []
+        blocks: []
+        notes:
+          - "2025-07-26: Task created via PMaC CLI"
+      - id: TEST-12345
+        title: title
+        status: ready
+        priority: medium
+        estimated_hours: 8
+        requirements: []
+        dependencies: []
+        blocks: []
+        notes:
+          - "2025-07-26: Task created via PMaC CLI"
+  test_new_phase2:
+    title: test new phase
+    description: desc
+    status: ready
+    estimated_duration: 1 second
+    tasks:
+      - id: test-1234
+        title: title
+        status: ready
+        priority: medium
+        estimated_hours: 8
+        requirements: []
+        dependencies: []
+        blocks: []
+        notes:
+          - "2025-07-26: Task created via PMaC CLI"
 epic_summary:
   total_estimated_hours: 94
   estimated_duration: 4-5 weeks

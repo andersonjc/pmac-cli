@@ -73,6 +73,7 @@ pmac list in_progress              # Only in-progress tasks
 pmac list ready high               # Ready tasks with high priority
 
 # Create and manage tasks
+# Note: Task IDs must be unique across entire backlog
 pmac create TASK-001 "Task title" phase [priority] [hours]
 pmac update TASK-001 in_progress "Starting implementation"
 pmac note TASK-001 "Important discovery about requirements"
@@ -323,7 +324,7 @@ PMaC includes a **Senior Engineer Task Execution Protocol**:
 
 ### For Teams
 - Always commit PMaC files with code changes
-- Use task IDs in branch names and commit messages  
+- Use globally unique task IDs in branch names and commit messages  
 - Include acceptance criteria validation in PRs
 - Review PMaC files during code reviews
 

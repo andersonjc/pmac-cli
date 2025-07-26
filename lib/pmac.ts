@@ -210,20 +210,8 @@ Please check the file permissions and format.
     this.backlog.phases[phase].tasks[taskIndex].status = status;
 
     if (note) {
-      // Generate timestamp with date, time, and local timezone (consistent with addTaskNote)
-      const now = new Date();
-      const timestamp = now
-        .toLocaleString('en-CA', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          timeZoneName: 'short',
-        })
-        .replace(',', '');
-
+      const timestamp = this.formatTimestamp();
+      
       if (!this.backlog.phases[phase].tasks[taskIndex].notes) {
         this.backlog.phases[phase].tasks[taskIndex].notes = [];
       }
@@ -246,19 +234,7 @@ Please check the file permissions and format.
 
     const { phase, taskIndex } = taskInfo;
 
-    // Generate timestamp with date, time, and local timezone
-    const now = new Date();
-    const timestamp = now
-      .toLocaleString('en-CA', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        timeZoneName: 'short',
-      })
-      .replace(',', '');
+    const timestamp = this.formatTimestamp();
 
     if (!this.backlog.phases[phase].tasks[taskIndex].notes) {
       this.backlog.phases[phase].tasks[taskIndex].notes = [];
@@ -770,6 +746,13 @@ Please check the file permissions and format.
 
   private formatTimestamp(): string {
     const now = new Date();
+    
+    // Get timezone abbreviation using the same method as existing code
+    const timezone = now
+      .toLocaleString('en-CA', { timeZoneName: 'short' })
+      .split(' ')
+      .pop() || 'UTC';
+    
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
@@ -782,10 +765,6 @@ Please check the file permissions and format.
     hours = hours % 12;
     hours = hours ? hours : 12; // 0 should be 12
     const formattedHours = String(hours).padStart(2, '0');
-    
-    // For simplicity, using EDT as shown in the examples
-    // In production, you might want to detect the actual timezone
-    const timezone = 'EDT';
     
     return `${year}-${month}-${day} ${formattedHours}:${minutes}:${seconds} ${ampm} ${timezone}`;
   }

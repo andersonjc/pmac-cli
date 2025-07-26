@@ -718,6 +718,18 @@ phases:
         blocks: []
         notes:
           - "2025-07-26 03:59:06 p.m. EDT: Task created via PMaC CLI"
+      - id: TIMESTAMP-TEST
+        title: Test all timestamp methods
+        status: in_progress
+        priority: medium
+        estimated_hours: 8
+        requirements: []
+        dependencies: []
+        blocks: []
+        notes:
+          - "2025-07-26 04:07:29 p.m. EDT: Task created via PMaC CLI"
+          - "2025-07-26 04:07:35 p.m. EDT: Testing updateTaskStatus timestamp"
+          - "2025-07-26 04:07:47 p.m. EDT: Testing addTaskNote timestamp functionality"
   test_new_phase2:
     title: test new phase
     description: desc

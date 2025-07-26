@@ -210,20 +210,8 @@ Please check the file permissions and format.
     this.backlog.phases[phase].tasks[taskIndex].status = status;
 
     if (note) {
-      // Generate timestamp with date, time, and local timezone (consistent with addTaskNote)
-      const now = new Date();
-      const timestamp = now
-        .toLocaleString('en-CA', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          timeZoneName: 'short',
-        })
-        .replace(',', '');
-
+      const timestamp = this.formatTimestamp();
+      
       if (!this.backlog.phases[phase].tasks[taskIndex].notes) {
         this.backlog.phases[phase].tasks[taskIndex].notes = [];
       }
@@ -246,19 +234,7 @@ Please check the file permissions and format.
 
     const { phase, taskIndex } = taskInfo;
 
-    // Generate timestamp with date, time, and local timezone
-    const now = new Date();
-    const timestamp = now
-      .toLocaleString('en-CA', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        timeZoneName: 'short',
-      })
-      .replace(',', '');
+    const timestamp = this.formatTimestamp();
 
     if (!this.backlog.phases[phase].tasks[taskIndex].notes) {
       this.backlog.phases[phase].tasks[taskIndex].notes = [];
@@ -481,12 +457,25 @@ Please check the file permissions and format.
       return;
     }
 
-    // Check if task ID already exists
+    // Enhanced task ID validation
     const existingTask = this.findTask(taskId);
     if (existingTask) {
-      console.log(`Task ${taskId} already exists`);
+      console.log(`❌ Task ${taskId} already exists in phase '${existingTask.phase}'`);
+      
+      // Suggest similar available IDs
+      const suggestions = this.suggestTaskIds(taskId, phaseName);
+      if (suggestions.length > 0) {
+        console.log(`💡 Suggested alternatives: ${suggestions.join(', ')}`);
+      }
+      
+      // Pattern validation suggestion
+      const phasePrefix = phaseName.toUpperCase().replace(/[^A-Z]/g, '').substring(0, 6);
+      console.log(`💡 Consider using pattern: ${phasePrefix}-001, ${phasePrefix}-002, etc.`);
       return;
     }
+
+    // Validate task ID pattern
+    this.validateTaskIdPattern(taskId);
 
     const newTask: Task = {
       id: taskId,
@@ -500,7 +489,7 @@ Please check the file permissions and format.
       notes: [],
     };
 
-    const timestamp = new Date().toISOString().split('T')[0];
+    const timestamp = this.formatTimestamp();
     newTask.notes.push(`${timestamp}: Task created via PMaC CLI`);
 
     this.backlog.phases[phaseName].tasks.push(newTask);
@@ -755,6 +744,115 @@ Please check the file permissions and format.
     }
   }
 
+  private formatTimestamp(): string {
+    const now = new Date();
+    
+    // Get timezone abbreviation using the same method as existing code
+    const timezone = now
+      .toLocaleString('en-CA', { timeZoneName: 'short' })
+      .split(' ')
+      .pop() || 'UTC';
+    
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    const ampm = hours >= 12 ? 'p.m.' : 'a.m.';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 should be 12
+    const formattedHours = String(hours).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${formattedHours}:${minutes}:${seconds} ${ampm} ${timezone}`;
+  }
+
+  private suggestTaskIds(taskId: string, phaseName: string): string[] {
+    const suggestions: string[] = [];
+    const existingIds = this.getAllTaskIds();
+    
+    // Extract base pattern and number
+    const match = taskId.match(/^(.*?)(-?\d*)$/);
+    if (match) {
+      const [, base] = match;
+      
+      // Suggest numbered variants
+      for (let i = 1; i <= 5; i++) {
+        const suggestion = `${base}-${String(i).padStart(3, '0')}`;
+        if (!existingIds.includes(suggestion)) {
+          suggestions.push(suggestion);
+        }
+      }
+    }
+    
+    // Suggest phase-based pattern
+    const phasePrefix = phaseName.toUpperCase().replace(/[^A-Z]/g, '').substring(0, 6);
+    for (let i = 1; i <= 3; i++) {
+      const suggestion = `${phasePrefix}-${String(i).padStart(3, '0')}`;
+      if (!existingIds.includes(suggestion)) {
+        suggestions.push(suggestion);
+      }
+    }
+    
+    return suggestions.slice(0, 3); // Return max 3 suggestions
+  }
+
+  private getAllTaskIds(): string[] {
+    const ids: string[] = [];
+    for (const phase of Object.values(this.backlog.phases)) {
+      for (const task of phase.tasks) {
+        ids.push(task.id);
+      }
+    }
+    return ids;
+  }
+
+  private validateTaskIdPattern(taskId: string): void {
+    // Check for common pattern recommendations
+    if (!/^[A-Z]/.test(taskId)) {
+      console.log(`⚠️  Recommendation: Task IDs typically start with uppercase letters (e.g., TASK-001)`);
+    }
+    
+    if (!/\d/.test(taskId)) {
+      console.log(`⚠️  Recommendation: Consider adding numbers for better organization (e.g., ${taskId}-001)`);
+    }
+    
+    if (taskId.length > 20) {
+      console.log(`⚠️  Recommendation: Task IDs shorter than 20 characters are easier to reference`);
+    }
+  }
+
+  createPhase(
+    phaseId: string,
+    title: string,
+    description: string,
+    estimatedDuration: string = '1 week'
+  ): void {
+    // Check if phase ID already exists
+    if (this.backlog.phases[phaseId]) {
+      console.log(`Phase '${phaseId}' already exists`);
+      console.log('Existing phases:', Object.keys(this.backlog.phases).join(', '));
+      return;
+    }
+
+    const newPhase: Phase = {
+      title: title,
+      description: description,
+      status: 'ready',
+      estimated_duration: estimatedDuration,
+      tasks: []
+    };
+
+    this.backlog.phases[phaseId] = newPhase;
+    this.saveBacklog();
+
+    console.log(`✅ Created phase ${phaseId}: ${title}`);
+    console.log(`   Description: ${description}`);
+    console.log(`   Estimated duration: ${estimatedDuration}`);
+  }
+
   private getStatusIcon(status: Task['status']): string {
     const icons = {
       ready: '⏳',
@@ -823,7 +921,7 @@ Project Setup Commands:
 
 Task Management Commands:
   list [status] [priority]         List all tasks, optionally filtered by status and/or priority
-  create <taskId> <title> <phase>  Create a new task in specified phase
+  create <taskId> <title> <phase>  Create a new task in specified phase (taskId must be unique across entire backlog)
   update <taskId> <status> [note]  Update task status (ready|in_progress|testing|completed)
   note <taskId> <note>             Add note to task
   move <taskId> <targetPhase>      Move task to different phase
@@ -842,10 +940,13 @@ Dependency Management:
   add-dep <taskId> <dependencyId>  Add dependency relationship
   rm-dep <taskId> <dependencyId>   Remove dependency relationship
 
+Phase Management:
+  phases                          List all phases and their details
+  phase-create <phaseId> <title> <description> [duration]  Create a new phase
+
 Analysis & Validation:
   validate                         Validate all dependencies
   critical-path                    Show critical path analysis
-  phases                          List all phases and their details
 
 Viewer:
   viewer                          Start PMaC Backlog Viewer
@@ -866,6 +967,7 @@ Examples:
   pmac list in_progress high
   pmac update PMAC-002 testing "Implementation complete"
   pmac phases
+  pmac phase-create new_phase "New Phase Title" "Description of new phase" "2 weeks"
   pmac viewer
 `);
   }
@@ -1150,6 +1252,7 @@ switch (command) {
   case 'create':
     if (args.length < 3) {
       console.error('Usage: pmac create <taskId> <title> <phase> [priority] [estimatedHours]');
+      console.error('Note: taskId must be unique across the entire backlog, not just within the phase');
       process.exit(1);
     }
     const priority = (args[3] as Task['priority']) || 'medium';
@@ -1216,6 +1319,14 @@ switch (command) {
 
   case 'phases':
     cli.listPhases();
+    break;
+
+  case 'phase-create':
+    if (args.length < 3) {
+      console.error('Usage: pmac phase-create <phaseId> <title> <description> [duration]');
+      process.exit(1);
+    }
+    cli.createPhase(args[0], args[1], args[2], args[3]);
     break;
 
   case 'bulk-phase':

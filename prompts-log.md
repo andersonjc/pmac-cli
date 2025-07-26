@@ -2317,6 +2317,28 @@ Make a plan to launch on subsequent ports if 5173 is in use
 
 Ensure tests are written or updated to exercise this new functionality
 
+## 2025-07-26 15:35:00 EDT
+Read project context and plan work for 022
+
+## 2025-07-26 15:40:50 EDT
+You'll need to run pnpm pmac to test the working code, since pmac is installed as a global npm package with the current public version. Also, log prompts. Task IDs should be unique across the whole backlog, not just within a phase.
+
+## 2025-07-26 15:45:35 EDT
+Ensure all documentation, help text, and tests are clear about the scope of task id uniqueness requirements
+
+## 2025-07-26 15:50:15 EDT
+Commit. Next, fix the fact that when new tasks are created, the note doesn't include a full date/time stamp. 
+2025-07-26: Task created via PMaC CLI
+
+## 2025-07-26 16:00:15 EDT
+Commit, then implement the new formatTimestamp function across all instances where timestamps are written
+
+## 2025-07-26 16:08:30 EDT
+Commit, then make a plan to clean up the test data in the backlog and resolve the TS errors in pmac.ts. Connect to IDE for error info.
+
+## 2025-07-26 16:13:15 EDT
+Commit, then create PR. Next, prepare for npm publish after PR merge
+
 ---
 
 _This log implements the "Complete conversation history" requirement of PMaC methodology, ensuring all development decisions are preserved and traceable through version control alongside the code they influenced._

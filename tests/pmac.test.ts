@@ -215,11 +215,13 @@ describe('PMaC CLI Integration Tests', () => {
       expect(result.stdout).toContain('Priority: critical, Estimated hours: 16');
     });
 
-    it('should reject duplicate task ID', () => {
+    it('should reject duplicate task ID across entire backlog with enhanced error message', () => {
       const result = runPMaC(['create', 'TEST-001', 'Duplicate Task', 'test_phase']);
 
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Task TEST-001 already exists');
+      expect(result.stdout).toContain('❌ Task TEST-001 already exists in phase');
+      expect(result.stdout).toContain('💡 Suggested alternatives:');
+      expect(result.stdout).toContain('💡 Consider using pattern:');
     });
 
     it('should reject invalid phase', () => {
@@ -228,6 +230,55 @@ describe('PMaC CLI Integration Tests', () => {
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain("Phase 'invalid_phase' not found");
       expect(result.stdout).toContain('Available phases: test_phase, other_phase');
+    });
+
+    it('should provide task ID pattern recommendations', () => {
+      const result = runPMaC(['create', 'lowercase-task', 'Test Task', 'test_phase']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('⚠️  Recommendation: Task IDs typically start with uppercase letters');
+    });
+
+    it('should enforce task ID uniqueness across different phases', () => {
+      // Try to create TEST-001 (which exists in test_phase) in other_phase - should fail
+      const duplicateResult = runPMaC(['create', 'TEST-001', 'Duplicate Task', 'other_phase']);
+      expect(duplicateResult.exitCode).toBe(0);
+      expect(duplicateResult.stdout).toContain('❌ Task TEST-001 already exists in phase \'test_phase\'');
+      expect(duplicateResult.stdout).toContain('💡 Suggested alternatives:');
+    });
+  });
+
+  describe('Phase Management', () => {
+    it('should create a new phase successfully', () => {
+      const result = runPMaC(['phase-create', 'new_phase', 'New Phase Title', 'Description of new phase', '2 weeks']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('✅ Created phase new_phase: New Phase Title');
+      expect(result.stdout).toContain('Description: Description of new phase');
+      expect(result.stdout).toContain('Estimated duration: 2 weeks');
+    });
+
+    it('should create a phase with default duration', () => {
+      const result = runPMaC(['phase-create', 'default_phase', 'Default Phase', 'Default description']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('✅ Created phase default_phase: Default Phase');
+      expect(result.stdout).toContain('Estimated duration: 1 week');
+    });
+
+    it('should reject duplicate phase ID', () => {
+      const result = runPMaC(['phase-create', 'test_phase', 'Duplicate Phase', 'This should fail']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain("Phase 'test_phase' already exists");
+      expect(result.stdout).toContain('Existing phases:');
+    });
+
+    it('should show error for incomplete phase-create command', () => {
+      const result = runPMaC(['phase-create', 'incomplete']);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain('Usage: pmac phase-create <phaseId> <title> <description> [duration]');
     });
   });
 

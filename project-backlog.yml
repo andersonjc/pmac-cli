@@ -708,6 +708,16 @@ phases:
         blocks: []
         notes:
           - "2025-07-26: Task created via PMaC CLI"
+      - id: TEST-TIMESTAMP
+        title: Test timestamp format
+        status: ready
+        priority: medium
+        estimated_hours: 8
+        requirements: []
+        dependencies: []
+        blocks: []
+        notes:
+          - "2025-07-26 03:59:06 p.m. EDT: Task created via PMaC CLI"
   test_new_phase2:
     title: test new phase
     description: desc

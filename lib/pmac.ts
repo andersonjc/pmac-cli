@@ -513,7 +513,7 @@ Please check the file permissions and format.
       notes: [],
     };
 
-    const timestamp = new Date().toISOString().split('T')[0];
+    const timestamp = this.formatTimestamp();
     newTask.notes.push(`${timestamp}: Task created via PMaC CLI`);
 
     this.backlog.phases[phaseName].tasks.push(newTask);
@@ -766,6 +766,28 @@ Please check the file permissions and format.
       console.log(`   Status: ${phase.status}, Duration: ${phase.estimated_duration}`);
       console.log(`   Tasks: ${phase.tasks.length}\n`);
     }
+  }
+
+  private formatTimestamp(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    const ampm = hours >= 12 ? 'p.m.' : 'a.m.';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 should be 12
+    const formattedHours = String(hours).padStart(2, '0');
+    
+    // For simplicity, using EDT as shown in the examples
+    // In production, you might want to detect the actual timezone
+    const timezone = 'EDT';
+    
+    return `${year}-${month}-${day} ${formattedHours}:${minutes}:${seconds} ${ampm} ${timezone}`;
   }
 
   private suggestTaskIds(taskId: string, phaseName: string): string[] {

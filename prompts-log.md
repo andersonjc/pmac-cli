@@ -2330,6 +2330,9 @@ Ensure all documentation, help text, and tests are clear about the scope of task
 Commit. Next, fix the fact that when new tasks are created, the note doesn't include a full date/time stamp. 
 2025-07-26: Task created via PMaC CLI
 
+## 2025-07-26 16:00:15 EDT
+Commit, then implement the new formatTimestamp function across all instances where timestamps are written
+
 ---
 
 _This log implements the "Complete conversation history" requirement of PMaC methodology, ensuring all development decisions are preserved and traceable through version control alongside the code they influenced._

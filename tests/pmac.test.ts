@@ -66,6 +66,13 @@ const runPMaC = (args: string[]): { stdout: string; stderr: string; exitCode: nu
     originalBacklog = readFileSync('project-backlog.yml', 'utf8');
   }
 
+  // Temporarily backup original prompts log
+  const originalPromptsExists = existsSync('prompts-log.md');
+  let originalPromptsLog = '';
+  if (originalPromptsExists) {
+    originalPromptsLog = readFileSync('prompts-log.md', 'utf8');
+  }
+
   try {
     // Copy test backlog to expected location
     writeFileSync('project-backlog.yml', readFileSync(TEST_BACKLOG_PATH, 'utf8'));
@@ -87,7 +94,7 @@ const runPMaC = (args: string[]): { stdout: string; stderr: string; exitCode: nu
       exitCode: execError.status || 1,
     };
   } finally {
-    // Always restore original backlog in finally block
+    // Always restore original backlog and prompts log in finally block
     try {
       if (originalExists) {
         writeFileSync('project-backlog.yml', originalBacklog);
@@ -98,6 +105,18 @@ const runPMaC = (args: string[]): { stdout: string; stderr: string; exitCode: nu
       }
     } catch (error) {
       console.error('Failed to restore original backlog:', error);
+    }
+
+    try {
+      if (originalPromptsExists) {
+        writeFileSync('prompts-log.md', originalPromptsLog);
+      } else {
+        if (existsSync('prompts-log.md')) {
+          unlinkSync('prompts-log.md');
+        }
+      }
+    } catch (error) {
+      console.error('Failed to restore original prompts log:', error);
     }
   }
 };
@@ -602,7 +621,6 @@ describe('PMaC CLI Integration Tests', () => {
       // Since the viewer starts a server that runs indefinitely, 
       // we'll test the startup output and then kill it quickly
       const { spawn } = require('child_process');
-      const path = require('path');
       
       return new Promise<void>((resolve, reject) => {
         const child = spawn('pnpm', ['--silent', 'pmac', 'viewer'], {
@@ -629,7 +647,7 @@ describe('PMaC CLI Integration Tests', () => {
             
             // Kill the process and resolve
             child.kill('SIGTERM');
-            setTimeout(() => resolve(), 100);
+            global.setTimeout(() => resolve(), 100);
           }
         });
         
@@ -642,12 +660,12 @@ describe('PMaC CLI Integration Tests', () => {
           }
         });
         
-        child.on('error', (error) => {
+        child.on('error', (error: Error) => {
           reject(error);
         });
         
         // Set a timeout to prevent hanging
-        setTimeout(() => {
+        global.setTimeout(() => {
           if (!hasStarted) {
             child.kill('SIGTERM');
             resolve(); // Don't fail if the test times out - viewer might be working
@@ -679,6 +697,84 @@ describe('PMaC CLI Integration Tests', () => {
       expect(viewerCode).toContain('Unable to find an available port');
       expect(viewerCode).toContain('Please free up some network ports and try again');
       expect(viewerCode).toContain('findAvailablePort');
+    });
+  });
+
+  describe('Prompt Logging', () => {
+    const PROMPT_LOG_PATH = 'prompts-log.md';
+
+    it('should log a prompt successfully', () => {
+      const testPrompt = 'Test prompt for logging';
+      
+      // Check the file content before the test (capture the original length)
+      const originalExists = existsSync(PROMPT_LOG_PATH);
+      const originalLength = originalExists ? readFileSync(PROMPT_LOG_PATH, 'utf8').length : 0;
+      
+      const result = runPMaC(['log-prompt', testPrompt]);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('📝 Prompt logged successfully');
+
+      // File should exist after command (even if it gets restored later)
+      expect(existsSync(PROMPT_LOG_PATH)).toBe(true);
+      
+      // The file content should be restored to original state due to backup/restore
+      // but we can verify the command succeeded by checking the stdout message
+      // This confirms the logPrompt functionality works without affecting the real file
+      const logContent = readFileSync(PROMPT_LOG_PATH, 'utf8');
+      expect(logContent.length).toBe(originalLength); // Restored to original length
+    });
+
+    it('should handle multi-word prompts correctly', () => {
+      const result = runPMaC(['log-prompt', 'This', 'is', 'a', 'multi-word', 'prompt', 'with', 'spaces']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('📝 Prompt logged successfully');
+    });
+
+    it('should handle multiple prompts in sequence', () => {
+      // Test multiple prompts - each should succeed
+      const firstResult = runPMaC(['log-prompt', 'First prompt']);
+      expect(firstResult.exitCode).toBe(0);
+      expect(firstResult.stdout).toContain('📝 Prompt logged successfully');
+
+      const secondResult = runPMaC(['log-prompt', 'Second prompt']);
+      expect(secondResult.exitCode).toBe(0);
+      expect(secondResult.stdout).toContain('📝 Prompt logged successfully');
+    });
+
+    it('should fail when no prompt is provided', () => {
+      const result = runPMaC(['log-prompt']);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain('Usage: pmac log-prompt <prompt>');
+    });
+
+    it('should handle prompts with special characters', () => {
+      const result = runPMaC(['log-prompt', 'Prompt with quotes and special chars: !@#$%^&*()']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('📝 Prompt logged successfully');
+    });
+
+    it('should preserve existing file during logging', () => {
+      // Verify that the original file exists and gets preserved
+      const originalExists = existsSync(PROMPT_LOG_PATH);
+      let originalLength = 0;
+      if (originalExists) {
+        originalLength = readFileSync(PROMPT_LOG_PATH, 'utf8').length;
+      }
+
+      const result = runPMaC(['log-prompt', 'Test preservation']);
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('📝 Prompt logged successfully');
+
+      // File should be restored to original state (backup/restore working)
+      if (originalExists) {
+        expect(existsSync(PROMPT_LOG_PATH)).toBe(true);
+        const finalLength = readFileSync(PROMPT_LOG_PATH, 'utf8').length;
+        expect(finalLength).toBe(originalLength);
+      }
     });
   });
 });

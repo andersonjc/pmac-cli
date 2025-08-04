@@ -108,6 +108,14 @@ pmac bulk-phase foundation completed
 pmac set TASK-001 dependencies "DEP-1,DEP-2,DEP-3"
 ```
 
+### Prompt Logging
+
+```bash
+# Log AI prompts with timestamps to prompts-log.md
+pmac log-prompt "Implement user authentication system"
+pmac log-prompt "Add error handling to payment processing"
+```
+
 ## Optional Tools
 
 ### Git Pre-Commit Hook

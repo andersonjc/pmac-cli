@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This repository contains **pmac-cli** - a standalone npm package providing CLI tools and interactive viewer for implementing Project Management as Code (PMaC) methodology in AI-assisted development.
 
 **Package Structure:**
+
 - **bin/**: CLI entry points (`pmac` command)
 - **lib/**: Core CLI implementation
 - **viewer/**: Interactive web-based backlog viewer (Svelte app)
@@ -47,7 +48,7 @@ Refer to the complete PMaC methodology in `project-management-as-code.md` for:
 ### During Development
 
 - Update task notes with implementation decisions in `project-backlog.yml`
-- Log all prompts and decisions in `prompts-log.md`
+- Log all prompts and decisions using `pmac log-prompt "prompt text"` command
 - Follow technical requirements exactly - no improvisation
 
 ### Before Committing
@@ -89,14 +90,12 @@ pnpm build:viewer  # Build viewer assets only
 **ABSOLUTE REQUIREMENT: Every code change must include comprehensive tests**
 
 1. **CLI Changes**: Must include integration tests for:
-
    - All CLI commands with success/failure scenarios
    - Command argument parsing and validation
    - File system operations (backlog read/write)
    - Error handling and edge cases
 
 2. **Viewer Changes**: Must include unit tests for:
-
    - Component rendering and interactions
    - Data parsing and transformation (YAML to UI state)
    - Store state management and reactivity
@@ -138,10 +137,14 @@ You are the senior engineer responsible for high-leverage, production-safe chang
 
 **CRITICAL: PMaC File Separation Protocol**
 
-- **prompts-log.md**: IMMEDIATELY log user prompts verbatim with correct, current, localized timestamp, before any other operations
+- **prompts-log.md**: IMMEDIATELY log user prompts using `pmac log-prompt "prompt text"` command, before any other operations
 - **project-backlog.yml**: Use PMaC CLI for implementation notes, milestones, decisions
-- **NO mixing**: Prompts go to prompts-log, dev context goes to backlog notes
-- **Timestamp Format**: CRITICAL - NEVER manually type timestamps. Always use actual current date/time from environment context `<env>Today's date: YYYY-MM-DD</env>` plus current time. Format: `YYYY-MM-DD HH:MM:SS EDT/EST` matching the actual timezone. VERIFY timestamp accuracy against environment context before logging.
+- **NO mixing**: Prompts go to prompts-log via CLI command, dev context goes to backlog notes
+- **Timestamp Format**: AUTOMATIC - The `pmac log-prompt` command automatically generates timestamps in the correct format and timezone. NEVER manually edit prompts-log.md file.
+- **Usage Examples**:
+  - `pmac log-prompt "Add authentication system"`
+  - `pmac log-prompt "Fix bug in payment processing"`
+  - `pmac log-prompt "Update documentation for new feature"`
 
 ## Development Environment Guidelines
 
@@ -211,7 +214,7 @@ You are a senior engineer with deep experience building production-grade applica
    • **Standard Usage**: Use `pmac update TASK-ID status "note"` for root backlog
    • **Custom Path**: Use `pmac --backlog path/to/backlog.yml update TASK-ID status "note"` as needed
    • **Document Implementation**: Add detailed notes to task about implementation decisions via PMaC CLI
-   • **SEPARATE FILE USAGE**: Use prompts-log.md for user prompts only, project-backlog.yml for all dev context
+   • **SEPARATE FILE USAGE**: Use `pmac log-prompt` command for user prompts only, project-backlog.yml for all dev context
    • Summarize what was changed and why in relation to task requirements
    • List every file modified and what was done in each
    • If there are any assumptions or risks, flag them for review
@@ -248,6 +251,7 @@ This repository uses these interconnected PMaC files:
 When working on viewer components (Svelte app):
 
 **Development Setup:**
+
 ```bash
 pnpm dev:viewer          # Start Vite dev server
 pnpm build:viewer        # Build viewer assets to dist/
@@ -255,12 +259,14 @@ pnpm test:viewer         # Run viewer component tests
 ```
 
 **Component Structure:**
+
 - `viewer/src/App.svelte` - Main application component
 - `viewer/src/components/` - UI components (TaskCard, PhaseGroup, etc.)
 - `viewer/src/lib/` - Utilities (stores, types, parsing)
 - `viewer/src/stores.ts` - Svelte reactive state management
 
 **Testing:**
+
 - Unit tests for utilities: `viewer/src/lib/*.test.ts`
 - Component testing via vitest + jsdom environment
 - Focus on data transformation, state management, UI logic

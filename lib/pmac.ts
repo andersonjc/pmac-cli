@@ -1370,6 +1370,14 @@ switch (command) {
     await cli.startViewer();
     break;
 
+  case 'log-prompt':
+    if (args.length < 1) {
+      console.error('Usage: pmac log-prompt <prompt>');
+      process.exit(1);
+    }
+    cli.logPrompt(args.join(' '));
+    break;
+
   case 'version':
   case '--version':
   case '-v':

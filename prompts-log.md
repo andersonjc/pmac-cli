@@ -2339,6 +2339,26 @@ Commit, then make a plan to clean up the test data in the backlog and resolve th
 ## 2025-07-26 16:13:15 EDT
 Commit, then create PR. Next, prepare for npm publish after PR merge
 
----
+## 2025-08-04 05:03:26 p.m. EDT
+- Prompt: "We're in the midst of implementing a feature to add prompt logging to the CLI. The logPrompt method has been written but not added to the CLI interface. Documentation and testing needs to be updated to ensure this new method is always used instead of writing directly to the prompts-log.md file."
 
-_This log implements the "Complete conversation history" requirement of PMaC methodology, ensuring all development decisions are preserved and traceable through version control alongside the code they influenced._
+## 2025-08-04 05:03:33 p.m. EDT
+- Prompt: "I would also like to change the tests command to run in non-watching mode, so I don't have to hit q for the test mode to finish"
+
+## 2025-08-04 05:03:39 p.m. EDT
+- Prompt: "Instead of using a different filename, can we just make a backup of the file and restore it after the test, like it does with the project-backlog.yml?"
+
+## 2025-08-04 05:03:45 p.m. EDT
+- Prompt: "The tests written are deleting my existing prompts-log.md file and not restoring it. Also, add directives to CLAUDE.md about using the pmac log-prompt command instead of directly editing the md file. Finally, fix the TS errors shown in the IDE."
+
+## 2025-08-04 05:03:50 p.m. EDT
+- Prompt: "Adhere to PMaC and log the prompts that we've shared in this session"
+
+## 2025-08-04 05:09:22 p.m. EDT
+- Prompt: "Kill the processes on ports 5173-5182 so I can test the viewer command"
+
+## 2025-08-04 05:10:39 p.m. EDT
+- Prompt: "Address the TS errors in the IDE on pmac.ts and pmac.test.ts"
+
+## 2025-08-04 05:16:36 p.m. EDT
+- Prompt: "Summarize all changes in a commit"

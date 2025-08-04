@@ -35,13 +35,13 @@ async function findAvailablePort(startPort: number = 5173, maxAttempts: number =
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
     const server = createNetServer();
-    
+
     server.listen(port, () => {
       server.close(() => {
         resolve(true);
       });
     });
-    
+
     server.on('error', () => {
       resolve(false);
     });
@@ -211,7 +211,7 @@ Please check the file permissions and format.
 
     if (note) {
       const timestamp = this.formatTimestamp();
-      
+
       if (!this.backlog.phases[phase].tasks[taskIndex].notes) {
         this.backlog.phases[phase].tasks[taskIndex].notes = [];
       }
@@ -461,13 +461,13 @@ Please check the file permissions and format.
     const existingTask = this.findTask(taskId);
     if (existingTask) {
       console.log(`❌ Task ${taskId} already exists in phase '${existingTask.phase}'`);
-      
+
       // Suggest similar available IDs
       const suggestions = this.suggestTaskIds(taskId, phaseName);
       if (suggestions.length > 0) {
         console.log(`💡 Suggested alternatives: ${suggestions.join(', ')}`);
       }
-      
+
       // Pattern validation suggestion
       const phasePrefix = phaseName.toUpperCase().replace(/[^A-Z]/g, '').substring(0, 6);
       console.log(`💡 Consider using pattern: ${phasePrefix}-001, ${phasePrefix}-002, etc.`);
@@ -746,38 +746,63 @@ Please check the file permissions and format.
 
   private formatTimestamp(): string {
     const now = new Date();
-    
+
     // Get timezone abbreviation using the same method as existing code
     const timezone = now
       .toLocaleString('en-CA', { timeZoneName: 'short' })
       .split(' ')
       .pop() || 'UTC';
-    
+
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    
+
     let hours = now.getHours();
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
-    
+
     const ampm = hours >= 12 ? 'p.m.' : 'a.m.';
     hours = hours % 12;
     hours = hours ? hours : 12; // 0 should be 12
     const formattedHours = String(hours).padStart(2, '0');
-    
+
     return `${year}-${month}-${day} ${formattedHours}:${minutes}:${seconds} ${ampm} ${timezone}`;
+  }
+
+  logPrompt(prompt: string): void {
+    const logPath = resolve(process.cwd(), 'prompts-log.md');
+    const timestamp = this.formatTimestamp();
+
+    const logEntry = `
+## ${timestamp}
+- Prompt: "${prompt}"
+`;
+
+    try {
+      // Check if file exists
+      if (!existsSync(logPath)) {
+        // Create file with header if it doesn't exist
+        writeFileSync(logPath, '# PMaC Prompt Log\n\n');
+      }
+
+      // Append the log entry
+      writeFileSync(logPath, logEntry, { flag: 'a' });
+      console.log('📝 Prompt logged successfully');
+    } catch (error) {
+      console.error('❌ Error logging prompt:', error instanceof Error ? error.message : 'Unknown error');
+      process.exit(1);
+    }
   }
 
   private suggestTaskIds(taskId: string, phaseName: string): string[] {
     const suggestions: string[] = [];
     const existingIds = this.getAllTaskIds();
-    
+
     // Extract base pattern and number
     const match = taskId.match(/^(.*?)(-?\d*)$/);
     if (match) {
       const [, base] = match;
-      
+
       // Suggest numbered variants
       for (let i = 1; i <= 5; i++) {
         const suggestion = `${base}-${String(i).padStart(3, '0')}`;
@@ -786,7 +811,7 @@ Please check the file permissions and format.
         }
       }
     }
-    
+
     // Suggest phase-based pattern
     const phasePrefix = phaseName.toUpperCase().replace(/[^A-Z]/g, '').substring(0, 6);
     for (let i = 1; i <= 3; i++) {
@@ -795,7 +820,7 @@ Please check the file permissions and format.
         suggestions.push(suggestion);
       }
     }
-    
+
     return suggestions.slice(0, 3); // Return max 3 suggestions
   }
 
@@ -814,11 +839,11 @@ Please check the file permissions and format.
     if (!/^[A-Z]/.test(taskId)) {
       console.log(`⚠️  Recommendation: Task IDs typically start with uppercase letters (e.g., TASK-001)`);
     }
-    
+
     if (!/\d/.test(taskId)) {
       console.log(`⚠️  Recommendation: Consider adding numbers for better organization (e.g., ${taskId}-001)`);
     }
-    
+
     if (taskId.length > 20) {
       console.log(`⚠️  Recommendation: Task IDs shorter than 20 characters are easier to reference`);
     }
@@ -875,10 +900,10 @@ Please check the file permissions and format.
 
   private getVersion(): string {
     let version = 'unknown';
-    
+
     // Try to find package root by looking for package.json (similar to viewer logic)
     let currentDir = __dirname;
-    
+
     while (currentDir !== resolve(currentDir, '..')) {
       const packageJsonPath = join(currentDir, 'package.json');
       if (existsSync(packageJsonPath)) {
@@ -894,7 +919,7 @@ Please check the file permissions and format.
       }
       currentDir = resolve(currentDir, '..');
     }
-    
+
     return version;
   }
 
@@ -948,6 +973,9 @@ Analysis & Validation:
   validate                         Validate all dependencies
   critical-path                    Show critical path analysis
 
+Prompt Logging:
+  log-prompt <prompt>              Log a prompt with AI directives
+
 Viewer:
   viewer                          Start PMaC Backlog Viewer
 
@@ -969,30 +997,31 @@ Examples:
   pmac phases
   pmac phase-create new_phase "New Phase Title" "Description of new phase" "2 weeks"
   pmac viewer
+  pmac log-prompt "Add a feature to log prompts via CLI"
 `);
   }
-  
+
   async startViewer(): Promise<void> {
     console.log('🔍 PMaC Backlog Viewer');
     console.log('======================');
-    
+
     // Validate backlog file exists
     if (!existsSync(this.backlogPath)) {
       console.error(`❌ Backlog file not found: ${this.backlogPath}`);
       console.error('Please ensure the backlog file exists or specify a valid path with --backlog');
       process.exit(1);
     }
-    
+
     console.log(`📁 Using backlog file: ${this.backlogPath}`);
-    
+
     // Path to pre-built viewer assets
     // Use more robust path resolution for both development and global installations
     let viewerAssetsPath: string;
-    
+
     // Try to find package root by looking for package.json
     let currentDir = __dirname;
     let packageRoot: string | null = null;
-    
+
     while (currentDir !== resolve(currentDir, '..')) {
       const packageJsonPath = join(currentDir, 'package.json');
       if (existsSync(packageJsonPath)) {
@@ -1008,14 +1037,14 @@ Examples:
       }
       currentDir = resolve(currentDir, '..');
     }
-    
+
     if (packageRoot) {
       viewerAssetsPath = join(packageRoot, 'dist', 'viewer');
     } else {
       // Fallback to relative path resolution
       viewerAssetsPath = resolve(__dirname, '../dist/viewer');
     }
-    
+
     if (!existsSync(viewerAssetsPath)) {
       console.error(`❌ Pre-built viewer assets not found at: ${viewerAssetsPath}`);
       console.error('');
@@ -1028,7 +1057,7 @@ Examples:
       console.error(`Current __dirname: ${__dirname}`);
       process.exit(1);
     }
-    
+
     // Find an available port, starting with the default 5173
     let port: number;
     try {
@@ -1038,16 +1067,16 @@ Examples:
       console.error('Please free up some network ports and try again.');
       process.exit(1);
     }
-    
+
     const server = createServer(async (req, res) => {
       try {
         // Set CORS headers for local development
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-        
+
         const filePath = req.url === '/' ? '/index.html' : (req.url || '/index.html');
-        
+
         // Handle backlog API endpoint
         if (filePath === '/api/backlog') {
           const backlogContent = readFileSync(this.backlogPath, 'utf8');
@@ -1058,10 +1087,10 @@ Examples:
           }));
           return;
         }
-        
+
         // Serve static files
         const fullPath = join(viewerAssetsPath, filePath);
-        
+
         if (!existsSync(fullPath)) {
           // Fallback to index.html for SPA routing
           const indexPath = join(viewerAssetsPath, 'index.html');
@@ -1075,9 +1104,9 @@ Examples:
           }
           return;
         }
-        
+
         const content = await readFile(fullPath);
-        
+
         // Set content type based on extension
         const ext = filePath.split('.').pop()?.toLowerCase();
         const contentTypes: Record<string, string> = {
@@ -1088,11 +1117,11 @@ Examples:
           'png': 'image/png',
           'svg': 'image/svg+xml'
         };
-        
+
         if (ext && contentTypes[ext]) {
           res.setHeader('Content-Type', contentTypes[ext]);
         }
-        
+
         res.end(content);
       } catch (error) {
         console.error('Server error:', error instanceof Error ? error.message : 'Unknown error');
@@ -1100,7 +1129,7 @@ Examples:
         res.end('Internal Server Error');
       }
     });
-    
+
     server.listen(port, () => {
       if (port !== 5173) {
         console.log(`🚀 PMaC Viewer running at http://localhost:${port} (port 5173 was in use)`);
@@ -1110,7 +1139,7 @@ Examples:
       console.log(`📁 Serving backlog: ${this.backlogPath}`);
       console.log(`⌨️  Press Ctrl+C to stop`);
     });
-    
+
     // Handle graceful shutdown
     process.on('SIGINT', () => {
       console.log('\n🛑 Stopping viewer...');
@@ -1118,7 +1147,7 @@ Examples:
         process.exit(0);
       });
     });
-    
+
     process.on('SIGTERM', () => {
       console.log('\n🛑 Stopping viewer...');
       server.close(() => {
@@ -1186,7 +1215,7 @@ Examples:
     if (copiedFiles > 0) {
       console.log(`\n🎉 PMaC project initialized successfully!`);
       console.log(`📝 ${copiedFiles} template files created`);
-      
+
       if (projectName && !isExisting) {
         console.log(`\nNext steps:`);
         console.log(`  cd ${projectName}`);
@@ -1203,7 +1232,7 @@ Examples:
       console.log(`\n⚠️  No files were created. Project may already be initialized.`);
     }
   }
-  
+
 }
 
 // CLI Interface
@@ -1339,6 +1368,14 @@ switch (command) {
 
   case 'viewer':
     await cli.startViewer();
+    break;
+
+  case 'log-prompt':
+    if (args.length < 1) {
+      console.error('Usage: pmac log-prompt <prompt>');
+      process.exit(1);
+    }
+    cli.logPrompt(args.join(' '));
     break;
 
   case 'version':

@@ -139,12 +139,8 @@ You are the senior engineer responsible for high-leverage, production-safe chang
 
 - **prompts-log.md**: IMMEDIATELY log user prompts using `pmac log-prompt "prompt text"` command, before any other operations
 - **project-backlog.yml**: Use PMaC CLI for implementation notes, milestones, decisions
-- **NO mixing**: Prompts go to prompts-log via CLI command, dev context goes to backlog notes
-- **Timestamp Format**: AUTOMATIC - The `pmac log-prompt` command automatically generates timestamps in the correct format and timezone. NEVER manually edit prompts-log.md file.
-- **Usage Examples**:
-  - `pmac log-prompt "Add authentication system"`
-  - `pmac log-prompt "Fix bug in payment processing"`
-  - `pmac log-prompt "Update documentation for new feature"`
+- **NO mixing**: Prompts go to prompts-log, dev context goes to backlog notes
+- **Never edit directly**: ALWAYS use the PMaC CLI commands to interact with the PMaC files. NEVER manually edit project-backlog.yml or prompts-log.md files.
 
 ## Development Environment Guidelines
 

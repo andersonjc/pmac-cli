@@ -4,6 +4,60 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.4.0] - 2025-08-04
+
+> Prompt logging CLI integration with comprehensive testing infrastructure 📝
+
+### 🚀 New Features
+
+- **Prompt Logging Command**: Added `pmac log-prompt "prompt text"` CLI command for structured prompt logging
+- **Automatic Timestamping**: CLI command generates timestamps in correct localized format automatically
+- **Multi-word Prompt Support**: Handles prompts with spaces via intelligent argument joining
+- **PMaC Integration**: Full integration with existing PMaC methodology and file structure
+
+### 🛠 Testing Infrastructure
+
+- **Non-Watch Mode Tests**: Fixed test configuration to run with `vitest run` instead of watch mode
+- **File Protection**: Implemented backup/restore pattern for `prompts-log.md` during testing
+- **Comprehensive Test Suite**: Added 6 integration tests covering all log-prompt functionality
+- **Project History Preservation**: Tests no longer delete or corrupt existing project history files
+
+### 🛠 Fixes
+
+- **TypeScript Configuration**: Updated module settings from ESNext to ES2022 for import.meta and top-level await support
+- **TypeScript Project References**: Added proper composite project structure for better IDE support
+- **Test File Type Issues**: Fixed setTimeout and error parameter type annotations in test files
+- **Unused Import Cleanup**: Removed unused imports and added proper type annotations
+
+### 📚 Documentation
+
+- **CLAUDE.md Directives**: Updated with clear instructions to use `pmac log-prompt` command instead of manual file editing
+- **README CLI Commands**: Added log-prompt command documentation with usage examples
+- **PMaC Methodology Compliance**: Emphasized automatic timestamp generation and proper workflow
+- **Usage Examples**: Added practical examples for common prompt logging scenarios
+
+### 🧪 Testing
+
+- **6 New Integration Tests**: Comprehensive coverage of log-prompt command functionality
+- **Backup/Restore Testing**: Verification that original files are preserved during test execution
+- **Error Handling Tests**: Validation of argument checking and error messages
+- **Multi-scenario Coverage**: Tests for single prompts, multi-word prompts, special characters, and edge cases
+
+### 🎯 Performance
+
+- **Efficient File Operations**: Streamlined backup/restore mechanisms in test infrastructure
+- **Clean Test Execution**: Tests complete automatically without manual intervention
+- **File System Safety**: No risk of data loss during test execution
+
+### 🔧 Internal
+
+- **TypeScript Project Structure**: Enhanced with proper project references and composite configurations
+- **Test Infrastructure**: Robust file protection patterns following existing project conventions
+- **Code Quality**: Improved type safety and eliminated IDE diagnostics issues
+- **PMaC Compliance**: All changes follow Project Management as Code methodology
+
+---
+
 ## [1.3.0] - 2025-07-26
 
 > Phase management and enhanced validation with timestamp improvements 🛠

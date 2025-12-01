@@ -25,10 +25,18 @@ phases:
         status: "ready"
         priority: "high"
         estimated_hours: 8
-        requirements: []
+        assignee: "developer"
+        requirements:
+          - "Implement feature X"
+          - "Add error handling"
+        acceptance_criteria:
+          - "All tests pass"
+          - "Code reviewed"
         dependencies: []
-        blocks: []
-        notes: []
+        blocks: ["TEST-002"]
+        notes:
+          - "2025-01-01 10:00:00 a.m. EST: Starting implementation"
+          - "2025-01-02 02:30:00 p.m. EST: Added initial code"
       - id: "TEST-002"
         title: "Test Task 2"
         status: "in_progress"
@@ -775,6 +783,223 @@ describe('PMaC CLI Integration Tests', () => {
         const finalLength = readFileSync(PROMPT_LOG_PATH, 'utf8').length;
         expect(finalLength).toBe(originalLength);
       }
+    });
+  });
+
+  describe('View Command - Single Task', () => {
+    it('should display full task details in pretty format', () => {
+      const result = runPMaC(['view', 'TEST-001']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Task: TEST-001');
+      expect(result.stdout).toContain('📋 BASIC INFORMATION');
+      expect(result.stdout).toContain('ID:');
+      expect(result.stdout).toContain('TEST-001');
+      expect(result.stdout).toContain('Status:');
+      expect(result.stdout).toContain('Priority:');
+      expect(result.stdout).toContain('Estimated Hours:');
+    });
+
+    it('should display requirements section when present', () => {
+      const result = runPMaC(['view', 'TEST-001']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('📝 REQUIREMENTS');
+      expect(result.stdout).toContain('Implement feature X');
+      expect(result.stdout).toContain('Add error handling');
+    });
+
+    it('should display acceptance criteria when present', () => {
+      const result = runPMaC(['view', 'TEST-001']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('✅ ACCEPTANCE CRITERIA');
+      expect(result.stdout).toContain('All tests pass');
+      expect(result.stdout).toContain('Code reviewed');
+    });
+
+    it('should display dependencies and blocks', () => {
+      const result = runPMaC(['view', 'TEST-001']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('🔗 DEPENDENCIES & RELATIONSHIPS');
+      expect(result.stdout).toContain('Blocks:');
+      expect(result.stdout).toContain('TEST-002');
+    });
+
+    it('should handle task not found', () => {
+      const result = runPMaC(['view', 'NONEXISTENT']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Task NONEXISTENT not found');
+    });
+
+    it('should display notes with timestamps', () => {
+      const result = runPMaC(['view', 'TEST-001']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('📒 NOTES');
+      expect(result.stdout).toContain('Starting implementation');
+      expect(result.stdout).toContain('Added initial code');
+    });
+  });
+
+  describe('View Command - Filtered Views', () => {
+    it('should filter by status', () => {
+      const result = runPMaC(['view', '--status', 'ready']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Found');
+      expect(result.stdout).toContain('task');
+      expect(result.stdout).toContain('TEST-001');
+    });
+
+    it('should filter by priority', () => {
+      const result = runPMaC(['view', '--priority', 'high']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Found');
+      expect(result.stdout).toContain('TEST-001');
+    });
+
+    it('should filter by phase', () => {
+      const result = runPMaC(['view', '--phase', 'test_phase']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('TEST-001');
+      expect(result.stdout).toContain('TEST-002');
+    });
+
+    it('should combine multiple filters', () => {
+      const result = runPMaC(['view', '--status', 'ready', '--priority', 'high']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('TEST-001');
+      expect(result.stdout).toContain('status: ready');
+      expect(result.stdout).toContain('priority: high');
+    });
+
+    it('should display count of filtered tasks', () => {
+      const result = runPMaC(['view', '--status', 'ready']);
+
+      expect(result.stdout).toMatch(/Found \d+ task/);
+    });
+
+    it('should handle no matching tasks gracefully', () => {
+      const result = runPMaC(['view', '--status', 'completed']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Found 0 task');
+      expect(result.stdout).toContain('No tasks match the specified filters');
+    });
+  });
+
+  describe('View Command - Output Formats', () => {
+    it('should output JSON format', () => {
+      const result = runPMaC(['view', 'TEST-001', '--json']);
+
+      expect(result.exitCode).toBe(0);
+      const json = JSON.parse(result.stdout);
+      expect(json.tasks).toHaveLength(1);
+      expect(json.tasks[0].id).toBe('TEST-001');
+      expect(json.count).toBe(1);
+    });
+
+    it('should output YAML format', () => {
+      const result = runPMaC(['view', 'TEST-001', '--yaml']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('tasks:');
+      expect(result.stdout).toContain('id: TEST-001');
+      expect(result.stdout).toContain('count: 1');
+    });
+
+    it('should support JSON with filters', () => {
+      const result = runPMaC(['view', '--status', 'ready', '--json']);
+
+      expect(result.exitCode).toBe(0);
+      const json = JSON.parse(result.stdout);
+      expect(json.tasks.length).toBeGreaterThan(0);
+      expect(json.filters.status).toBe('ready');
+      expect(json.count).toBeGreaterThan(0);
+    });
+
+    it('should support YAML with filters', () => {
+      const result = runPMaC(['view', '--priority', 'high', '--yaml']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('filters:');
+      expect(result.stdout).toContain('priority: high');
+    });
+  });
+
+  describe('View Command - Error Handling', () => {
+    it('should reject combining task ID with filters', () => {
+      const result = runPMaC(['view', 'TEST-001', '--status', 'ready']);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain('Cannot combine task ID with filter flags');
+    });
+
+    it('should reject invalid status value', () => {
+      const result = runPMaC(['view', '--status', 'invalid']);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain('Invalid status');
+      expect(result.stderr).toContain('Valid statuses');
+    });
+
+    it('should reject invalid priority value', () => {
+      const result = runPMaC(['view', '--priority', 'invalid']);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain('Invalid priority');
+      expect(result.stderr).toContain('Valid priorities');
+    });
+
+    it('should show usage when no arguments provided', () => {
+      const result = runPMaC(['view']);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain('Usage: pmac view');
+    });
+
+    it('should show error when only format flag provided', () => {
+      const result = runPMaC(['view', '--json']);
+
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr).toContain('Must specify either a task ID or filter flags');
+    });
+  });
+
+  describe('View Command - Edge Cases', () => {
+    it('should handle task with no notes gracefully', () => {
+      const result = runPMaC(['view', 'TEST-002']);
+
+      expect(result.exitCode).toBe(0);
+      // Should not show notes section if empty
+      expect(result.stdout).not.toContain('📒 NOTES');
+    });
+
+    it('should handle task with no dependencies', () => {
+      const result = runPMaC(['view', 'TEST-001']);
+
+      expect(result.stdout).toContain('Dependencies:');
+      expect(result.stdout).toContain('-');
+    });
+
+    it('should handle empty filter results', () => {
+      const result = runPMaC(['view', '--status', 'completed', '--priority', 'critical']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Found 0 task');
+    });
+
+    it('should handle non-existent phase gracefully', () => {
+      const result = runPMaC(['view', '--phase', 'nonexistent']);
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('Found 0 task');
     });
   });
 });

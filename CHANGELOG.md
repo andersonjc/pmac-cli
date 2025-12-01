@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.5.0] - 2025-12-01
+
+> Comprehensive task viewing with multiple output formats 👁️
+
+### 🚀 New Features
+
+- **View Command**: Added `pmac view` command for detailed task inspection
+- **Single Task View**: Display complete task details with `pmac view TASK-001`
+- **Filtered Views**: View multiple tasks by status, priority, or phase
+- **Multiple Output Formats**: Pretty-print (default), JSON (`--json`), and YAML (`--yaml`)
+- **Rich Display**: Sectioned output with icons, showing all task fields including requirements, acceptance criteria, dependencies, blocks, and notes
+- **Filter Combinations**: Combine multiple filters (e.g., `--status ready --priority high`)
+
+### 📚 Documentation
+
+- **README Updates**: Added view command examples and usage patterns
+- **Help Text**: Updated CLI help with comprehensive view command documentation
+- **Usage Examples**: Added examples for all view command variations
+
+### 🧪 Testing
+
+- **28 New Integration Tests**: Comprehensive coverage of view command functionality
+  - Single task views (6 tests)
+  - Filtered views (6 tests)
+  - Output formats (4 tests)
+  - Error handling (5 tests)
+  - Edge cases (4 tests)
+- **Format Validation**: Tests verify JSON and YAML outputs are parseable and correct
+
+---
+
 ## [1.4.0] - 2025-08-04
 
 > Prompt logging CLI integration with comprehensive testing infrastructure 📝

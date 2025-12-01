@@ -72,6 +72,16 @@ pmac list                           # All tasks
 pmac list in_progress              # Only in-progress tasks
 pmac list ready high               # Ready tasks with high priority
 
+# View detailed task information
+pmac view TASK-001                          # View full task details
+pmac view TASK-001 --json                   # View task as JSON
+pmac view TASK-001 --yaml                   # View task as YAML
+pmac view --status ready                    # View all ready tasks
+pmac view --priority high                   # View all high-priority tasks
+pmac view --phase foundation                # View all foundation phase tasks
+pmac view --status ready --priority high    # Combine filters
+pmac view --status testing --yaml           # Filtered view as YAML
+
 # Create and manage tasks
 # Note: Task IDs must be unique across entire backlog
 pmac create TASK-001 "Task title" phase [priority] [hours]

@@ -898,6 +898,279 @@ Please check the file permissions and format.
     return icons[priority] || '❓';
   }
 
+  private validateStatus(status: string): Task['status'] | null {
+    const validStatuses: Task['status'][] = ['ready', 'in_progress', 'testing', 'completed'];
+    if (validStatuses.includes(status as Task['status'])) {
+      return status as Task['status'];
+    }
+    return null;
+  }
+
+  private validatePriority(priority: string): Task['priority'] | null {
+    const validPriorities: Task['priority'][] = ['critical', 'high', 'medium', 'low'];
+    if (validPriorities.includes(priority as Task['priority'])) {
+      return priority as Task['priority'];
+    }
+    return null;
+  }
+
+  viewTasks(args: string[]): void {
+    // Parse arguments
+    let taskId: string | undefined;
+    const filters: {
+      status?: Task['status'];
+      priority?: Task['priority'];
+      phase?: string;
+    } = {};
+    let format: 'pretty' | 'json' | 'yaml' = 'pretty';
+
+    // Iterate through args
+    for (let i = 0; i < args.length; i++) {
+      if (args[i] === '--status' && i + 1 < args.length) {
+        const status = this.validateStatus(args[i + 1]);
+        if (!status) {
+          console.error(`Invalid status: ${args[i + 1]}`);
+          console.error('Valid statuses: ready, in_progress, testing, completed');
+          process.exit(1);
+        }
+        filters.status = status;
+        i++; // Skip next arg
+      } else if (args[i] === '--priority' && i + 1 < args.length) {
+        const priority = this.validatePriority(args[i + 1]);
+        if (!priority) {
+          console.error(`Invalid priority: ${args[i + 1]}`);
+          console.error('Valid priorities: critical, high, medium, low');
+          process.exit(1);
+        }
+        filters.priority = priority;
+        i++;
+      } else if (args[i] === '--phase' && i + 1 < args.length) {
+        filters.phase = args[i + 1];
+        i++;
+      } else if (args[i] === '--json') {
+        format = 'json';
+      } else if (args[i] === '--yaml') {
+        format = 'yaml';
+      } else if (!args[i].startsWith('--')) {
+        taskId = args[i];
+      }
+    }
+
+    // Validate mutually exclusive modes
+    const hasFilters = Object.keys(filters).length > 0;
+    if (taskId && hasFilters) {
+      console.error('Error: Cannot combine task ID with filter flags');
+      process.exit(1);
+    }
+
+    // Execute appropriate mode
+    if (taskId) {
+      this.viewSingleTask(taskId, format);
+    } else if (hasFilters) {
+      this.viewFilteredTasks(filters, format);
+    } else {
+      console.error('Error: Must specify either a task ID or filter flags');
+      process.exit(1);
+    }
+  }
+
+  private viewSingleTask(taskId: string, format: 'pretty' | 'json' | 'yaml'): void {
+    const taskInfo = this.findTask(taskId);
+
+    if (!taskInfo) {
+      console.log(`Task ${taskId} not found`);
+      return;
+    }
+
+    const tasks = [{ task: taskInfo.task, phase: taskInfo.phase }];
+
+    if (format === 'json') {
+      this.formatTasksJson(tasks);
+    } else if (format === 'yaml') {
+      this.formatTasksYaml(tasks);
+    } else {
+      this.formatTaskPretty(taskInfo.task, taskInfo.phase);
+    }
+  }
+
+  private viewFilteredTasks(
+    filters: {
+      status?: Task['status'];
+      priority?: Task['priority'];
+      phase?: string;
+    },
+    format: 'pretty' | 'json' | 'yaml'
+  ): void {
+    const matchingTasks: Array<{ task: Task; phase: string }> = [];
+
+    // Iterate through phases and find matching tasks
+    for (const [phaseName, phase] of Object.entries(this.backlog.phases)) {
+      // Apply phase filter first
+      if (filters.phase && phaseName !== filters.phase) {
+        continue;
+      }
+
+      // Filter tasks within phase
+      const filteredTasks = phase.tasks.filter(task => {
+        const statusMatch = !filters.status || task.status === filters.status;
+        const priorityMatch = !filters.priority || task.priority === filters.priority;
+        return statusMatch && priorityMatch;
+      });
+
+      // Add to results with phase information
+      filteredTasks.forEach(task => {
+        matchingTasks.push({ task, phase: phaseName });
+      });
+    }
+
+    // Display results based on format
+    if (format === 'json') {
+      this.formatTasksJson(matchingTasks, filters);
+    } else if (format === 'yaml') {
+      this.formatTasksYaml(matchingTasks, filters);
+    } else {
+      // Pretty-print format
+      const filterDesc = this.buildFilterDescription(filters);
+      console.log(`\nFound ${matchingTasks.length} task(s) matching filters${filterDesc}`);
+      console.log('='.repeat(80) + '\n');
+
+      if (matchingTasks.length === 0) {
+        console.log('No tasks match the specified filters.\n');
+        return;
+      }
+
+      matchingTasks.forEach(({ task, phase }) => {
+        this.formatTaskPretty(task, phase);
+      });
+    }
+  }
+
+  private printSection(title: string, divider: string, content: () => void): void {
+    console.log(`\n${title}`);
+    console.log(divider);
+    content();
+  }
+
+  private buildFilterDescription(filters: {
+    status?: Task['status'];
+    priority?: Task['priority'];
+    phase?: string;
+  }): string {
+    const parts: string[] = [];
+    if (filters.status) parts.push(`status: ${filters.status}`);
+    if (filters.priority) parts.push(`priority: ${filters.priority}`);
+    if (filters.phase) parts.push(`phase: ${filters.phase}`);
+    return parts.length > 0 ? ` (${parts.join(', ')})` : '';
+  }
+
+  private formatTaskPretty(task: Task, phase: string): void {
+    const width = 80;
+    const divider = '─'.repeat(width);
+    const doubleDivider = '='.repeat(width);
+
+    console.log('\n' + doubleDivider);
+    console.log(`Task: ${task.id}`);
+    console.log(doubleDivider);
+
+    // Basic Information section
+    this.printSection('📋 BASIC INFORMATION', divider, () => {
+      console.log(`  ID:              ${task.id}`);
+      console.log(`  Title:           ${task.title}`);
+      console.log(`  Status:          ${this.getStatusIcon(task.status)} ${task.status}`);
+      console.log(`  Priority:        ${this.getPriorityIcon(task.priority)} ${task.priority}`);
+      console.log(`  Phase:           ${phase}`);
+      console.log(`  Estimated Hours: ${task.estimated_hours}`);
+      console.log(`  Actual Hours:    ${task.actual_hours || '-'}`);
+      console.log(`  Assignee:        ${task.assignee || '-'}`);
+    });
+
+    // Requirements section (only if exists)
+    if (task.requirements && task.requirements.length > 0) {
+      this.printSection('📝 REQUIREMENTS', divider, () => {
+        task.requirements.forEach(req => {
+          console.log(`  • ${req}`);
+        });
+      });
+    }
+
+    // Acceptance criteria section (only if exists)
+    if (task.acceptance_criteria && task.acceptance_criteria.length > 0) {
+      this.printSection('✅ ACCEPTANCE CRITERIA', divider, () => {
+        task.acceptance_criteria!.forEach(criteria => {
+          console.log(`  • ${criteria}`);
+        });
+      });
+    }
+
+    // Dependencies & Relationships section
+    this.printSection('🔗 DEPENDENCIES & RELATIONSHIPS', divider, () => {
+      const deps = task.dependencies && task.dependencies.length > 0
+        ? task.dependencies.join(', ')
+        : '-';
+      const blocks = task.blocks && task.blocks.length > 0
+        ? task.blocks.join(', ')
+        : '-';
+
+      console.log(`  Dependencies:    ${deps}`);
+      console.log(`  Blocks:          ${blocks}`);
+    });
+
+    // Notes section (only if exists)
+    if (task.notes && task.notes.length > 0) {
+      this.printSection('📒 NOTES', divider, () => {
+        task.notes.forEach(note => {
+          console.log(`  ${note}`);
+        });
+      });
+    }
+
+    console.log(doubleDivider + '\n');
+  }
+
+  private formatTasksJson(
+    tasks: Array<{ task: Task; phase: string }>,
+    filters?: {
+      status?: Task['status'];
+      priority?: Task['priority'];
+      phase?: string;
+    }
+  ): void {
+    const output = {
+      tasks: tasks.map(({ task, phase }) => ({
+        ...task,
+        phase
+      })),
+      count: tasks.length,
+      ...(filters && { filters })
+    };
+
+    console.log(JSON.stringify(output, null, 2));
+  }
+
+  private formatTasksYaml(
+    tasks: Array<{ task: Task; phase: string }>,
+    filters?: {
+      status?: Task['status'];
+      priority?: Task['priority'];
+      phase?: string;
+    }
+  ): void {
+    const output = {
+      tasks: tasks.map(({ task, phase }) => ({
+        ...task,
+        phase
+      })),
+      count: tasks.length,
+      ...(filters && { filters })
+    };
+
+    console.log(stringifyYaml(output, {
+      indent: 2,
+      lineWidth: 120,
+      minContentWidth: 20,
+    }));
+  }
+
   private getVersion(): string {
     let version = 'unknown';
 
@@ -946,6 +1219,8 @@ Project Setup Commands:
 
 Task Management Commands:
   list [status] [priority]         List all tasks, optionally filtered by status and/or priority
+  view <taskId> [--json|--yaml]    Display full details for a specific task
+  view --status <status> [options] View all tasks matching filters (supports --priority, --phase, --json, --yaml)
   create <taskId> <title> <phase>  Create a new task in specified phase (taskId must be unique across entire backlog)
   update <taskId> <status> [note]  Update task status (ready|in_progress|testing|completed)
   note <taskId> <note>             Add note to task
@@ -993,6 +1268,11 @@ Examples:
   pmac add-dep API-002 API-001
   pmac move TEST-001 api_foundation
   pmac list in_progress high
+  pmac view TEST-001                    # View full task details
+  pmac view TEST-001 --json             # View task as JSON
+  pmac view --status ready              # View all ready tasks
+  pmac view --status ready --priority high  # View ready high-priority tasks
+  pmac view --phase foundation --yaml   # View phase tasks as YAML
   pmac update PMAC-002 testing "Implementation complete"
   pmac phases
   pmac phase-create new_phase "New Phase Title" "Description of new phase" "2 weeks"
@@ -1276,6 +1556,15 @@ switch (command) {
 
   case 'list':
     cli.listTasks(args[0] as Task['status'], args[1] as Task['priority']);
+    break;
+
+  case 'view':
+    if (args.length === 0) {
+      console.error('Usage: pmac view <taskId> [--json|--yaml]');
+      console.error('   or: pmac view --status <status> [--priority <priority>] [--phase <phase>] [--json|--yaml]');
+      process.exit(1);
+    }
+    cli.viewTasks(args);
     break;
 
   case 'create':

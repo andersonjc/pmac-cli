@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [1.5.1] - 2026-05-12
+
+> Supply chain hardening — exact-pin every dependency 🔒
+
+### 🔒 Security
+
+- **Exact-pin direct dependencies**: removed caret ranges from all 23 entries in `package.json` (1 dependency, 22 devDependencies) so a compromised future release within a semver range cannot enter end-user installs.
+- **Pinned `packageManager`** to `pnpm@10.11.0` for reproducible contributor installs via Corepack.
+- **Added `pnpm.overrides`** for historically-targeted single-version transitives (`chalk`, `color-convert`, `color-name`, `debug`, `minimist`, `ms`, `supports-color`).
+- **Added `.npmrc`** (`save-exact=true`, `save-prefix=`, `engine-strict=true`) so future `pnpm add` cannot reintroduce caret ranges.
+
+### 📚 Documentation
+
+- README contributor setup now uses `corepack enable` + `pnpm install --frozen-lockfile`.
+
+### ✅ Verification
+
+- All 118 tests pass (95 CLI + 23 viewer); `pnpm build` green; packed tarball install in a clean consumer pulls only `yaml@2.8.0` exact.
+
+---
+
 ## [1.5.0] - 2025-12-01
 
 > Comprehensive task viewing with multiple output formats 👁️

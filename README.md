@@ -373,9 +373,12 @@ We welcome contributions to improve PMaC methodology and tooling!
 ```bash
 git clone https://github.com/andersonjc/pmac-cli.git
 cd pmac-cli
-pnpm install
+corepack enable
+pnpm install --frozen-lockfile
 pnpm test
 ```
+
+Dependencies are pinned to exact versions and `pnpm-lock.yaml` is the source of truth. Always use `--frozen-lockfile` so installs fail loudly rather than silently regenerate the lockfile.
 
 ### Contributing Guidelines
 1. Follow PMaC methodology for all changes
